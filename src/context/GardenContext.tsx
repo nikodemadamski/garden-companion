@@ -27,6 +27,7 @@ interface GardenContextType {
     exportGarden: () => string;
     importGarden: (jsonString: string) => boolean;
     weather: WeatherData | null;
+    season: 'Spring' | 'Summer' | 'Autumn' | 'Winter';
 }
 
 const GardenContext = createContext<GardenContextType | undefined>(undefined);
@@ -182,6 +183,17 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         return { status: 'ok', label, color: 'var(--color-primary)', adjustmentReason: reason };
     };
 
+    const [season, setSeason] = useState<'Spring' | 'Summer' | 'Autumn' | 'Winter'>('Spring');
+
+    useEffect(() => {
+        const month = new Date().getMonth(); // 0-11
+        // Northern Hemisphere
+        if (month >= 2 && month <= 4) setSeason('Spring');
+        else if (month >= 5 && month <= 7) setSeason('Summer');
+        else if (month >= 8 && month <= 10) setSeason('Autumn');
+        else setSeason('Winter');
+    }, []);
+
     return (
         <GardenContext.Provider
             value={{
@@ -222,6 +234,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                     }
                 },
                 weather,
+                season,
             }}
         >
             {children}
