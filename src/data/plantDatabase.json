@@ -1,0 +1,644 @@
+[
+  {
+    "id": 5257,
+    "common_name": "Monstera Deliciosa",
+    "scientific_name": [
+      "Monstera deliciosa"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Part shade"
+    ],
+    "care_level": "Medium",
+    "description": "The Monstera Deliciosa, also known as the Swiss Cheese Plant, is famous for its natural leaf holes. It loves indirect light and moderate watering.",
+    "hardiness": {
+      "min": "10a",
+      "max": "12b"
+    }
+  },
+  {
+    "id": 10001,
+    "common_name": "Snake Plant",
+    "scientific_name": [
+      "Sansevieria trifasciata"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1599598425947-d351053c4431?auto=format&fit=crop&w=600&q=80",
+    "watering": "Minimum",
+    "sunlight": [
+      "Part shade",
+      "Full shade"
+    ],
+    "care_level": "Low",
+    "description": "Indestructible and architectural, the Snake Plant purifies air and thrives on neglect. Perfect for beginners.",
+    "hardiness": {
+      "min": "9a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10002,
+    "common_name": "Fiddle Leaf Fig",
+    "scientific_name": [
+      "Ficus lyrata"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1613143569773-456075677d68?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun",
+      "Part shade"
+    ],
+    "care_level": "High",
+    "description": "The Fiddle Leaf Fig is a stunning statement plant with large, violin-shaped leaves. It can be finicky but is worth the effort.",
+    "hardiness": {
+      "min": "10a",
+      "max": "12b"
+    }
+  },
+  {
+    "id": 10003,
+    "common_name": "Peace Lily",
+    "scientific_name": [
+      "Spathiphyllum wallisii"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1593691509543-c55ce32e015c?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": [
+      "Part shade"
+    ],
+    "care_level": "Medium",
+    "description": "Elegant and expressive, the Peace Lily droops dramatically when thirsty, making it easy to care for.",
+    "hardiness": {
+      "min": "11a",
+      "max": "12b"
+    }
+  },
+  {
+    "id": 10004,
+    "common_name": "Spider Plant",
+    "scientific_name": [
+      "Chlorophytum comosum"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1572688484279-a9e8f75eb052?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Part shade"
+    ],
+    "care_level": "Low",
+    "description": "Fast-growing and fun, the Spider Plant produces 'pups' that dangle like spiders. Great for hanging baskets.",
+    "hardiness": {
+      "min": "9a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10005,
+    "common_name": "Aloe Vera",
+    "scientific_name": [
+      "Aloe vera"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1567331140982-17c320d38142?auto=format&fit=crop&w=600&q=80",
+    "watering": "Minimum",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Low",
+    "description": "A medicinal succulent that soothes burns. It loves bright light and very little water.",
+    "hardiness": {
+      "min": "8a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10006,
+    "common_name": "Pothos",
+    "scientific_name": [
+      "Epipremnum aureum"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1598880940371-c756e026fe13?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Part shade",
+      "Full shade"
+    ],
+    "care_level": "Low",
+    "description": "The ultimate trailing plant. Pothos is incredibly forgiving and grows quickly in almost any light.",
+    "hardiness": {
+      "min": "10a",
+      "max": "12b"
+    }
+  },
+  {
+    "id": 10007,
+    "common_name": "Rubber Plant",
+    "scientific_name": [
+      "Ficus elastica"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1611211232932-da3113c5b960?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Part shade"
+    ],
+    "care_level": "Medium",
+    "description": "With glossy, dark leaves, the Rubber Plant adds a touch of drama. It prefers bright, indirect light.",
+    "hardiness": {
+      "min": "10a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10008,
+    "common_name": "ZZ Plant",
+    "scientific_name": [
+      "Zamioculcas zamiifolia"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1632207691143-643e2a9a9361?auto=format&fit=crop&w=600&q=80",
+    "watering": "Minimum",
+    "sunlight": [
+      "Part shade",
+      "Full shade"
+    ],
+    "care_level": "Low",
+    "description": "The ZZ Plant is a survivor. It tolerates low light and drought, making it perfect for offices.",
+    "hardiness": {
+      "min": "9a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10009,
+    "common_name": "Chinese Money Plant",
+    "scientific_name": [
+      "Pilea peperomioides"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1612363326164-28266211284d?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Part shade"
+    ],
+    "care_level": "Medium",
+    "description": "Known for its coin-shaped leaves, the Pilea is a symbol of good fortune and friendship.",
+    "hardiness": {
+      "min": "10a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10010,
+    "common_name": "Jade Plant",
+    "scientific_name": [
+      "Crassula ovata"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?auto=format&fit=crop&w=600&q=80",
+    "watering": "Minimum",
+    "sunlight": [
+      "Full sun",
+      "Part shade"
+    ],
+    "care_level": "Low",
+    "description": "A classic succulent that resembles a miniature tree. It represents wealth and prosperity.",
+    "hardiness": {
+      "min": "10a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10011,
+    "common_name": "Boston Fern",
+    "scientific_name": [
+      "Nephrolepis exaltata"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1596547609652-9cf5d8d76921?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": [
+      "Part shade",
+      "Full shade"
+    ],
+    "care_level": "Medium",
+    "description": "Lush and feathery, the Boston Fern loves humidity and adds a soft, green touch to any room.",
+    "hardiness": {
+      "min": "10a",
+      "max": "12b"
+    }
+  },
+  {
+    "id": 10012,
+    "common_name": "Strawberry",
+    "scientific_name": [
+      "Fragaria x ananassa"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1589123053646-4e7197004540?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "Sweet and delicious, strawberries are perfect for pots or garden beds. They love sun and regular water.",
+    "hardiness": {
+      "min": "4a",
+      "max": "9b"
+    }
+  },
+  {
+    "id": 10013,
+    "common_name": "Raspberry",
+    "scientific_name": [
+      "Rubus idaeus"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1577069861033-55d04cec4ef5?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "Raspberries offer a bountiful summer harvest. They need support for their canes and plenty of sun.",
+    "hardiness": {
+      "min": "4a",
+      "max": "8b"
+    }
+  },
+  {
+    "id": 10014,
+    "common_name": "Blueberry",
+    "scientific_name": [
+      "Vaccinium corymbosum"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1498557850523-fd3d118b962e?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "Blueberries require acidic soil to thrive. They provide delicious fruit and beautiful fall foliage.",
+    "hardiness": {
+      "min": "3a",
+      "max": "7b"
+    }
+  },
+  {
+    "id": 10015,
+    "common_name": "Lemon Tree",
+    "scientific_name": [
+      "Citrus limon"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1595855709915-bd98996a26b0?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "High",
+    "description": "A lemon tree brings fresh citrus scent and fruit. It needs lots of sun and protection from frost.",
+    "hardiness": {
+      "min": "9a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10016,
+    "common_name": "Fig Tree",
+    "scientific_name": [
+      "Ficus carica"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1621961048738-b8562f036b5c?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "Figs are ancient, hardy trees with sweet fruit. They love heat and can be grown in containers.",
+    "hardiness": {
+      "min": "7a",
+      "max": "10b"
+    }
+  },
+  {
+    "id": 10017,
+    "common_name": "Apple Tree",
+    "scientific_name": [
+      "Malus domestica"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "A staple of the home orchard. Apple trees need a pollinator partner and winter chill to fruit.",
+    "hardiness": {
+      "min": "3a",
+      "max": "8b"
+    }
+  },
+  {
+    "id": 10018,
+    "common_name": "Tomato",
+    "scientific_name": [
+      "Solanum lycopersicum"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1592841200221-a6898f307baa?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "The king of the vegetable garden. Tomatoes need heat, sun, and consistent watering.",
+    "hardiness": {
+      "min": "10a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10019,
+    "common_name": "Cucumber",
+    "scientific_name": [
+      "Cucumis sativus"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1604977042946-1eecc60f202f?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "Crisp and refreshing. Cucumbers are vines that love to climb and need plenty of water.",
+    "hardiness": {
+      "min": "10a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10020,
+    "common_name": "Bell Pepper",
+    "scientific_name": [
+      "Capsicum annuum"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1563565375-f3fdf5ec2e97?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "Colorful and crunchy. Bell peppers love warm weather and full sun.",
+    "hardiness": {
+      "min": "10a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10021,
+    "common_name": "Carrot",
+    "scientific_name": [
+      "Daucus carota"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Low",
+    "description": "Root vegetables that love loose, sandy soil. Carrots are fun to harvest!",
+    "hardiness": {
+      "min": "3a",
+      "max": "10b"
+    }
+  },
+  {
+    "id": 10022,
+    "common_name": "Lettuce",
+    "scientific_name": [
+      "Lactuca sativa"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": [
+      "Part shade",
+      "Full sun"
+    ],
+    "care_level": "Low",
+    "description": "Fast-growing greens for salads. Lettuce prefers cooler weather and can bolt in high heat.",
+    "hardiness": {
+      "min": "4a",
+      "max": "9b"
+    }
+  },
+  {
+    "id": 10023,
+    "common_name": "Chili Pepper",
+    "scientific_name": [
+      "Capsicum frutescens"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1588252303782-cb80119abd6d?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "Add some spice to your life. Chili peppers are easy to grow and love the heat.",
+    "hardiness": {
+      "min": "10a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10024,
+    "common_name": "Spinach",
+    "scientific_name": [
+      "Spinacia oleracea"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": [
+      "Part shade",
+      "Full sun"
+    ],
+    "care_level": "Low",
+    "description": "Nutrient-rich greens. Spinach grows quickly in cool weather.",
+    "hardiness": {
+      "min": "3a",
+      "max": "9b"
+    }
+  },
+  {
+    "id": 10025,
+    "common_name": "Potato",
+    "scientific_name": [
+      "Solanum tuberosum"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "Buried treasure! Potatoes need hilling up as they grow and produce a large harvest.",
+    "hardiness": {
+      "min": "3a",
+      "max": "10b"
+    }
+  },
+  {
+    "id": 10026,
+    "common_name": "Basil",
+    "scientific_name": [
+      "Ocimum basilicum"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1618375569909-3c8616cf7733?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "A fragrant herb essential for cooking. Basil loves heat and regular watering.",
+    "hardiness": {
+      "min": "10a",
+      "max": "11b"
+    }
+  },
+  {
+    "id": 10027,
+    "common_name": "Lavender",
+    "scientific_name": [
+      "Lavandula"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1565011523534-747a8601f10a?auto=format&fit=crop&w=600&q=80",
+    "watering": "Minimum",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "Famous for its soothing scent. Lavender needs full sun and well-draining soil to thrive.",
+    "hardiness": {
+      "min": "5a",
+      "max": "9b"
+    }
+  },
+  {
+    "id": 10028,
+    "common_name": "Rose",
+    "scientific_name": [
+      "Rosa"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1543341574-17e25f856a8e?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "High",
+    "description": "The classic symbol of love. Roses require attention, sun, and regular feeding for beautiful blooms.",
+    "hardiness": {
+      "min": "5a",
+      "max": "9b"
+    }
+  },
+  {
+    "id": 10029,
+    "common_name": "Chamomile",
+    "scientific_name": [
+      "Matricaria chamomilla"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1605218427368-35b820257915?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Full sun",
+      "Part shade"
+    ],
+    "care_level": "Low",
+    "description": "Delicate flowers perfect for tea. Chamomile is easy to grow and reseeds itself.",
+    "hardiness": {
+      "min": "4a",
+      "max": "9b"
+    }
+  },
+  {
+    "id": 10030,
+    "common_name": "Mint",
+    "scientific_name": [
+      "Mentha"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1626469726969-19b7fa95d721?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": [
+      "Part shade",
+      "Full sun"
+    ],
+    "care_level": "Low",
+    "description": "Vigorous and refreshing. Mint spreads rapidly, so it's best grown in containers.",
+    "hardiness": {
+      "min": "3a",
+      "max": "9b"
+    }
+  },
+  {
+    "id": 10031,
+    "common_name": "Rosemary",
+    "scientific_name": [
+      "Salvia rosmarinus"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1594313012869-1c890336f420?auto=format&fit=crop&w=600&q=80",
+    "watering": "Minimum",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Low",
+    "description": "A woody, aromatic herb. Rosemary is drought-tolerant and great for cooking.",
+    "hardiness": {
+      "min": "7a",
+      "max": "10b"
+    }
+  },
+  {
+    "id": 10032,
+    "common_name": "Thyme",
+    "scientific_name": [
+      "Thymus vulgaris"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1627462968401-6272b96e960f?auto=format&fit=crop&w=600&q=80",
+    "watering": "Minimum",
+    "sunlight": [
+      "Full sun"
+    ],
+    "care_level": "Low",
+    "description": "A low-growing herb with tiny leaves. Thyme is perfect for rock gardens and seasoning.",
+    "hardiness": {
+      "min": "5a",
+      "max": "9b"
+    }
+  },
+  {
+    "id": 10033,
+    "common_name": "Parsley",
+    "scientific_name": [
+      "Petroselinum crispum"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1622205313162-be1d5712a43f?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Part shade",
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "A biennial herb often treated as an annual. Parsley is rich in vitamins and flavor.",
+    "hardiness": {
+      "min": "4a",
+      "max": "9b"
+    }
+  },
+  {
+    "id": 10034,
+    "common_name": "Cilantro",
+    "scientific_name": [
+      "Coriandrum sativum"
+    ],
+    "default_image": "https://images.unsplash.com/photo-1588879468573-4f5a36c87a4d?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": [
+      "Part shade",
+      "Full sun"
+    ],
+    "care_level": "Medium",
+    "description": "Also known as coriander. Cilantro has a distinct flavor and loves cool weather.",
+    "hardiness": {
+      "min": "2a",
+      "max": "11b"
+    }
+  }
+]
