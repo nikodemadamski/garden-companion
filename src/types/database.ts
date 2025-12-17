@@ -268,6 +268,35 @@ export interface Database {
           created_at?: string;
         };
       };
+      task_progress: {
+        Row: {
+          id: string;
+          user_id: string;
+          task_id: string;
+          completed: boolean;
+          completed_date: string | null;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          task_id: string;
+          completed?: boolean;
+          completed_date?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          task_id?: string;
+          completed?: boolean;
+          completed_date?: string | null;
+          notes?: string | null;
+          created_at?: string;
+        };
+      };
       user_settings: {
         Row: {
           user_id: string;
