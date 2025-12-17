@@ -40,20 +40,20 @@
   - Implement task completion tracking and progress updates
   - _Requirements: 1.1, 7.4, 7.5_
 
-- [ ] 4. Develop weather alert system for Irish conditions
-- [ ] 4.1 Create weather alert service and API integration
+- [x] 4. Develop weather alert system for Irish conditions
+- [x] 4.1 Create weather alert service and API integration
   - Implement Irish Met Office weather alert API integration
   - Create weather alert processing and categorization logic
   - Build alert severity mapping for yellow, orange, and red warnings
   - _Requirements: 2.1, 2.4, 7.2_
 
-- [ ] 4.2 Build weather alert UI components
+- [x] 4.2 Build weather alert UI components
   - Create WeatherAlertBanner component for prominent alert display
   - Implement WeatherActionModal with detailed protection recommendations
   - Build AlertHistory component for past alerts and actions
   - _Requirements: 2.1, 2.3, 2.5_
 
-- [ ] 4.3 Implement plant protection recommendation system
+- [x] 4.3 Implement plant protection recommendation system
   - Create protection action database and recommendation engine
   - Build plant-specific protection strategies for wind, rain, and storms
   - Implement emergency preparation checklists
