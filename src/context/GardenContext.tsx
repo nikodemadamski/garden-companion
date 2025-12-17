@@ -128,6 +128,11 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         let frequency = plant.waterFrequencyDays;
         let reason: 'rain' | 'heat' | 'cold' | undefined;
 
+        // P7: Hospital Logic
+        if (plant.status === 'hospital') {
+            return { status: 'ok', label: 'Recovering ❤️‍🩹', color: '#E53E3E', adjustmentReason: undefined };
+        }
+
         // Smart Logic for Outdoor Plants
         if (plant.type === 'outdoor' && history && history.length > 0) {
             // 1. Rain Check (Last 3 days)
@@ -147,6 +152,15 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             } else if (avgTemp < 10) {
                 frequency += 2; // Water less often
                 reason = 'cold';
+            }
+        }
+
+        // P4: Snooze Logic
+        if (plant.snoozeUntil) {
+            const snoozeDate = new Date(plant.snoozeUntil);
+            const now = new Date();
+            if (snoozeDate > now) {
+                return { status: 'ok', label: 'Snoozed 😴', color: '#718096', adjustmentReason: undefined };
             }
         }
 

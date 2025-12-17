@@ -5,6 +5,7 @@ export interface JournalEntry {
     date: string;
     note: string;
     heightCm?: number;
+    imageUrl?: string; // P6: Growth Tape
 }
 
 export interface Plant {
@@ -21,6 +22,15 @@ export interface Plant {
     journal?: JournalEntry[];
     perenualId?: number;
     room?: string; // P9: Room Grouping
+    snoozeUntil?: string; // P4: Snooze Button (ISO date)
+
+    // P7: Hospital Wing
+    status?: 'healthy' | 'hospital';
+
+    // P8: Pet Profiles
+    nickname?: string;
+    gotchaDate?: string; // ISO date
+    potType?: 'terracotta' | 'ceramic' | 'plastic' | 'hanging';
 }
 
 export interface GardenStats {
