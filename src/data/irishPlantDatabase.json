@@ -260,10 +260,8 @@
       "frost": true,
       "excessive_rain": true
     }
-  }
-],
- 
- {
+  },
+  {
     "id": "irish-potato-001",
     "common_name": "Irish Potato",
     "scientific_name": ["Solanum tuberosum"],
