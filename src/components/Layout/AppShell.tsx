@@ -1,14 +1,14 @@
-"use client";
-
 import React from 'react';
 import { useGarden } from '@/context/GardenContext';
 import { fetchLocalWeather, WeatherData } from '@/services/weatherService';
 import ProfileModal from '@/components/Profile/ProfileModal';
+import ExploreModal from '@/components/Explore/ExploreModal';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
     const { currentGarden, switchGarden } = useGarden();
     const [weather, setWeather] = React.useState<WeatherData | null>(null);
     const [showProfile, setShowProfile] = React.useState(false);
+    const [showExplore, setShowExplore] = React.useState(false);
 
     React.useEffect(() => {
         // Fetch weather for header (London default for now)
@@ -60,7 +60,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 borderRadius: '50px',
                 boxShadow: 'var(--shadow-float)',
                 display: 'flex',
-                gap: '2rem',
+                gap: '1.5rem',
                 alignItems: 'center',
                 zIndex: 100
             }}>
@@ -73,6 +73,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     }}
                 >
                     🏠
+                </button>
+
+                <button
+                    onClick={() => setShowExplore(true)}
+                    style={{
+                        background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer',
+                        opacity: showExplore ? 1 : 0.5,
+                        transform: showExplore ? 'scale(1.1)' : 'scale(1)'
+                    }}
+                >
+                    🧭
                 </button>
 
                 <button
@@ -113,6 +124,10 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
             {showProfile && (
                 <ProfileModal onClose={() => setShowProfile(false)} />
+            )}
+
+            {showExplore && (
+                <ExploreModal onClose={() => setShowExplore(false)} />
             )}
         </div>
     );
