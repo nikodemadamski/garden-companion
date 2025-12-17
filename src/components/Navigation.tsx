@@ -1,13 +1,15 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useGarden } from '@/context/GardenContext';
-import SettingsModal from './SettingsModal';
+import ProfileModal from './Profile/ProfileModal';
+import SettingsModal from './SettingsModal'; // Keep for now if user wants direct access, or remove? Plan said keep settings for backup.
 
 export default function Navigation() {
     const { currentGarden, switchGarden } = useGarden();
 
-    const [showSettings, setShowSettings] = React.useState(false);
+    const [showSettings, setShowSettings] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
 
     return (
         <>
@@ -35,6 +37,18 @@ export default function Navigation() {
                 >
                     🌳 Outdoor
                 </button>
+
+                {/* Profile Button */}
+                <button
+                    className="btn"
+                    onClick={() => setShowProfile(true)}
+                    style={{ padding: '0.5rem 1rem', fontSize: '1.2rem', backgroundColor: showProfile ? 'var(--color-primary)' : 'transparent', color: showProfile ? 'white' : 'inherit' }}
+                    aria-label="Profile"
+                >
+                    👤
+                </button>
+
+                {/* Settings Button - Keeping for Backup/Restore */}
                 <button
                     className="btn"
                     onClick={() => setShowSettings(true)}
@@ -47,6 +61,10 @@ export default function Navigation() {
 
             {showSettings && (
                 <SettingsModal onClose={() => setShowSettings(false)} />
+            )}
+
+            {showProfile && (
+                <ProfileModal onClose={() => setShowProfile(false)} />
             )}
         </>
     );

@@ -26,6 +26,7 @@ export default function ContextCalendar({ history }: ContextCalendarProps) {
                 {history.map((day) => {
                     const date = new Date(day.date);
                     const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                    const isToday = new Date().toISOString().split('T')[0] === day.date;
 
                     return (
                         <div key={day.date} style={{
@@ -34,14 +35,19 @@ export default function ContextCalendar({ history }: ContextCalendarProps) {
                             alignItems: 'center',
                             minWidth: '50px',
                             padding: '0.5rem',
-                            backgroundColor: 'rgba(255,255,255,0.5)',
-                            borderRadius: 'var(--radius-sm)'
+                            backgroundColor: isToday ? 'var(--color-primary)' : 'rgba(255,255,255,0.5)',
+                            color: isToday ? 'white' : 'inherit',
+                            borderRadius: 'var(--radius-sm)',
+                            border: isToday ? '2px solid white' : 'none',
+                            boxShadow: isToday ? '0 4px 6px rgba(0,0,0,0.1)' : 'none',
+                            transform: isToday ? 'scale(1.05)' : 'none',
+                            transition: 'all 0.2s ease'
                         }}>
-                            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#666' }}>{dayName}</span>
+                            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: isToday ? 'rgba(255,255,255,0.9)' : '#666' }}>{dayName}</span>
                             <span style={{ fontSize: '1.5rem', margin: '0.2rem 0' }}>{getWeatherIcon(day.weatherCode, day.rainSum)}</span>
                             <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{Math.round(day.maxTemp)}°</span>
                             {day.rainSum > 0 && (
-                                <span style={{ fontSize: '0.7rem', color: '#3b82f6' }}>{day.rainSum}mm</span>
+                                <span style={{ fontSize: '0.7rem', color: isToday ? 'white' : '#3b82f6' }}>{day.rainSum}mm</span>
                             )}
                         </div>
                     );

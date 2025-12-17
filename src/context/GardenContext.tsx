@@ -33,6 +33,8 @@ interface GardenContextType {
     season: 'Spring' | 'Summer' | 'Autumn' | 'Winter';
     session: Session | null;
     signOut: () => void;
+    loginStreak: number;
+    wateringStreak: number;
 }
 
 const GardenContext = createContext<GardenContextType | undefined>(undefined);
@@ -44,6 +46,8 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     const [rooms, setRooms] = useState<string[]>(['Living Room', 'Bedroom', 'Kitchen', 'Office', 'Bathroom', 'Balcony']);
     const [weather, setWeather] = useState<WeatherData | null>(null);
     const [loading, setLoading] = useState(true);
+    const [loginStreak, setLoginStreak] = useState(0);
+    const [wateringStreak, setWateringStreak] = useState(0);
 
     // Auth & Data Fetching
     useEffect(() => {
@@ -168,7 +172,26 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     };
 
     const updatePlant = async (updatedPlant: Plant) => {
+        const oldPlant = plants.find(p => p.id === updatedPlant.id);
         setPlants((prev) => prev.map((p) => (p.id === updatedPlant.id ? updatedPlant : p)));
+
+        // Check if watered
+        if (oldPlant && oldPlant.lastWateredDate !== updatedPlant.lastWateredDate) {
+            const today = new Date().toISOString().split('T')[0];
+
+            // Fetch current settings to check last watered date
+            const { data: settings } = await supabase.from('user_settings').select('*').single();
+
+            if (settings && settings.last_watered_date !== today) {
+                const newStreak = (settings.watering_streak || 0) + 1;
+                await supabase.from('user_settings').upsert({
+                    user_id: session?.user.id,
+                    last_watered_date: today,
+                    watering_streak: newStreak
+                });
+                setWateringStreak(newStreak);
+            }
+        }
 
         const { error } = await supabase.from('plants').update({
             name: updatedPlant.name,
@@ -352,7 +375,9 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 weather,
                 season,
                 session,
-                signOut
+                signOut,
+                loginStreak,
+                wateringStreak
             }}
         >
             {children}
