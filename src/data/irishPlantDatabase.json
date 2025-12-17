@@ -1,0 +1,935 @@
+[
+  {
+    "id": "irish-strawberry-001",
+    "common_name": "Irish Strawberry",
+    "scientific_name": ["Fragaria x ananassa"],
+    "category": "fruit",
+    "default_image": "https://images.unsplash.com/photo-1589123053646-4e7197004540?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": ["Full sun", "Part shade"],
+    "care_level": "Medium",
+    "description": "Sweet strawberries adapted for Irish climate. Perfect for containers and raised beds.",
+    "native_region": "Ireland",
+    "companion_plants": ["Chives", "Thyme", "Borage", "Lettuce"],
+    "pollinator_friendly": true,
+    "harvest_info": {
+      "season": ["June", "July", "August"],
+      "time_to_harvest": "60-90 days from planting",
+      "harvest_signs": ["Deep red color", "Sweet aroma", "Soft texture"],
+      "storage_instructions": "Best eaten fresh, can be frozen or made into preserves"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Regular watering as growth begins",
+        "fertilizing": "Apply balanced fertilizer monthly",
+        "pruning": "Remove old leaves and runners",
+        "protection": "Protect from late frosts with fleece",
+        "special_care": ["Plant new strawberry plants", "Mulch around plants"]
+      },
+      "summer": {
+        "watering": "Daily watering during dry spells",
+        "fertilizing": "Feed with potash-rich fertilizer during fruiting",
+        "pruning": "Remove runners unless propagating",
+        "protection": "Net against birds",
+        "special_care": ["Harvest regularly", "Watch for slugs and snails"]
+      },
+      "autumn": {
+        "watering": "Reduce watering as growth slows",
+        "fertilizing": "Stop feeding to encourage dormancy",
+        "pruning": "Cut back old foliage after harvest",
+        "protection": "Mulch for winter protection",
+        "special_care": ["Plant new strawberry plants", "Divide established plants"]
+      },
+      "winter": {
+        "watering": "Minimal watering, avoid waterlogging",
+        "protection": "Protect from harsh winds and frost",
+        "special_care": ["Check for pest damage", "Plan next year's planting"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Grey Mould",
+        "symptoms": ["Grey fuzzy growth on fruit", "Rotting berries"],
+        "causes": ["High humidity", "Poor air circulation", "Overwatering"],
+        "treatments": ["Remove affected fruit", "Improve ventilation", "Reduce watering"],
+        "prevention": ["Space plants well", "Water at soil level", "Remove debris"]
+      },
+      {
+        "name": "Slug Damage",
+        "symptoms": ["Holes in fruit", "Slime trails", "Missing berries"],
+        "causes": ["Wet conditions", "Dense planting", "Organic matter"],
+        "treatments": ["Beer traps", "Copper tape", "Organic slug pellets"],
+        "prevention": ["Raise containers", "Clear debris", "Use straw mulch"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Well-draining, fertile soil",
+      "ph": {"min": 6.0, "max": 7.0},
+      "drainage": "good",
+      "nutrients": ["Nitrogen", "Phosphorus", "Potassium"],
+      "amendments": ["Compost", "Well-rotted manure"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "moderate"
+    },
+    "irish_growing_tips": [
+      "Choose varieties suited to Irish climate like 'Gariguette' or 'Elsanta'",
+      "Grow in raised beds or containers for better drainage",
+      "Use cloches or polytunnels to extend growing season",
+      "Plant in sheltered spots to protect from Atlantic winds"
+    ],
+    "protection_requirements": {
+      "wind": true,
+      "frost": true,
+      "excessive_rain": true
+    }
+  },
+  {
+    "id": "irish-raspberry-001",
+    "common_name": "Irish Raspberry",
+    "scientific_name": ["Rubus idaeus"],
+    "category": "fruit",
+    "default_image": "https://images.unsplash.com/photo-1577069861033-55d04cec4ef5?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": ["Full sun", "Part shade"],
+    "care_level": "Medium",
+    "description": "Hardy raspberries that thrive in Ireland's cool, moist climate.",
+    "native_region": "Ireland",
+    "companion_plants": ["Garlic", "Chives", "Tansy", "Comfrey"],
+    "pollinator_friendly": true,
+    "harvest_info": {
+      "season": ["July", "August", "September"],
+      "time_to_harvest": "2 years from planting for full crop",
+      "harvest_signs": ["Deep red color", "Easy removal from core", "Sweet aroma"],
+      "storage_instructions": "Best eaten fresh, freeze well, make excellent jams"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Regular watering as buds break",
+        "fertilizing": "Apply balanced fertilizer and mulch",
+        "pruning": "Remove weak canes, tie in new growth",
+        "protection": "Support with canes or wires",
+        "special_care": ["Plant new canes", "Check for pest damage"]
+      },
+      "summer": {
+        "watering": "Deep watering during dry spells",
+        "fertilizing": "Side-dress with compost",
+        "pruning": "Remove old fruited canes after harvest",
+        "protection": "Net against birds",
+        "special_care": ["Harvest regularly", "Tie in new canes"]
+      },
+      "autumn": {
+        "watering": "Reduce watering as growth slows",
+        "pruning": "Cut back autumn-fruiting varieties to ground",
+        "protection": "Mulch around base",
+        "special_care": ["Plant new canes", "Clear fallen leaves"]
+      },
+      "winter": {
+        "watering": "Minimal watering needed",
+        "pruning": "Prune summer-fruiting varieties",
+        "protection": "Protect from strong winds",
+        "special_care": ["Check supports", "Plan new plantings"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Raspberry Beetle",
+        "symptoms": ["Small grubs in fruit", "Damaged berries"],
+        "causes": ["Natural pest cycle"],
+        "treatments": ["Organic sprays", "Beneficial insects"],
+        "prevention": ["Good garden hygiene", "Encourage natural predators"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Moisture-retentive but well-draining",
+      "ph": {"min": 6.0, "max": 7.0},
+      "drainage": "good",
+      "nutrients": ["Nitrogen", "Potassium", "Organic matter"],
+      "amendments": ["Compost", "Well-rotted manure"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "moderate"
+    },
+    "irish_growing_tips": [
+      "Choose varieties like 'Glen Ample' or 'Tulameen' for Irish conditions",
+      "Plant in sheltered location to protect from strong winds",
+      "Use support systems due to Ireland's windy conditions",
+      "Autumn-fruiting varieties extend harvest season"
+    ],
+    "protection_requirements": {
+      "wind": true,
+      "frost": false,
+      "excessive_rain": true
+    }
+  },
+  {
+    "id": "irish-apple-001",
+    "common_name": "Irish Apple Tree",
+    "scientific_name": ["Malus domestica"],
+    "category": "fruit",
+    "default_image": "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": ["Full sun"],
+    "care_level": "Medium",
+    "description": "Heritage Irish apple varieties perfect for the local climate and conditions.",
+    "native_region": "Ireland",
+    "companion_plants": ["Chives", "Comfrey", "Nasturtiums", "Clover"],
+    "pollinator_friendly": true,
+    "harvest_info": {
+      "season": ["September", "October", "November"],
+      "time_to_harvest": "3-5 years from planting",
+      "harvest_signs": ["Easy removal from tree", "Full color development", "Sweet taste"],
+      "storage_instructions": "Store in cool, dry place. Many varieties keep through winter"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Regular watering during dry spells",
+        "fertilizing": "Apply balanced fertilizer",
+        "pruning": "Prune for shape and air circulation",
+        "protection": "Protect blossoms from late frosts",
+        "special_care": ["Check for pest damage", "Apply organic mulch"]
+      },
+      "summer": {
+        "watering": "Deep watering during dry periods",
+        "fertilizing": "Avoid high nitrogen feeds",
+        "pruning": "Summer pruning for shape",
+        "protection": "Support heavy branches",
+        "special_care": ["Thin fruit if overcrowded", "Monitor for pests"]
+      },
+      "autumn": {
+        "watering": "Reduce watering as harvest approaches",
+        "pruning": "Light pruning after harvest",
+        "protection": "Collect fallen fruit",
+        "special_care": ["Harvest at proper ripeness", "Store carefully"]
+      },
+      "winter": {
+        "watering": "Minimal watering needed",
+        "pruning": "Main pruning season",
+        "protection": "Protect from strong winds",
+        "special_care": ["Plan next year's care", "Check tree health"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Apple Scab",
+        "symptoms": ["Dark spots on leaves", "Cracked fruit skin"],
+        "causes": ["Wet conditions", "Poor air circulation"],
+        "treatments": ["Fungicidal sprays", "Improve air flow"],
+        "prevention": ["Choose resistant varieties", "Prune for air circulation"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Well-draining, fertile soil",
+      "ph": {"min": 6.0, "max": 7.5},
+      "drainage": "good",
+      "nutrients": ["Balanced NPK", "Organic matter"],
+      "amendments": ["Compost", "Well-rotted manure"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "moderate"
+    },
+    "irish_growing_tips": [
+      "Choose Irish heritage varieties like 'Irish Peach' or 'Bloody Butcher'",
+      "Plant in sheltered spots to protect from Atlantic storms",
+      "Consider dwarf rootstocks for container growing",
+      "Cross-pollination needed - plant multiple varieties"
+    ],
+    "protection_requirements": {
+      "wind": true,
+      "frost": true,
+      "excessive_rain": true
+    }
+  }
+],
+ 
+ {
+    "id": "irish-potato-001",
+    "common_name": "Irish Potato",
+    "scientific_name": ["Solanum tuberosum"],
+    "category": "vegetable",
+    "default_image": "https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": ["Full sun"],
+    "care_level": "Medium",
+    "description": "The iconic Irish crop, perfectly adapted to local growing conditions.",
+    "native_region": "Ireland",
+    "companion_plants": ["Beans", "Peas", "Cabbage", "Marigolds"],
+    "pollinator_friendly": false,
+    "harvest_info": {
+      "season": ["July", "August", "September", "October"],
+      "time_to_harvest": "70-120 days depending on variety",
+      "harvest_signs": ["Flowers have finished", "Foliage begins to yellow", "Skin doesn't rub off easily"],
+      "storage_instructions": "Store in cool, dark, well-ventilated place. Can keep for months"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Moderate watering after planting",
+        "fertilizing": "Apply balanced fertilizer at planting",
+        "pruning": "Earth up stems as they grow",
+        "protection": "Protect from late frosts",
+        "special_care": ["Chit seed potatoes", "Plant after last frost"]
+      },
+      "summer": {
+        "watering": "Regular watering, especially during tuber formation",
+        "fertilizing": "Side-dress with compost",
+        "pruning": "Continue earthing up",
+        "protection": "Watch for blight in wet weather",
+        "special_care": ["Monitor for Colorado beetle", "Earth up regularly"]
+      },
+      "autumn": {
+        "watering": "Reduce watering before harvest",
+        "pruning": "Cut back foliage before harvest",
+        "protection": "Harvest before hard frosts",
+        "special_care": ["Harvest on dry day", "Cure before storage"]
+      },
+      "winter": {
+        "watering": "No watering needed",
+        "protection": "Store harvested potatoes properly",
+        "special_care": ["Check stored potatoes", "Plan next year's varieties"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Potato Blight",
+        "symptoms": ["Brown patches on leaves", "White fungal growth", "Rotting tubers"],
+        "causes": ["Wet, humid conditions", "Poor air circulation"],
+        "treatments": ["Copper-based fungicides", "Remove affected plants"],
+        "prevention": ["Choose resistant varieties", "Ensure good drainage", "Avoid overhead watering"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Well-draining, fertile soil",
+      "ph": {"min": 5.5, "max": 7.0},
+      "drainage": "excellent",
+      "nutrients": ["Potassium", "Phosphorus", "Organic matter"],
+      "amendments": ["Compost", "Well-rotted manure"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "moderate"
+    },
+    "irish_growing_tips": [
+      "Choose blight-resistant varieties like 'Sarpo Mira' or 'Orla'",
+      "Plant in ridges for better drainage",
+      "Use certified seed potatoes from Irish suppliers",
+      "Consider early varieties to avoid late blight season"
+    ],
+    "protection_requirements": {
+      "wind": false,
+      "frost": true,
+      "excessive_rain": true
+    }
+  },
+  {
+    "id": "irish-carrot-001",
+    "common_name": "Irish Carrot",
+    "scientific_name": ["Daucus carota"],
+    "category": "vegetable",
+    "default_image": "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": ["Full sun", "Part shade"],
+    "care_level": "Low",
+    "description": "Sweet, crunchy carrots that thrive in Ireland's cool climate.",
+    "native_region": "Ireland",
+    "companion_plants": ["Onions", "Leeks", "Chives", "Rosemary"],
+    "pollinator_friendly": true,
+    "harvest_info": {
+      "season": ["June", "July", "August", "September", "October"],
+      "time_to_harvest": "70-80 days from sowing",
+      "harvest_signs": ["Orange color visible at soil surface", "Appropriate size for variety"],
+      "storage_instructions": "Store in sand or peat in cool place. Can overwinter in ground"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Light watering to keep soil moist",
+        "fertilizing": "Avoid fresh manure, use balanced fertilizer",
+        "pruning": "Thin seedlings to prevent overcrowding",
+        "protection": "Protect from carrot fly with fleece",
+        "special_care": ["Sow successionally", "Prepare fine seedbed"]
+      },
+      "summer": {
+        "watering": "Regular watering during dry spells",
+        "fertilizing": "Side-dress with compost",
+        "pruning": "Continue thinning if needed",
+        "protection": "Maintain carrot fly protection",
+        "special_care": ["Harvest baby carrots", "Continue successive sowings"]
+      },
+      "autumn": {
+        "watering": "Reduce watering as growth slows",
+        "protection": "Mulch to prevent soil freezing",
+        "special_care": ["Harvest main crop", "Leave some in ground for winter use"]
+      },
+      "winter": {
+        "watering": "No watering needed",
+        "protection": "Mulch heavily if leaving in ground",
+        "special_care": ["Harvest as needed", "Check stored carrots"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Carrot Fly",
+        "symptoms": ["Tunnels in roots", "Stunted growth", "Rusty colored larvae"],
+        "causes": ["Adult flies laying eggs near plants"],
+        "treatments": ["Remove affected plants", "Use beneficial nematodes"],
+        "prevention": ["Use fine mesh covers", "Companion plant with onions", "Avoid thinning on warm days"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Deep, sandy, well-draining soil",
+      "ph": {"min": 6.0, "max": 7.5},
+      "drainage": "excellent",
+      "nutrients": ["Potassium", "Phosphorus"],
+      "amendments": ["Sand for heavy soils", "Compost"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "low"
+    },
+    "irish_growing_tips": [
+      "Choose varieties suited to Irish conditions like 'Nantes' types",
+      "Sow little and often for continuous harvest",
+      "Use raised beds for better drainage",
+      "Can be grown year-round with protection"
+    ],
+    "protection_requirements": {
+      "wind": false,
+      "frost": false,
+      "excessive_rain": true
+    }
+  },
+  {
+    "id": "irish-lettuce-001",
+    "common_name": "Irish Lettuce",
+    "scientific_name": ["Lactuca sativa"],
+    "category": "vegetable",
+    "default_image": "https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?auto=format&fit=crop&w=600&q=80",
+    "watering": "Frequent",
+    "sunlight": ["Part shade", "Full sun"],
+    "care_level": "Low",
+    "description": "Cool-season lettuce varieties perfect for Ireland's mild climate.",
+    "native_region": "Ireland",
+    "companion_plants": ["Carrots", "Radishes", "Chives", "Garlic"],
+    "pollinator_friendly": false,
+    "harvest_info": {
+      "season": ["April", "May", "June", "July", "August", "September", "October"],
+      "time_to_harvest": "30-60 days from sowing",
+      "harvest_signs": ["Full-sized heads", "Crisp leaves", "Before bolting"],
+      "storage_instructions": "Best eaten fresh, can be stored in refrigerator for up to a week"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Regular watering to keep soil moist",
+        "fertilizing": "Light nitrogen feeding",
+        "pruning": "Harvest outer leaves regularly",
+        "protection": "Protect from slugs and snails",
+        "special_care": ["Start sowings under cover", "Transplant when weather warms"]
+      },
+      "summer": {
+        "watering": "Daily watering in hot weather",
+        "fertilizing": "Liquid feed weekly",
+        "pruning": "Harvest before bolting",
+        "protection": "Provide shade in very hot weather",
+        "special_care": ["Choose bolt-resistant varieties", "Sow successionally"]
+      },
+      "autumn": {
+        "watering": "Reduce watering as temperatures drop",
+        "protection": "Use cloches for winter varieties",
+        "special_care": ["Sow winter varieties", "Harvest before hard frosts"]
+      },
+      "winter": {
+        "watering": "Minimal watering needed",
+        "protection": "Use fleece or cloches",
+        "special_care": ["Harvest winter varieties", "Plan spring sowings"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Slug and Snail Damage",
+        "symptoms": ["Holes in leaves", "Slime trails", "Seedlings disappearing"],
+        "causes": ["Wet conditions", "Dense planting"],
+        "treatments": ["Beer traps", "Copper barriers", "Organic pellets"],
+        "prevention": ["Raise beds", "Clear debris", "Use companion plants"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Rich, moisture-retentive soil",
+      "ph": {"min": 6.0, "max": 7.5},
+      "drainage": "good",
+      "nutrients": ["Nitrogen", "Organic matter"],
+      "amendments": ["Compost", "Well-rotted manure"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "low"
+    },
+    "irish_growing_tips": [
+      "Grow year-round with succession planting",
+      "Use polytunnels or cloches to extend season",
+      "Choose varieties suited to Irish conditions",
+      "Harvest in morning for best quality"
+    ],
+    "protection_requirements": {
+      "wind": false,
+      "frost": true,
+      "excessive_rain": false
+    }
+  },
+  {
+    "id": "irish-rosemary-001",
+    "common_name": "Irish Rosemary",
+    "scientific_name": ["Salvia rosmarinus"],
+    "category": "herb",
+    "default_image": "https://images.unsplash.com/photo-1594313012869-1c890336f420?auto=format&fit=crop&w=600&q=80",
+    "watering": "Minimum",
+    "sunlight": ["Full sun"],
+    "care_level": "Low",
+    "description": "Hardy rosemary varieties that can survive Irish winters with protection.",
+    "native_region": "Ireland",
+    "companion_plants": ["Sage", "Thyme", "Lavender", "Beans"],
+    "pollinator_friendly": true,
+    "harvest_info": {
+      "season": ["Year-round"],
+      "time_to_harvest": "Continuous harvest after establishment",
+      "harvest_signs": ["Mature sprigs", "Aromatic leaves"],
+      "storage_instructions": "Use fresh, dry for storage, or freeze in oil"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Light watering as growth begins",
+        "fertilizing": "Light feeding with balanced fertilizer",
+        "pruning": "Light pruning to shape",
+        "protection": "Remove winter protection gradually",
+        "special_care": ["Take cuttings for propagation", "Check for winter damage"]
+      },
+      "summer": {
+        "watering": "Minimal watering, drought tolerant",
+        "pruning": "Harvest regularly to encourage growth",
+        "protection": "No protection needed",
+        "special_care": ["Harvest for drying", "Take summer cuttings"]
+      },
+      "autumn": {
+        "watering": "Reduce watering",
+        "pruning": "Light pruning, avoid hard cuts",
+        "protection": "Prepare winter protection",
+        "special_care": ["Harvest before first frost", "Mulch around base"]
+      },
+      "winter": {
+        "watering": "Very minimal watering",
+        "protection": "Protect from harsh winds and frost",
+        "special_care": ["Use fleece in severe weather", "Harvest sparingly"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Root Rot",
+        "symptoms": ["Yellowing leaves", "Wilting", "Black roots"],
+        "causes": ["Overwatering", "Poor drainage"],
+        "treatments": ["Reduce watering", "Improve drainage", "Repot if in container"],
+        "prevention": ["Well-draining soil", "Avoid overwatering"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Well-draining, sandy soil",
+      "ph": {"min": 6.0, "max": 8.0},
+      "drainage": "excellent",
+      "nutrients": ["Low fertility preferred"],
+      "amendments": ["Sand", "Gravel for drainage"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "moderate"
+    },
+    "irish_growing_tips": [
+      "Choose hardy varieties like 'Arp' or 'Hill Hardy'",
+      "Grow in containers to move indoors in severe weather",
+      "Plant in sheltered, sunny spot",
+      "Protect from wet Irish winters"
+    ],
+    "protection_requirements": {
+      "wind": true,
+      "frost": true,
+      "excessive_rain": true
+    }
+  },
+  {
+    "id": "irish-thyme-001",
+    "common_name": "Irish Thyme",
+    "scientific_name": ["Thymus vulgaris"],
+    "category": "herb",
+    "default_image": "https://images.unsplash.com/photo-1627462968401-6272b96e960f?auto=format&fit=crop&w=600&q=80",
+    "watering": "Minimum",
+    "sunlight": ["Full sun"],
+    "care_level": "Low",
+    "description": "Hardy thyme that thrives in Irish conditions and provides year-round harvest.",
+    "native_region": "Ireland",
+    "companion_plants": ["Rosemary", "Sage", "Cabbage", "Strawberries"],
+    "pollinator_friendly": true,
+    "harvest_info": {
+      "season": ["Year-round"],
+      "time_to_harvest": "Continuous harvest after establishment",
+      "harvest_signs": ["Mature sprigs", "Before flowering for best flavor"],
+      "storage_instructions": "Use fresh, dry well, or freeze"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Light watering as growth begins",
+        "fertilizing": "Light feeding if needed",
+        "pruning": "Trim back winter damage",
+        "protection": "No protection needed",
+        "special_care": ["Divide established plants", "Take cuttings"]
+      },
+      "summer": {
+        "watering": "Minimal watering, drought tolerant",
+        "pruning": "Harvest regularly, trim after flowering",
+        "protection": "No protection needed",
+        "special_care": ["Harvest for drying", "Deadhead flowers"]
+      },
+      "autumn": {
+        "watering": "Reduce watering",
+        "pruning": "Light trim, avoid hard cuts",
+        "protection": "Generally hardy",
+        "special_care": ["Final harvest for drying", "Collect seeds"]
+      },
+      "winter": {
+        "watering": "Very minimal watering",
+        "protection": "Generally hardy in Irish climate",
+        "special_care": ["Harvest sparingly", "Plan spring propagation"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Fungal Issues",
+        "symptoms": ["Yellowing leaves", "Poor growth"],
+        "causes": ["Overwatering", "Poor air circulation"],
+        "treatments": ["Reduce watering", "Improve drainage"],
+        "prevention": ["Well-draining soil", "Good air circulation"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Well-draining, sandy soil",
+      "ph": {"min": 6.0, "max": 8.0},
+      "drainage": "excellent",
+      "nutrients": ["Low fertility preferred"],
+      "amendments": ["Sand", "Gravel"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "low"
+    },
+    "irish_growing_tips": [
+      "Very hardy in Irish conditions",
+      "Excellent for rock gardens and containers",
+      "Self-seeds readily in suitable conditions",
+      "Attracts beneficial insects"
+    ],
+    "protection_requirements": {
+      "wind": false,
+      "frost": false,
+      "excessive_rain": true
+    }
+  },
+  {
+    "id": "irish-parsley-001",
+    "common_name": "Irish Parsley",
+    "scientific_name": ["Petroselinum crispum"],
+    "category": "herb",
+    "default_image": "https://images.unsplash.com/photo-1622205313162-be1d5712a43f?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": ["Part shade", "Full sun"],
+    "care_level": "Medium",
+    "description": "Biennial herb that provides fresh leaves throughout the Irish growing season.",
+    "native_region": "Ireland",
+    "companion_plants": ["Tomatoes", "Carrots", "Chives", "Roses"],
+    "pollinator_friendly": true,
+    "harvest_info": {
+      "season": ["April", "May", "June", "July", "August", "September", "October"],
+      "time_to_harvest": "70-90 days from sowing",
+      "harvest_signs": ["Full-sized leaves", "Before flowering in second year"],
+      "storage_instructions": "Use fresh, freeze well, can be dried"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Regular watering to establish",
+        "fertilizing": "Light nitrogen feeding",
+        "pruning": "Harvest outer leaves regularly",
+        "protection": "Protect young plants from slugs",
+        "special_care": ["Sow fresh seed", "Transplant seedlings"]
+      },
+      "summer": {
+        "watering": "Regular watering, especially in dry spells",
+        "fertilizing": "Monthly liquid feed",
+        "pruning": "Harvest regularly to encourage growth",
+        "protection": "Provide some shade in very hot weather",
+        "special_care": ["Successive sowings", "Watch for pests"]
+      },
+      "autumn": {
+        "watering": "Reduce watering as growth slows",
+        "protection": "Use cloches for winter harvest",
+        "special_care": ["Sow winter varieties", "Harvest before hard frost"]
+      },
+      "winter": {
+        "watering": "Minimal watering",
+        "protection": "Protect with fleece or cloches",
+        "special_care": ["Harvest winter varieties", "Plan spring sowings"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Carrot Fly",
+        "symptoms": ["Yellowing leaves", "Stunted growth"],
+        "causes": ["Same pest that affects carrots"],
+        "treatments": ["Remove affected plants", "Use companion planting"],
+        "prevention": ["Grow with carrots", "Use fine mesh covers"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Rich, moisture-retentive soil",
+      "ph": {"min": 6.0, "max": 7.5},
+      "drainage": "good",
+      "nutrients": ["Nitrogen", "Organic matter"],
+      "amendments": ["Compost", "Well-rotted manure"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "low"
+    },
+    "irish_growing_tips": [
+      "Soak seeds before sowing to improve germination",
+      "Can be grown year-round with protection",
+      "Flat-leaf varieties often more flavorful",
+      "Allow some plants to flower for beneficial insects"
+    ],
+    "protection_requirements": {
+      "wind": false,
+      "frost": true,
+      "excessive_rain": false
+    }
+  },
+  {
+    "id": "irish-chrysanthemum-001",
+    "common_name": "Irish Chrysanthemum",
+    "scientific_name": ["Chrysanthemum morifolium"],
+    "category": "flower",
+    "default_image": "https://images.unsplash.com/photo-1571771019784-3ff35f4f4277?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": ["Full sun", "Part shade"],
+    "care_level": "Medium",
+    "description": "Hardy chrysanthemums that provide autumn color in Irish gardens.",
+    "native_region": "Ireland",
+    "companion_plants": ["Asters", "Sedum", "Ornamental grasses", "Kale"],
+    "pollinator_friendly": true,
+    "harvest_info": {
+      "season": ["September", "October", "November"],
+      "time_to_harvest": "Cut flowers when buds are just opening",
+      "harvest_signs": ["Buds showing color", "Firm stems"],
+      "storage_instructions": "Cut flowers last 7-10 days in water"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Regular watering as growth begins",
+        "fertilizing": "Balanced fertilizer monthly",
+        "pruning": "Pinch growing tips to encourage bushiness",
+        "protection": "Protect from late frosts",
+        "special_care": ["Divide established clumps", "Take cuttings"]
+      },
+      "summer": {
+        "watering": "Regular watering, especially during dry spells",
+        "fertilizing": "High potash feed to encourage flowering",
+        "pruning": "Pinch out growing tips until mid-July",
+        "protection": "Support tall varieties",
+        "special_care": ["Deadhead spent flowers", "Watch for aphids"]
+      },
+      "autumn": {
+        "watering": "Reduce watering as flowering finishes",
+        "pruning": "Deadhead to prolong flowering",
+        "protection": "Protect from early frosts",
+        "special_care": ["Enjoy peak flowering", "Collect seeds"]
+      },
+      "winter": {
+        "watering": "Minimal watering",
+        "pruning": "Cut back after flowering",
+        "protection": "Mulch crowns for winter protection",
+        "special_care": ["Plan next year's varieties", "Order new plants"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Aphids",
+        "symptoms": ["Sticky honeydew", "Distorted growth", "Black sooty mold"],
+        "causes": ["Warm weather", "Soft growth"],
+        "treatments": ["Insecticidal soap", "Beneficial insects", "Water spray"],
+        "prevention": ["Avoid over-fertilizing", "Encourage natural predators"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Well-draining, fertile soil",
+      "ph": {"min": 6.0, "max": 7.5},
+      "drainage": "good",
+      "nutrients": ["Balanced NPK", "Organic matter"],
+      "amendments": ["Compost", "Well-rotted manure"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "moderate"
+    },
+    "irish_growing_tips": [
+      "Choose hardy varieties for Irish conditions",
+      "Plant in sheltered spot to protect from wind",
+      "Excellent for extending garden color into autumn",
+      "Many varieties are perennial in Irish climate"
+    ],
+    "protection_requirements": {
+      "wind": true,
+      "frost": true,
+      "excessive_rain": false
+    }
+  },
+  {
+    "id": "irish-pansy-001",
+    "common_name": "Irish Pansy",
+    "scientific_name": ["Viola x wittrockiana"],
+    "category": "flower",
+    "default_image": "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?auto=format&fit=crop&w=600&q=80",
+    "watering": "Average",
+    "sunlight": ["Part shade", "Full sun"],
+    "care_level": "Low",
+    "description": "Cheerful pansies that thrive in Ireland's cool, moist climate.",
+    "native_region": "Ireland",
+    "companion_plants": ["Primroses", "Daffodils", "Tulips", "Lettuce"],
+    "pollinator_friendly": true,
+    "harvest_info": {
+      "season": ["March", "April", "May", "September", "October", "November"],
+      "time_to_harvest": "Flowers for cutting when fully open",
+      "harvest_signs": ["Full color development", "Fresh appearance"],
+      "storage_instructions": "Cut flowers last 3-5 days, edible flowers for salads"
+    },
+    "seasonal_care": {
+      "spring": {
+        "watering": "Regular watering to establish",
+        "fertilizing": "Light balanced fertilizer",
+        "pruning": "Deadhead regularly to prolong flowering",
+        "protection": "Generally hardy",
+        "special_care": ["Plant out after last frost", "Successive plantings"]
+      },
+      "summer": {
+        "watering": "Regular watering, especially in hot weather",
+        "fertilizing": "Liquid feed every 2 weeks",
+        "pruning": "Deadhead spent flowers",
+        "protection": "Provide shade in very hot weather",
+        "special_care": ["May struggle in heat", "Plant autumn varieties"]
+      },
+      "autumn": {
+        "watering": "Regular watering as temperatures cool",
+        "fertilizing": "Reduce feeding",
+        "pruning": "Deadhead to prolong flowering",
+        "protection": "Generally hardy",
+        "special_care": ["Peak flowering season", "Plant winter varieties"]
+      },
+      "winter": {
+        "watering": "Minimal watering needed",
+        "protection": "Generally hardy in Irish climate",
+        "special_care": ["Winter varieties provide color", "Plan spring plantings"]
+      }
+    },
+    "common_issues": [
+      {
+        "name": "Slugs and Snails",
+        "symptoms": ["Holes in leaves and flowers", "Slime trails"],
+        "causes": ["Wet conditions", "Dense planting"],
+        "treatments": ["Beer traps", "Copper barriers", "Organic pellets"],
+        "prevention": ["Good drainage", "Clear debris", "Raise containers"]
+      }
+    ],
+    "soil_requirements": {
+      "type": "Moist, well-draining soil",
+      "ph": {"min": 6.0, "max": 7.5},
+      "drainage": "good",
+      "nutrients": ["Balanced NPK", "Organic matter"],
+      "amendments": ["Compost", "Well-rotted manure"]
+    },
+    "climate_data": {
+      "hardiness_zone": "8a",
+      "frost_dates": {
+        "last_spring_frost": "04-15",
+        "first_autumn_frost": "10-15"
+      },
+      "growing_season_length": 180,
+      "rainfall_pattern": "high",
+      "wind_exposure": "low"
+    },
+    "irish_growing_tips": [
+      "Perfect for Irish climate - love cool, moist conditions",
+      "Can flower almost year-round with right varieties",
+      "Excellent for containers and window boxes",
+      "Edible flowers add color to salads"
+    ],
+    "protection_requirements": {
+      "wind": false,
+      "frost": false,
+      "excessive_rain": false
+    }
+  }
+]

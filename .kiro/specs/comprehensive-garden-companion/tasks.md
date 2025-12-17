@@ -6,18 +6,18 @@
   - Add database migration scripts for schema updates
   - _Requirements: 1.1, 2.1, 3.1, 4.1, 5.1, 6.1_
 
-- [ ] 2. Implement enhanced plant database with Irish climate data
-- [ ] 2.1 Create enhanced plant data structure and types
+- [x] 2. Implement enhanced plant database with Irish climate data
+- [x] 2.1 Create enhanced plant data structure and types
   - Define TypeScript interfaces for enhanced plant information including harvest info, seasonal care, and companion plants
   - Create plant category enums and validation schemas
   - _Requirements: 4.1, 4.2, 4.4_
 
-- [ ] 2.2 Populate plant database with comprehensive Irish climate data
+- [x] 2.2 Populate plant database with comprehensive Irish climate data
   - Add detailed information for fruits (strawberries, raspberries, apples), vegetables (potatoes, carrots, lettuce), herbs (rosemary, thyme, parsley), and flowers (chrysanthemums, pansies)
   - Include care requirements, growing seasons, companion plants, and harvesting information for each plant
   - _Requirements: 4.1, 4.2, 4.3_
 
-- [ ] 2.3 Create plant database management utilities
+- [x] 2.3 Create plant database management utilities
   - Write utilities for plant data validation and import/export
   - Create plant search and filtering functions
   - _Requirements: 4.1, 4.2_

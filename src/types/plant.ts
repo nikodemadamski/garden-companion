@@ -130,7 +130,7 @@ export interface SeasonalCareInstructions {
     fertilizing?: string;
     pruning?: string;
     protection?: string;
-    specialCare?: string[];
+    special_care?: string[];
 }
 
 export interface PlantIssue {
@@ -183,4 +183,215 @@ export interface GardenStats {
     totalPlants: number;
     plantsNeedingWater: number;
     healthScore: number; // 0-100
+}
+
+// Validation schemas and utility types for enhanced plant database
+export const PLANT_CATEGORIES = ['fruit', 'vegetable', 'herb', 'flower'] as const;
+export const GARDEN_TYPES = ['indoor', 'outdoor'] as const;
+export const WEATHER_ALERT_TYPES = ['yellow', 'orange', 'red'] as const;
+export const WEATHER_ALERT_CATEGORIES = ['wind', 'rain', 'storm', 'temperature'] as const;
+export const TASK_PRIORITIES = ['high', 'medium', 'low'] as const;
+export const TASK_CATEGORIES = ['planting', 'maintenance', 'harvesting', 'preparation'] as const;
+export const SYMPTOM_CATEGORIES = ['leaves', 'stems', 'roots', 'growth'] as const;
+export const POT_MATERIALS = ['terracotta', 'ceramic', 'plastic', 'fabric', 'hanging'] as const;
+export const PLANT_STATUSES = ['healthy', 'hospital'] as const;
+export const DRAINAGE_LEVELS = ['excellent', 'good', 'moderate', 'poor'] as const;
+export const SEASONS = ['spring', 'summer', 'autumn', 'winter'] as const;
+
+// Validation functions
+export const isValidPlantCategory = (category: string): category is PlantCategory => {
+    return PLANT_CATEGORIES.includes(category as PlantCategory);
+};
+
+export const isValidGardenType = (type: string): type is GardenType => {
+    return GARDEN_TYPES.includes(type as GardenType);
+};
+
+export const isValidWeatherAlertType = (type: string): type is WeatherAlertType => {
+    return WEATHER_ALERT_TYPES.includes(type as WeatherAlertType);
+};
+
+export const isValidTaskPriority = (priority: string): priority is TaskPriority => {
+    return TASK_PRIORITIES.includes(priority as TaskPriority);
+};
+
+export const isValidPotMaterial = (material: string): material is PotMaterial => {
+    return POT_MATERIALS.includes(material as PotMaterial);
+};
+
+// Plant data validation schema
+export interface PlantValidationSchema {
+    name: {
+        required: true;
+        minLength: 1;
+        maxLength: 100;
+    };
+    species: {
+        required: false;
+        maxLength: 100;
+    };
+    category: {
+        required: false;
+        enum: typeof PLANT_CATEGORIES;
+    };
+    waterFrequencyDays: {
+        required: false;
+        min: 1;
+        max: 365;
+    };
+    companionPlants: {
+        required: false;
+        maxItems: 20;
+    };
+}
+
+// Enhanced plant data validation
+export const validatePlantData = (plant: Partial<Plant>): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+
+    // Required fields
+    if (!plant.name || plant.name.trim().length === 0) {
+        errors.push('Plant name is required');
+    }
+    if (plant.name && plant.name.length > 100) {
+        errors.push('Plant name must be 100 characters or less');
+    }
+
+    // Category validation
+    if (plant.category && !isValidPlantCategory(plant.category)) {
+        errors.push('Invalid plant category');
+    }
+
+    // Garden type validation
+    if (plant.type && !isValidGardenType(plant.type)) {
+        errors.push('Invalid garden type');
+    }
+
+    // Water frequency validation
+    if (plant.waterFrequencyDays && (plant.waterFrequencyDays < 1 || plant.waterFrequencyDays > 365)) {
+        errors.push('Water frequency must be between 1 and 365 days');
+    }
+
+    // Companion plants validation
+    if (plant.companionPlants && plant.companionPlants.length > 20) {
+        errors.push('Maximum 20 companion plants allowed');
+    }
+
+    // Pot material validation
+    if (plant.potType && !isValidPotMaterial(plant.potType)) {
+        errors.push('Invalid pot material');
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors
+    };
+};
+
+// Harvest info validation
+export const validateHarvestInfo = (harvestInfo: Partial<HarvestInfo>): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+
+    if (harvestInfo.season && harvestInfo.season.length === 0) {
+        errors.push('At least one harvest season is required');
+    }
+
+    if (harvestInfo.timeToHarvest && harvestInfo.timeToHarvest.trim().length === 0) {
+        errors.push('Time to harvest information is required');
+    }
+
+    if (harvestInfo.harvestSigns && harvestInfo.harvestSigns.length === 0) {
+        errors.push('At least one harvest sign is required');
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors
+    };
+};
+
+// Soil requirements validation
+export const validateSoilRequirements = (soil: Partial<SoilRequirements>): { isValid: boolean; errors: string[] } => {
+    const errors: string[] = [];
+
+    if (soil.ph) {
+        if (soil.ph.min < 0 || soil.ph.min > 14) {
+            errors.push('Minimum pH must be between 0 and 14');
+        }
+        if (soil.ph.max < 0 || soil.ph.max > 14) {
+            errors.push('Maximum pH must be between 0 and 14');
+        }
+        if (soil.ph.min >= soil.ph.max) {
+            errors.push('Minimum pH must be less than maximum pH');
+        }
+    }
+
+    if (soil.drainage && !DRAINAGE_LEVELS.includes(soil.drainage)) {
+        errors.push('Invalid drainage level');
+    }
+
+    return {
+        isValid: errors.length === 0,
+        errors
+    };
+};
+
+// Utility types for plant database operations
+export type PlantSearchFilters = {
+    category?: PlantCategory;
+    pollinatorFriendly?: boolean;
+    nativeRegion?: string;
+    harvestSeason?: string;
+    companionWith?: string;
+};
+
+export type PlantSortOptions = {
+    field: 'name' | 'category' | 'nativeRegion' | 'pollinatorFriendly';
+    direction: 'asc' | 'desc';
+};
+
+export interface PlantDatabaseQuery {
+    filters?: PlantSearchFilters;
+    sort?: PlantSortOptions;
+    limit?: number;
+    offset?: number;
+    searchTerm?: string;
+}
+
+// Irish climate specific types
+export interface IrishClimateData {
+    hardiness_zone: string; // e.g., "8a", "8b", "9a"
+    frost_dates: {
+        last_spring_frost: string; // MM-DD format
+        first_autumn_frost: string; // MM-DD format
+    };
+    growing_season_length: number; // days
+    rainfall_pattern: 'high' | 'moderate' | 'low';
+    wind_exposure: 'high' | 'moderate' | 'low';
+}
+
+export interface IrishPlantData {
+    id: string;
+    common_name: string;
+    scientific_name: string[];
+    category: PlantCategory;
+    default_image?: string;
+    watering: string;
+    sunlight: string[];
+    care_level: string;
+    description: string;
+    native_region?: string;
+    companion_plants?: string[];
+    pollinator_friendly: boolean;
+    harvest_info?: HarvestInfo;
+    seasonal_care?: SeasonalCareGuide;
+    common_issues?: PlantIssue[];
+    soil_requirements?: SoilRequirements;
+    climate_data?: IrishClimateData;
+    irish_growing_tips?: string[];
+    protection_requirements?: {
+        wind: boolean;
+        frost: boolean;
+        excessive_rain: boolean;
+    };
 }
