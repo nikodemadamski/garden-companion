@@ -7,6 +7,7 @@ import PlantDetailModal from './PlantDetailModal';
 import { fetchHistoricalWeather, HistoricalWeatherData } from '@/services/weatherService';
 import ContextCalendar from '@/components/Weather/ContextCalendar';
 import PlantCard from './PlantCard';
+import SeasonalBanner from '@/components/Weather/SeasonalBanner';
 
 export default function PlantList() {
     const { plants, currentGarden, updatePlant, deletePlant } = useGarden();
@@ -77,6 +78,7 @@ export default function PlantList() {
 
     return (
         <>
+            <SeasonalBanner />
             {currentGarden === 'outdoor' && <ContextCalendar history={history} />}
 
             <div style={{ marginBottom: '4rem' }}>
