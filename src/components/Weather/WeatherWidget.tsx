@@ -2,32 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { useGarden } from '@/context/GardenContext';
-import { fetchLocalWeather, WeatherData } from '@/services/weatherService';
+import { WeatherData } from '@/services/weatherService';
 
 export default function WeatherWidget() {
-    const { currentGarden, plants, updatePlant } = useGarden();
-    const [weather, setWeather] = useState<WeatherData | null>(null);
-    const [loading, setLoading] = useState(true);
+    const { currentGarden, plants, updatePlant, weather } = useGarden();
     const [skippedCount, setSkippedCount] = useState(0);
 
     useEffect(() => {
-        if (currentGarden !== 'outdoor') return;
-
-        // Get user location
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(async (position) => {
-                const data = await fetchLocalWeather(position.coords.latitude, position.coords.longitude);
-                setWeather(data);
-                setLoading(false);
-                checkAutoSkip(data);
-            }, (error) => {
-                console.error("Geolocation error", error);
-                setLoading(false);
-            });
-        } else {
-            setLoading(false);
-        }
-    }, [currentGarden]);
+        if (currentGarden !== 'outdoor' || !weather) return;
+        checkAutoSkip(weather);
+    }, [currentGarden, weather]);
 
     const checkAutoSkip = (data: WeatherData) => {
         if (data.rainSum24h > 5) { // If rained more than 5mm
@@ -52,9 +36,7 @@ export default function WeatherWidget() {
 
     if (currentGarden !== 'outdoor') return null;
 
-    if (loading) return <div className="glass-panel" style={{ padding: '1rem', marginBottom: '2rem' }}>Loading Weather...</div>;
-
-    if (!weather) return <div className="glass-panel" style={{ padding: '1rem', marginBottom: '2rem' }}>Weather unavailable. Enable location.</div>;
+    if (!weather) return <div className="glass-panel" style={{ padding: '1rem', marginBottom: '2rem' }}>Loading Weather...</div>;
 
     return (
         <div className="glass-panel animate-fade-in" style={{

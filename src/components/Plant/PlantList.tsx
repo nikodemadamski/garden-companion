@@ -9,13 +9,13 @@ import ContextCalendar from '@/components/Weather/ContextCalendar';
 import PlantCard from './PlantCard';
 
 export default function PlantList() {
-    const { plants, currentGarden, updatePlant, deletePlant, calculateWateringStatus } = useGarden();
+    const { plants, currentGarden, updatePlant, deletePlant } = useGarden();
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
     const [history, setHistory] = useState<HistoricalWeatherData[]>([]);
 
     useEffect(() => {
         if (currentGarden === 'outdoor') {
-            // Fetch history for outdoor context (using mock coords for now, or real if available)
+            // Fetch history for outdoor context
             fetchHistoricalWeather(51.5074, -0.1278).then(setHistory);
         } else {
             setHistory([]);

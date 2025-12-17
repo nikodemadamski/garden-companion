@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Plant, GardenType, JournalEntry } from '@/types/plant';
-import { HistoricalWeatherData } from '@/services/weatherService';
+import { HistoricalWeatherData, WeatherData, fetchLocalWeather } from '@/services/weatherService';
 
 interface WateringStatus {
     status: 'ok' | 'due' | 'overdue';
@@ -24,6 +24,9 @@ interface GardenContextType {
     rooms: string[];
     addRoom: (name: string) => void;
     deleteRoom: (name: string) => void;
+    exportGarden: () => string;
+    importGarden: (jsonString: string) => boolean;
+    weather: WeatherData | null;
 }
 
 const GardenContext = createContext<GardenContextType | undefined>(undefined);
@@ -32,6 +35,19 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     const [currentGarden, setCurrentGarden] = useState<GardenType>('indoor');
     const [plants, setPlants] = useState<Plant[]>([]);
     const [rooms, setRooms] = useState<string[]>(['Living Room', 'Bedroom', 'Kitchen', 'Office', 'Bathroom', 'Balcony']);
+    const [weather, setWeather] = useState<WeatherData | null>(null);
+
+    // Fetch Weather on Mount
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const data = await fetchLocalWeather(position.coords.latitude, position.coords.longitude);
+                setWeather(data);
+            }, (error) => {
+                console.error("Geolocation error", error);
+            });
+        }
+    }, []);
 
     // Load from local storage on mount
     useEffect(() => {
@@ -167,6 +183,31 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 rooms,
                 addRoom,
                 deleteRoom,
+                exportGarden: () => {
+                    const data = {
+                        plants,
+                        rooms,
+                        version: '1.0',
+                        exportDate: new Date().toISOString()
+                    };
+                    return JSON.stringify(data, null, 2);
+                },
+                importGarden: (jsonString: string) => {
+                    try {
+                        const data = JSON.parse(jsonString);
+                        if (data.plants && Array.isArray(data.plants)) {
+                            setPlants(data.plants);
+                        }
+                        if (data.rooms && Array.isArray(data.rooms)) {
+                            setRooms(data.rooms);
+                        }
+                        return true;
+                    } catch (e) {
+                        console.error("Failed to import garden", e);
+                        return false;
+                    }
+                },
+                weather,
             }}
         >
             {children}
