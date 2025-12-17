@@ -6,7 +6,7 @@ interface SettingsModalProps {
 }
 
 export default function SettingsModal({ onClose }: SettingsModalProps) {
-    const { exportGarden, importGarden } = useGarden();
+    const { exportGarden, importGarden, signOut, session } = useGarden();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [message, setMessage] = useState<string | null>(null);
 
@@ -102,6 +102,16 @@ export default function SettingsModal({ onClose }: SettingsModalProps) {
                             onChange={handleRestore}
                             style={{ display: 'none' }}
                         />
+                    </div>
+
+                    <div style={{ padding: '1rem', border: '1px solid #E2E8F0', borderRadius: '12px' }}>
+                        <h3 style={{ fontWeight: 600, marginBottom: '0.5rem' }}>👤 Account</h3>
+                        <p style={{ fontSize: '0.85rem', color: '#718096', marginBottom: '1rem' }}>
+                            Signed in as {session?.user.email}
+                        </p>
+                        <button onClick={signOut} className="btn" style={{ width: '100%', backgroundColor: '#FED7D7', color: '#C53030' }}>
+                            Sign Out
+                        </button>
                     </div>
                 </div>
             </div>
