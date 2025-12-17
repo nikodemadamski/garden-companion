@@ -3,10 +3,12 @@
 import React from 'react';
 import { useGarden } from '@/context/GardenContext';
 import { fetchLocalWeather, WeatherData } from '@/services/weatherService';
+import ProfileModal from '@/components/Profile/ProfileModal';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
     const { currentGarden, switchGarden } = useGarden();
     const [weather, setWeather] = React.useState<WeatherData | null>(null);
+    const [showProfile, setShowProfile] = React.useState(false);
 
     React.useEffect(() => {
         // Fetch weather for header (London default for now)
@@ -96,7 +98,22 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 >
                     🌳
                 </button>
+
+                <button
+                    onClick={() => setShowProfile(true)}
+                    style={{
+                        background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer',
+                        opacity: showProfile ? 1 : 0.5,
+                        transform: showProfile ? 'scale(1.1)' : 'scale(1)'
+                    }}
+                >
+                    👤
+                </button>
             </nav>
+
+            {showProfile && (
+                <ProfileModal onClose={() => setShowProfile(false)} />
+            )}
         </div>
     );
 }
