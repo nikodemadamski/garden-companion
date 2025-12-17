@@ -94,3 +94,40 @@ add column if not exists login_streak int default 0,
 add column if not exists last_watered_date text,
 add column if not exists watering_streak int default 0;
 ```
+
+## 5. Enhanced Garden Companion Schema (New Features)
+
+To enable the comprehensive garden companion features, run the following migrations in order:
+
+### Option A: Run All Migrations at Once
+Copy and paste the contents of each migration file in the `migrations/` directory in this order:
+1. `migrations/001_enhanced_schema.sql` - Creates new tables for seasonal tasks, weather alerts, diagnostics, enhanced plant data, and photos
+2. `migrations/002_extend_plants_table.sql` - Extends existing plants table with enhanced fields
+3. `migrations/003_initial_seasonal_tasks.sql` - Populates seasonal tasks for Irish climate
+4. `migrations/004_initial_plant_database.sql` - Adds enhanced plant database with detailed information
+
+### Option B: Individual Migration Files
+Run each migration file separately in the SQL Editor:
+
+**Migration 001 - Enhanced Schema:**
+```sql
+-- Copy content from migrations/001_enhanced_schema.sql
+```
+
+**Migration 002 - Extend Plants Table:**
+```sql
+-- Copy content from migrations/002_extend_plants_table.sql
+```
+
+**Migration 003 - Initial Seasonal Tasks:**
+```sql
+-- Copy content from migrations/003_initial_seasonal_tasks.sql
+```
+
+**Migration 004 - Initial Plant Database:**
+```sql
+-- Copy content from migrations/004_initial_plant_database.sql
+```
+
+### Migration Tracking
+The migrations include a tracking system to prevent duplicate runs. Each migration will only be applied once, even if run multiple times.

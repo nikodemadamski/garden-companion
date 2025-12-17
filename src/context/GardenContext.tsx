@@ -111,19 +111,21 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             const { data: settingsData, error: settingsError } = await supabase
                 .from('user_settings')
                 .select('*')
-                .single();
+                .eq('user_id', userId)
+                .maybeSingle();
 
-            if (settingsData) {
-                if (settingsData.rooms) setRooms(settingsData.rooms);
-                if (settingsData.login_streak) setLoginStreak(settingsData.login_streak);
-                if (settingsData.watering_streak) setWateringStreak(settingsData.watering_streak);
+            if (settingsData && !settingsError) {
+                const currentSettings = settingsData as any; // Type assertion for compatibility
+                if (currentSettings.rooms) setRooms(currentSettings.rooms);
+                if (currentSettings.login_streak) setLoginStreak(currentSettings.login_streak);
+                if (currentSettings.watering_streak) setWateringStreak(currentSettings.watering_streak);
 
                 // Handle Login Streak
                 const today = new Date().toISOString().split('T')[0];
-                const lastLogin = settingsData.last_login_date;
+                const lastLogin = currentSettings.last_login_date;
 
                 if (lastLogin !== today) {
-                    let newStreak = settingsData.login_streak || 0;
+                    let newStreak = currentSettings.login_streak || 0;
                     const yesterday = new Date();
                     yesterday.setDate(yesterday.getDate() - 1);
                     const yesterdayStr = yesterday.toISOString().split('T')[0];
@@ -135,7 +137,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                     }
 
                     // Update DB
-                    await supabase.from('user_settings').upsert({
+                    await (supabase.from('user_settings') as any).upsert({
                         user_id: userId,
                         last_login_date: today,
                         login_streak: newStreak
@@ -145,7 +147,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             } else {
                 // Initialize settings for new user
                 const today = new Date().toISOString().split('T')[0];
-                await supabase.from('user_settings').upsert({
+                await (supabase.from('user_settings') as any).upsert({
                     user_id: userId,
                     last_login_date: today,
                     login_streak: 1,
@@ -180,7 +182,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         // Optimistic update
         setPlants((prev) => [...prev, plant]);
 
-        const { error } = await supabase.from('plants').insert({
+        const { error } = await (supabase.from('plants') as any).insert({
             // id: plant.id, // Let Supabase generate ID or use UUID? Better to let Supabase gen, but we need it for UI.
             // If we use crypto.randomUUID() in frontend, we can send it.
             id: plant.id,
@@ -219,11 +221,15 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             const today = new Date().toISOString().split('T')[0];
 
             // Fetch current settings to check last watered date
-            const { data: settings } = await supabase.from('user_settings').select('*').single();
+            const { data: settings } = await (supabase
+                .from('user_settings') as any)
+                .select('*')
+                .eq('user_id', session?.user.id)
+                .maybeSingle();
 
-            if (settings && settings.last_watered_date !== today) {
-                const newStreak = (settings.watering_streak || 0) + 1;
-                await supabase.from('user_settings').upsert({
+            if (settings && (settings as any).last_watered_date !== today) {
+                const newStreak = ((settings as any).watering_streak || 0) + 1;
+                await (supabase.from('user_settings') as any).upsert({
                     user_id: session?.user.id,
                     last_watered_date: today,
                     watering_streak: newStreak
@@ -232,7 +238,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             }
         }
 
-        const { error } = await supabase.from('plants').update({
+        const { error } = await (supabase.from('plants') as any).update({
             name: updatedPlant.name,
             species: updatedPlant.species,
             type: updatedPlant.type,
@@ -256,7 +262,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
 
     const deletePlant = async (id: string) => {
         setPlants((prev) => prev.filter((p) => p.id !== id));
-        const { error } = await supabase.from('plants').delete().eq('id', id);
+        const { error } = await (supabase.from('plants') as any).delete().eq('id', id);
         if (error) console.error('Error deleting plant:', error);
     };
 
@@ -266,7 +272,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             setRooms(newRooms);
 
             // Upsert settings
-            const { error } = await supabase.from('user_settings').upsert({
+            const { error } = await (supabase.from('user_settings') as any).upsert({
                 user_id: session?.user.id,
                 rooms: newRooms
             });
@@ -278,7 +284,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         const newRooms = rooms.filter(r => r !== name);
         setRooms(newRooms);
 
-        const { error } = await supabase.from('user_settings').upsert({
+        const { error } = await (supabase.from('user_settings') as any).upsert({
             user_id: session?.user.id,
             rooms: newRooms
         });
