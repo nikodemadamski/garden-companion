@@ -49,8 +49,8 @@ export default function Login() {
                 width: '100%',
                 textAlign: 'center'
             }}>
-                <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>🌱 Garden Companion</h1>
-                <p style={{ marginBottom: '2rem', color: '#4A5568' }}>Sign in to access your garden</p>
+                <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>👋 Welcome Back!</h1>
+                <p style={{ marginBottom: '2rem', color: '#4A5568' }}>Sign in to your Garden Companion</p>
 
                 <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <input

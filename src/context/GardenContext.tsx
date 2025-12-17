@@ -52,16 +52,18 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     // Auth & Data Fetching
     useEffect(() => {
         supabase.auth.getSession().then(({ data: { session } }) => {
+            console.log("Session init:", session ? "Logged In" : "No Session");
             setSession(session);
-            if (session) fetchData();
+            if (session) fetchData(session.user.id);
             else setLoading(false);
         });
 
         const {
             data: { subscription },
         } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log("Auth change:", _event, session ? "Logged In" : "No Session");
             setSession(session);
-            if (session) fetchData();
+            if (session) fetchData(session.user.id);
             else {
                 setPlants([]);
                 setLoading(false);
@@ -71,7 +73,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         return () => subscription.unsubscribe();
     }, []);
 
-    const fetchData = async () => {
+    const fetchData = async (userId: string) => {
         setLoading(true);
         try {
             // Fetch Plants
@@ -105,14 +107,51 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 setPlants(mappedPlants);
             }
 
-            // Fetch Settings (Rooms)
+            // Fetch Settings (Rooms & Streaks)
             const { data: settingsData, error: settingsError } = await supabase
                 .from('user_settings')
-                .select('rooms')
+                .select('*')
                 .single();
 
-            if (settingsData && settingsData.rooms) {
-                setRooms(settingsData.rooms);
+            if (settingsData) {
+                if (settingsData.rooms) setRooms(settingsData.rooms);
+                if (settingsData.login_streak) setLoginStreak(settingsData.login_streak);
+                if (settingsData.watering_streak) setWateringStreak(settingsData.watering_streak);
+
+                // Handle Login Streak
+                const today = new Date().toISOString().split('T')[0];
+                const lastLogin = settingsData.last_login_date;
+
+                if (lastLogin !== today) {
+                    let newStreak = settingsData.login_streak || 0;
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+                    if (lastLogin === yesterdayStr) {
+                        newStreak += 1;
+                    } else {
+                        newStreak = 1; // Reset or start new
+                    }
+
+                    // Update DB
+                    await supabase.from('user_settings').upsert({
+                        user_id: userId,
+                        last_login_date: today,
+                        login_streak: newStreak
+                    });
+                    setLoginStreak(newStreak);
+                }
+            } else {
+                // Initialize settings for new user
+                const today = new Date().toISOString().split('T')[0];
+                await supabase.from('user_settings').upsert({
+                    user_id: userId,
+                    last_login_date: today,
+                    login_streak: 1,
+                    rooms: ['Living Room', 'Bedroom', 'Kitchen', 'Office', 'Bathroom', 'Balcony']
+                });
+                setLoginStreak(1);
             }
         } catch (error) {
             console.error('Error fetching data:', error);
