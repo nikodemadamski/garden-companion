@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabaseClient';
 import Login from '@/components/Auth/Login';
 import { Session } from '@supabase/supabase-js';
 import { GardenEngine } from '@/services/gardenEngine';
-import { ProductiveService } from '@/services/productiveService';
+import { ProductiveService, PRODUCTIVE_DATABASE, ProductivePlantData } from '@/services/productiveService';
 
 interface WateringStatus {
     status: 'ok' | 'due' | 'overdue';
@@ -47,6 +47,8 @@ interface GardenContextType {
     addSeed: (seed: Seed) => Promise<void>;
     updateSeed: (seed: Seed) => Promise<void>;
     removeSeed: (seedId: string) => Promise<void>;
+    productiveData: Record<string, ProductivePlantData>;
+    refreshProductiveData: () => void;
 }
 
 const GardenContext = createContext<GardenContextType | undefined>(undefined);
@@ -224,6 +226,21 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    // Background Ingestion for existing plants
+    useEffect(() => {
+        if (plants.length > 0) {
+            import('@/services/ingestionService').then(({ IngestionService }) => {
+                plants.forEach(p => {
+                    if (p.species && !ProductiveService.getPlantData(p.species)) {
+                        IngestionService.ingestPlant(p.species).then(() => {
+                            refreshProductiveData();
+                        });
+                    }
+                });
+            });
+        }
+    }, [plants.length]);
+
     // Fetch Weather on Mount
     useEffect(() => {
         if (navigator.geolocation) {
@@ -242,6 +259,16 @@ export function GardenProvider({ children }: { children: ReactNode }) {
 
     const addPlant = async (plant: Plant) => {
         setPlants((prev) => [...prev, plant]);
+
+        // Trigger background ingestion for productive data
+        if (plant.species) {
+            import('@/services/ingestionService').then(({ IngestionService }) => {
+                IngestionService.ingestPlant(plant.species).then(() => {
+                    refreshProductiveData();
+                });
+            });
+        }
+
         const { error } = await (supabase.from('plants') as any).insert({
             id: plant.id,
             user_id: session?.user.id,
@@ -497,6 +524,12 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         return <Login />;
     }
 
+    const [productiveData, setProductiveData] = useState<Record<string, ProductivePlantData>>(PRODUCTIVE_DATABASE);
+
+    const refreshProductiveData = () => {
+        setProductiveData({ ...PRODUCTIVE_DATABASE });
+    };
+
     return (
         <GardenContext.Provider
             value={{
@@ -535,7 +568,9 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 seeds,
                 addSeed,
                 updateSeed,
-                removeSeed
+                removeSeed,
+                productiveData,
+                refreshProductiveData
             }}
         >
             {children}

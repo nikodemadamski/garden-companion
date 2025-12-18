@@ -10,7 +10,7 @@ import GardenerAI from '@/components/AI/GardenerAI';
 import { ProductiveService } from '@/services/productiveService';
 
 export default function GardenDashboard() {
-    const { plants, weather, calculateWateringStatus, setActiveTab, gardenRank: rank, seeds, awardXP, calculateHarmony, season, addPlant } = useGarden();
+    const { plants, weather, calculateWateringStatus, setActiveTab, gardenRank: rank, seeds, awardXP, calculateHarmony, season, addPlant, productiveData } = useGarden();
     const harmony = calculateHarmony();
 
     const [alerts, setAlerts] = useState<ProcessedAlert[]>([]);
@@ -59,7 +59,7 @@ export default function GardenDashboard() {
         }));
     };
 
-    const productivePlants = plants.filter(p => ProductiveService.getPlantData(p.species));
+    const productivePlants = plants.filter(p => p.species && productiveData[p.species]);
     const productivityScore = productivePlants.length > 0
         ? Math.round((productivePlants.filter(p => calculateWateringStatus(p).status === 'ok').length / productivePlants.length) * 100)
         : 100;
@@ -94,7 +94,7 @@ export default function GardenDashboard() {
     }, {} as Record<string, number>);
 
     const successionAlerts = plants.reduce((acc, p) => {
-        const data = ProductiveService.getPlantData(p.species);
+        const data = p.species ? productiveData[p.species] : undefined;
         if (data?.successionDays) {
             const addedDate = new Date(p.dateAdded);
             const today = new Date();
@@ -210,7 +210,7 @@ export default function GardenDashboard() {
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {productivePlants.length > 0 ? productivePlants.slice(0, 4).map(p => {
-                            const data = ProductiveService.getPlantData(p.species);
+                            const data = p.species ? productiveData[p.species] : undefined;
                             const daysLeft = Math.max(0, (data?.harvestDays || 30) - (p.level * 2));
                             return (
                                 <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

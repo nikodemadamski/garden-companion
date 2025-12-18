@@ -9,6 +9,10 @@ export interface AIChatMessage {
 }
 
 export class AIService {
+    public static async getRawLLMResponse(prompt: string, context: string = ""): Promise<string> {
+        return await this.callLLM(prompt, context);
+    }
+
     private static async callLLM(prompt: string, context: string): Promise<string> {
         const hfToken = process.env.NEXT_PUBLIC_HUGGINGFACE_TOKEN;
 
