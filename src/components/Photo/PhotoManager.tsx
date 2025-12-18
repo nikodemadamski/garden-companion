@@ -61,7 +61,7 @@ export default function PhotoManager({
   const handleUploadSuccess = (newPhoto: PlantPhoto) => {
     setPhotos(prev => [newPhoto, ...prev]);
     loadStorageStats(); // Refresh storage stats
-    
+
     // Switch to gallery tab to show the uploaded photo
     if (activeTab === 'upload') {
       setActiveTab('gallery');
@@ -99,34 +99,33 @@ export default function PhotoManager({
   return (
     <div className={`photo-manager ${className}`}>
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-gray-800">
+      <div style={{ marginBottom: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--color-text)', margin: 0 }}>
             📷 {plantName} Photos
           </h2>
-          
+
           {/* Storage Stats */}
           {storageStats && (
-            <div className="text-sm text-gray-600">
-              <div className="flex items-center space-x-2">
+            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-light)', minWidth: '150px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
                 <span>Storage:</span>
-                <span className={getStorageColor(storageStats.quotaUsagePercent)}>
+                <span style={{
+                  fontWeight: 700,
+                  color: storageStats.quotaUsagePercent >= 90 ? 'var(--color-danger)' :
+                    storageStats.quotaUsagePercent >= 75 ? 'var(--color-warning)' : 'var(--color-success)'
+                }}>
                   {formatStorageUsage(storageStats.totalSizeBytes)} / 100 MB
                 </span>
-                <span className="text-gray-400">
-                  ({storageStats.quotaUsagePercent.toFixed(1)}%)
-                </span>
               </div>
-              <div className="w-32 bg-gray-200 rounded-full h-2 mt-1">
+              <div className="progress-bar" style={{ width: '100%' }}>
                 <div
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    storageStats.quotaUsagePercent >= 90 
-                      ? 'bg-red-500' 
-                      : storageStats.quotaUsagePercent >= 75 
-                        ? 'bg-yellow-500' 
-                        : 'bg-green-500'
-                  }`}
-                  style={{ width: `${Math.min(storageStats.quotaUsagePercent, 100)}%` }}
+                  className="progress-fill"
+                  style={{
+                    width: `${Math.min(storageStats.quotaUsagePercent, 100)}%`,
+                    backgroundColor: storageStats.quotaUsagePercent >= 90 ? 'var(--color-danger)' :
+                      storageStats.quotaUsagePercent >= 75 ? 'var(--color-warning)' : 'var(--color-primary)'
+                  }}
                 />
               </div>
             </div>
@@ -134,69 +133,80 @@ export default function PhotoManager({
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+        <div style={{
+          display: 'flex', gap: '0.25rem', backgroundColor: '#F1F5F9',
+          padding: '0.25rem', borderRadius: '12px'
+        }}>
           <button
             onClick={() => setActiveTab('gallery')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-              activeTab === 'gallery'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
+            style={{
+              flex: 1, padding: '0.6rem', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 700,
+              border: 'none', cursor: 'pointer', transition: 'all 0.2s ease',
+              backgroundColor: activeTab === 'gallery' ? 'white' : 'transparent',
+              color: activeTab === 'gallery' ? 'var(--color-text)' : 'var(--color-text-light)',
+              boxShadow: activeTab === 'gallery' ? 'var(--shadow-soft)' : 'none'
+            }}
           >
             Gallery ({photos.length})
           </button>
           <button
             onClick={() => setActiveTab('upload')}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-              activeTab === 'upload'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
+            style={{
+              flex: 1, padding: '0.6rem', borderRadius: '10px', fontSize: '0.85rem', fontWeight: 700,
+              border: 'none', cursor: 'pointer', transition: 'all 0.2s ease',
+              backgroundColor: activeTab === 'upload' ? 'white' : 'transparent',
+              color: activeTab === 'upload' ? 'var(--color-text)' : 'var(--color-text-light)',
+              boxShadow: activeTab === 'upload' ? 'var(--shadow-soft)' : 'none'
+            }}
           >
-            Upload Photos
+            Upload
           </button>
         </div>
       </div>
 
       {/* Error Display */}
       {error && (
-        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <span className="text-red-600">⚠️</span>
-              <span className="text-red-800 text-sm">{error}</span>
-            </div>
-            <button
-              onClick={clearError}
-              className="text-red-600 hover:text-red-800 text-sm"
-            >
-              ✕
-            </button>
+        <div style={{
+          marginBottom: '1rem', padding: '0.75rem 1rem',
+          backgroundColor: 'rgba(239, 68, 68, 0.05)',
+          border: '1px solid rgba(239, 68, 68, 0.1)',
+          borderRadius: '12px', display: 'flex',
+          alignItems: 'center', justifyContent: 'space-between'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ fontSize: '1.1rem' }}>⚠️</span>
+            <span style={{ fontSize: '0.85rem', color: 'var(--color-danger)', fontWeight: 600 }}>{error}</span>
           </div>
+          <button
+            onClick={clearError}
+            style={{ background: 'none', border: 'none', color: 'var(--color-danger)', cursor: 'pointer', fontSize: '1.1rem' }}
+          >
+            ✕
+          </button>
         </div>
       )}
 
       {/* Storage Warning */}
       {storageStats && storageStats.quotaUsagePercent >= 90 && (
-        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <div className="flex items-center space-x-2">
-            <span className="text-yellow-600">⚠️</span>
-            <span className="text-yellow-800 text-sm">
-              Storage almost full! You're using {storageStats.quotaUsagePercent.toFixed(1)}% of your quota.
-              Consider deleting some photos to free up space.
-            </span>
-          </div>
+        <div style={{
+          marginBottom: '1rem', padding: '0.75rem 1rem',
+          backgroundColor: 'rgba(245, 158, 11, 0.05)',
+          border: '1px solid rgba(245, 158, 11, 0.1)',
+          borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '0.5rem'
+        }}>
+          <span style={{ fontSize: '1.1rem' }}>⚠️</span>
+          <span style={{ fontSize: '0.85rem', color: '#92400E', fontWeight: 600 }}>
+            Storage almost full! ({storageStats.quotaUsagePercent.toFixed(1)}%)
+          </span>
         </div>
       )}
 
       {/* Content */}
-      <div className="min-h-[400px]">
+      <div style={{ minHeight: '300px' }}>
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <div className="animate-spin text-4xl mb-4">🔄</div>
-              <div className="text-gray-600">Loading photos...</div>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4rem 0' }}>
+            <div className="animate-spin" style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🔄</div>
+            <div style={{ color: 'var(--color-text-light)', fontWeight: 600 }}>Loading photos...</div>
           </div>
         ) : (
           <>
@@ -209,7 +219,7 @@ export default function PhotoManager({
                 onError={handleError}
               />
             )}
-            
+
             {activeTab === 'upload' && (
               <PhotoUploader
                 plantId={plantId}
@@ -225,20 +235,22 @@ export default function PhotoManager({
 
       {/* Quick Actions */}
       {photos.length > 0 && activeTab === 'gallery' && (
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Quick Actions</h3>
-          <div className="flex flex-wrap gap-2">
+        <div style={{ marginTop: '2rem', padding: '1rem', backgroundColor: '#F8FAFC', borderRadius: '16px' }}>
+          <h3 style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-text)', marginBottom: '0.75rem' }}>Quick Actions</h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
             <button
               onClick={() => setActiveTab('upload')}
-              className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+              className="btn btn-primary"
+              style={{ padding: '0.5rem 1rem', fontSize: '0.8rem' }}
             >
               Add More Photos
             </button>
             <button
               onClick={loadPhotos}
-              className="px-3 py-1 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 transition-colors"
+              className="btn"
+              style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', backgroundColor: 'white' }}
             >
-              Refresh Gallery
+              Refresh
             </button>
             {photos.length > 10 && (
               <button
@@ -261,23 +273,13 @@ export default function PhotoManager({
                       });
                   }
                 }}
-                className="px-3 py-1 bg-orange-600 text-white text-sm rounded hover:bg-orange-700 transition-colors"
+                className="btn"
+                style={{ padding: '0.5rem 1rem', fontSize: '0.8rem', color: 'var(--color-danger)', backgroundColor: 'white' }}
               >
-                Cleanup Photos
+                Cleanup
               </button>
             )}
           </div>
-        </div>
-      )}
-
-      {/* Empty State for Upload Tab */}
-      {activeTab === 'upload' && photos.length === 0 && (
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <h3 className="text-sm font-medium text-blue-800 mb-2">📸 Getting Started</h3>
-          <p className="text-sm text-blue-700">
-            Upload your first photo to start tracking your {plantName.toLowerCase()}'s progress! 
-            Photos help you monitor growth, identify issues, and celebrate milestones.
-          </p>
         </div>
       )}
     </div>

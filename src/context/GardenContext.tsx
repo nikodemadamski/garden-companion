@@ -37,8 +37,8 @@ interface GardenContextType {
     signOut: () => void;
     loginStreak: number;
     wateringStreak: number;
-    activeTab: 'dashboard' | 'plants' | 'explore' | 'profile';
-    setActiveTab: (tab: 'dashboard' | 'plants' | 'explore' | 'profile') => void;
+    activeTab: 'dashboard' | 'plants' | 'explore' | 'profile' | 'gallery';
+    setActiveTab: (tab: 'dashboard' | 'plants' | 'explore' | 'profile' | 'gallery') => void;
     awardXP: (plantId: string, amount: number) => void;
     calculateHarmony: () => number;
     gardenRank: { title: string; icon: string; color: string };
@@ -60,7 +60,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
     const [loginStreak, setLoginStreak] = useState(0);
     const [wateringStreak, setWateringStreak] = useState(0);
-    const [activeTab, setActiveTab] = useState<'dashboard' | 'plants' | 'explore' | 'profile'>('dashboard');
+    const [activeTab, setActiveTab] = useState<'dashboard' | 'plants' | 'explore' | 'profile' | 'gallery'>('dashboard');
     const [seeds, setSeeds] = useState<Seed[]>([]);
 
     // Phase 15: Seed Vault Persistence

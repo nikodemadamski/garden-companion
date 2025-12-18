@@ -321,6 +321,36 @@ export class PhotoService {
   }
 
   /**
+   * Gets all photos for a user
+   */
+  static async getAllUserPhotos(userId: string): Promise<PlantPhoto[]> {
+    try {
+      const { data, error } = await (supabase.from('plant_photos') as any)
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw new Error(`Failed to fetch all user photos: ${error.message}`);
+      }
+
+      return data.map((photo: any) => ({
+        id: photo.id,
+        plantId: photo.plant_id,
+        userId: photo.user_id,
+        url: photo.url,
+        thumbnailUrl: photo.thumbnail_url,
+        isPrimary: photo.is_primary,
+        metadata: photo.metadata,
+        createdAt: photo.created_at
+      }));
+    } catch (error) {
+      console.error('Error fetching all user photos:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Gets primary photo for a plant
    */
   static async getPrimaryPhoto(plantId: string, userId: string): Promise<PlantPhoto | null> {

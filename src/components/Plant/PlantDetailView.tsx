@@ -6,8 +6,8 @@ import { useGarden } from '@/context/GardenContext';
 import ShareCardModal from './ShareCardModal';
 import confetti from 'canvas-confetti';
 import { ProductiveService } from '@/services/productiveService';
-
 import BottomSheet from '../UI/BottomSheet';
+import PhotoManager from '../Photo/PhotoManager';
 
 interface PlantDetailViewProps {
     plant: Plant;
@@ -15,11 +15,12 @@ interface PlantDetailViewProps {
 }
 
 export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps) {
-    const { awardXP, addJournalEntry, updatePlant, calculateWateringStatus, getCompanionStatus } = useGarden();
+    const { session, awardXP, addJournalEntry, updatePlant, calculateWateringStatus, getCompanionStatus } = useGarden();
     const [showShare, setShowShare] = useState(false);
     const [isLogging, setIsLogging] = useState(false);
     const [isHarvesting, setIsHarvesting] = useState(false);
     const [isDiagnosing, setIsDiagnosing] = useState(false);
+    const [isPhotosOpen, setIsPhotosOpen] = useState(false);
     const [note, setNote] = useState('');
     const [harvestAmount, setHarvestAmount] = useState('');
     const [harvestUnit, setHarvestUnit] = useState('g');
@@ -294,6 +295,14 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                         <div style={{ fontWeight: 900, fontSize: '0.7rem', color: '#C53030', marginTop: '0.5rem' }}>PEST PATROL</div>
                     </div>
 
+                    {/* Photos Trigger */}
+                    <div className="bento-card"
+                        onClick={() => setIsPhotosOpen(true)}
+                        style={{ backgroundColor: '#FAF5FF', cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}>
+                        <span style={{ fontSize: '2rem' }}>📸</span>
+                        <div style={{ fontWeight: 900, fontSize: '0.7rem', color: '#553C9A', marginTop: '0.5rem' }}>PHOTOS</div>
+                    </div>
+
                     {/* Share Card Trigger */}
                     <div className="bento-card"
                         onClick={() => setShowShare(true)}
@@ -455,6 +464,16 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                         CLOSE PATROL
                     </button>
                 </div>
+            </BottomSheet>
+            {/* 4. Photos Sheet */}
+            <BottomSheet isOpen={isPhotosOpen} onClose={() => setIsPhotosOpen(false)} title="Plant Photos 📸">
+                {session?.user.id && (
+                    <PhotoManager
+                        plantId={plant.id}
+                        userId={session.user.id}
+                        plantName={plant.nickname || plant.name}
+                    />
+                )}
             </BottomSheet>
 
             {showShare && (

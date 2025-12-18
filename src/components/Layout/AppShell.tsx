@@ -5,6 +5,7 @@ import { useGarden } from '@/context/GardenContext';
 import { fetchLocalWeather, WeatherData } from '@/services/weatherService';
 import ProfileModal from '@/components/Profile/ProfileModal';
 import ExploreModal from '@/components/Explore/ExploreModal';
+import GardenGallery from '@/components/Gallery/GardenGallery';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
     const { activeTab, setActiveTab, weather: gardenWeather } = useGarden();
@@ -37,7 +38,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '-0.02em' }}>
                         {activeTab === 'dashboard' ? 'My Garden' :
                             activeTab === 'plants' ? 'My Plants' :
-                                activeTab === 'explore' ? 'Explore' : 'Profile'}
+                                activeTab === 'explore' ? 'Explore' :
+                                    activeTab === 'gallery' ? 'Gallery' : 'Profile'}
                     </h1>
                 </div>
                 <div style={{
@@ -78,6 +80,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     onClick={() => setActiveTab('plants')}
                     icon="🌳"
                     label="Plants"
+                />
+
+                <NavButton
+                    active={activeTab === 'gallery'}
+                    onClick={() => setActiveTab('gallery')}
+                    icon="📸"
+                    label="Gallery"
                 />
 
                 {/* Central Add Button */}

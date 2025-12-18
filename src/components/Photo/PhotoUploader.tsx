@@ -46,7 +46,7 @@ export default function PhotoUploader({
     // Validate and create previews for all files
     for (const file of fileArray) {
       const validation = validateImageFile(file);
-      
+
       if (!validation.isValid) {
         onUploadError(`${file.name}: ${validation.errors.join(', ')}`);
         continue;
@@ -73,18 +73,18 @@ export default function PhotoUploader({
     // Upload files sequentially
     for (let i = 0; i < newUploads.length; i++) {
       const upload = newUploads[i];
-      
+
       try {
         // Update status to uploading
-        setUploads(prev => prev.map((u, index) => 
+        setUploads(prev => prev.map((u, index) =>
           index === i ? { ...u, status: 'uploading' as const, progress: 0 } : u
         ));
 
         // Simulate progress updates (since Supabase doesn't provide upload progress)
         const progressInterval = setInterval(() => {
-          setUploads(prev => prev.map((u, index) => 
-            index === i && u.status === 'uploading' 
-              ? { ...u, progress: Math.min(u.progress + 10, 90) } 
+          setUploads(prev => prev.map((u, index) =>
+            index === i && u.status === 'uploading'
+              ? { ...u, progress: Math.min(u.progress + 10, 90) }
               : u
           ));
         }, 200);
@@ -100,18 +100,18 @@ export default function PhotoUploader({
         clearInterval(progressInterval);
 
         // Update status to success
-        setUploads(prev => prev.map((u, index) => 
+        setUploads(prev => prev.map((u, index) =>
           index === i ? { ...u, status: 'success' as const, progress: 100 } : u
         ));
 
         onUploadSuccess(photo);
       } catch (error) {
         // Update status to error
-        setUploads(prev => prev.map((u, index) => 
-          index === i ? { 
-            ...u, 
-            status: 'error' as const, 
-            error: error instanceof Error ? error.message : 'Upload failed' 
+        setUploads(prev => prev.map((u, index) =>
+          index === i ? {
+            ...u,
+            status: 'error' as const,
+            error: error instanceof Error ? error.message : 'Upload failed'
           } : u
         ));
 
@@ -120,7 +120,7 @@ export default function PhotoUploader({
     }
 
     setIsUploading(false);
-    
+
     // Clear uploads after a delay
     setTimeout(() => {
       setUploads([]);
@@ -142,7 +142,7 @@ export default function PhotoUploader({
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    
+
     if (disabled || isUploading) return;
 
     const files = e.dataTransfer.files;
@@ -200,21 +200,15 @@ export default function PhotoUploader({
     <div className={`photo-uploader ${className}`}>
       {/* Upload Area */}
       <div
-        className={`
-          border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
-          ${isDragOver 
-            ? 'border-blue-400 bg-blue-50' 
-            : 'border-gray-300 hover:border-gray-400'
-          }
-          ${disabled || isUploading 
-            ? 'opacity-50 cursor-not-allowed' 
-            : 'hover:bg-gray-50'
-          }
-        `}
+        className={`upload-area ${isDragOver ? 'dragging' : ''} ${disabled || isUploading ? 'disabled' : ''}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={handleClick}
+        style={{
+          opacity: disabled || isUploading ? 0.5 : 1,
+          cursor: disabled || isUploading ? 'not-allowed' : 'pointer'
+        }}
       >
         <input
           ref={fileInputRef}
@@ -224,17 +218,18 @@ export default function PhotoUploader({
           onChange={handleFileInputChange}
           className="hidden"
           disabled={disabled || isUploading}
+          style={{ display: 'none' }}
         />
-        
-        <div className="space-y-2">
-          <div className="text-4xl">📷</div>
-          <div className="text-lg font-medium text-gray-700">
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <div style={{ fontSize: '2.5rem' }}>📷</div>
+          <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-text)' }}>
             {isUploading ? 'Uploading...' : 'Upload Plant Photos'}
           </div>
-          <div className="text-sm text-gray-500">
+          <div style={{ fontSize: '0.9rem', color: 'var(--color-text-light)' }}>
             Drag and drop photos here, or click to select files
           </div>
-          <div className="text-xs text-gray-400">
+          <div style={{ fontSize: '0.75rem', color: 'var(--color-text-light)', opacity: 0.7 }}>
             Supports JPEG, PNG, WebP • Max {maxFiles} files • 10MB each
           </div>
         </div>
@@ -242,54 +237,61 @@ export default function PhotoUploader({
 
       {/* Upload Progress */}
       {uploads.length > 0 && (
-        <div className="mt-4 space-y-2">
-          <h4 className="text-sm font-medium text-gray-700">Upload Progress</h4>
+        <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--color-text)' }}>Upload Progress</h4>
           {uploads.map((upload, index) => (
-            <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+            <div key={index} style={{
+              display: 'flex', alignItems: 'center', gap: '1rem',
+              padding: '0.75rem', backgroundColor: '#F8FAFC', borderRadius: '12px'
+            }}>
               {/* Preview */}
-              <div className="flex-shrink-0">
+              <div style={{ flexShrink: 0 }}>
                 <img
                   src={upload.preview}
                   alt="Preview"
-                  className="w-12 h-12 object-cover rounded"
+                  style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '8px' }}
                 />
               </div>
-              
+
               {/* File Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center space-x-2">
-                  <span className="text-lg">{getStatusIcon(upload.status)}</span>
-                  <span className="text-sm font-medium text-gray-700 truncate">
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '1.1rem' }}>{getStatusIcon(upload.status)}</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {upload.file.name}
                   </span>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-light)' }}>
                   {formatFileSize(upload.file.size)}
                 </div>
                 {upload.error && (
-                  <div className="text-xs text-red-600 mt-1">
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-danger)', marginTop: '0.25rem' }}>
                     {upload.error}
                   </div>
                 )}
               </div>
-              
+
               {/* Progress */}
-              <div className="flex-shrink-0">
+              <div style={{ flexShrink: 0 }}>
                 {upload.status === 'uploading' && (
-                  <div className="w-16">
-                    <div className="bg-gray-200 rounded-full h-2">
+                  <div style={{ width: '80px' }}>
+                    <div className="progress-bar">
                       <div
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                        className="progress-fill"
                         style={{ width: `${upload.progress}%` }}
                       />
                     </div>
-                    <div className="text-xs text-center mt-1 text-gray-600">
+                    <div style={{ fontSize: '0.7rem', textAlign: 'center', marginTop: '0.25rem', color: 'var(--color-text-light)' }}>
                       {upload.progress}%
                     </div>
                   </div>
                 )}
                 {upload.status !== 'uploading' && (
-                  <span className={`text-sm ${getStatusColor(upload.status)}`}>
+                  <span style={{
+                    fontSize: '0.8rem', fontWeight: 700,
+                    color: upload.status === 'success' ? 'var(--color-success)' :
+                      upload.status === 'error' ? 'var(--color-danger)' : 'var(--color-text-light)'
+                  }}>
                     {upload.status === 'success' && 'Done'}
                     {upload.status === 'error' && 'Failed'}
                     {upload.status === 'pending' && 'Waiting'}
@@ -302,9 +304,13 @@ export default function PhotoUploader({
       )}
 
       {/* Upload Tips */}
-      <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-        <h4 className="text-sm font-medium text-blue-800 mb-2">📸 Photo Tips</h4>
-        <ul className="text-xs text-blue-700 space-y-1">
+      <div style={{
+        marginTop: '1.5rem', padding: '1rem',
+        backgroundColor: 'rgba(59, 130, 246, 0.05)',
+        borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.1)'
+      }}>
+        <h4 style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1E40AF', marginBottom: '0.5rem' }}>📸 Photo Tips</h4>
+        <ul style={{ fontSize: '0.75rem', color: '#1E40AF', listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
           <li>• Take photos in good lighting for best results</li>
           <li>• Include the whole plant or focus on specific features</li>
           <li>• The first photo uploaded will be set as the primary image</li>

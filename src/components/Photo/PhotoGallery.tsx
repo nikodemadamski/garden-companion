@@ -36,13 +36,13 @@ export default function PhotoGallery({
     setIsLoading(true);
     try {
       await PhotoService.setPrimaryPhoto(photoId, plantId, userId);
-      
+
       // Update local state
       const updatedPhotos = photos.map(photo => ({
         ...photo,
         isPrimary: photo.id === photoId
       }));
-      
+
       onPhotosChange(updatedPhotos);
     } catch (error) {
       onError(error instanceof Error ? error.message : 'Failed to set primary photo');
@@ -53,18 +53,18 @@ export default function PhotoGallery({
 
   const handleDeletePhoto = async (photoId: string) => {
     if (isLoading) return;
-    
+
     const confirmDelete = window.confirm('Are you sure you want to delete this photo? This action cannot be undone.');
     if (!confirmDelete) return;
 
     setIsLoading(true);
     try {
       await PhotoService.deletePhoto(photoId, userId);
-      
+
       // Update local state
       const updatedPhotos = photos.filter(photo => photo.id !== photoId);
       onPhotosChange(updatedPhotos);
-      
+
       // Close modal if deleted photo was selected
       if (selectedPhoto && selectedPhoto.photo.id === photoId) {
         setSelectedPhoto(null);
@@ -145,12 +145,10 @@ export default function PhotoGallery({
 
   if (photos.length === 0) {
     return (
-      <div className={`photo-gallery-empty ${className}`}>
-        <div className="text-center py-8 text-gray-500">
-          <div className="text-4xl mb-2">📷</div>
-          <div className="text-lg font-medium">No photos yet</div>
-          <div className="text-sm">Upload some photos to see your plant's progress!</div>
-        </div>
+      <div className={`photo-gallery-empty ${className}`} style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📷</div>
+        <div style={{ fontWeight: 800, color: 'var(--color-text)', fontSize: '1.1rem' }}>No photos yet</div>
+        <div style={{ color: 'var(--color-text-light)', fontSize: '0.9rem' }}>Upload some photos to see your plant's progress!</div>
       </div>
     );
   }
@@ -158,166 +156,166 @@ export default function PhotoGallery({
   return (
     <div className={`photo-gallery ${className}`}>
       {/* Photo Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="photo-grid">
         {photos.map((photo, index) => (
           <div
             key={photo.id}
-            className="relative group cursor-pointer bg-gray-100 rounded-lg overflow-hidden aspect-square"
+            className="photo-item"
             onClick={() => openPhotoModal(photo, index)}
           >
             {/* Photo */}
             <img
               src={photo.thumbnailUrl || photo.url}
               alt={`Plant photo ${index + 1}`}
-              className="w-full h-full object-cover transition-transform group-hover:scale-105"
               loading="lazy"
             />
-            
+
             {/* Primary Badge */}
             {photo.isPrimary && (
-              <div className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
-                Primary
+              <div style={{
+                position: 'absolute', top: '0.5rem', left: '0.5rem',
+                backgroundColor: 'var(--color-primary)', color: 'white',
+                fontSize: '0.6rem', fontWeight: 900, padding: '2px 8px',
+                borderRadius: '8px', zIndex: 2
+              }}>
+                PRIMARY
               </div>
             )}
-            
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200">
-              <div className="absolute bottom-2 left-2 right-2 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="truncate">
-                  {formatDate(photo.createdAt)}
-                </div>
-                {photo.metadata?.size && (
-                  <div className="truncate">
-                    {formatFileSize(photo.metadata.size)}
-                  </div>
-                )}
-              </div>
-            </div>
-            
+
             {/* Action Buttons */}
-            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="flex space-x-1">
-                {!photo.isPrimary && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSetPrimary(photo.id);
-                    }}
-                    disabled={isLoading}
-                    className="bg-blue-600 hover:bg-blue-700 text-white p-1 rounded text-xs disabled:opacity-50"
-                    title="Set as primary"
-                  >
-                    ⭐
-                  </button>
-                )}
+            <div style={{
+              position: 'absolute', top: '0.5rem', right: '0.5rem',
+              display: 'flex', gap: '0.25rem', zIndex: 2
+            }}>
+              {!photo.isPrimary && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleDeletePhoto(photo.id);
+                    handleSetPrimary(photo.id);
                   }}
                   disabled={isLoading}
-                  className="bg-red-600 hover:bg-red-700 text-white p-1 rounded text-xs disabled:opacity-50"
-                  title="Delete photo"
+                  style={{
+                    backgroundColor: 'white', color: 'var(--color-primary)',
+                    width: '24px', height: '24px', borderRadius: '6px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '0.8rem', boxShadow: 'var(--shadow-soft)'
+                  }}
+                  title="Set as primary"
                 >
-                  🗑️
+                  ⭐
                 </button>
-              </div>
+              )}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeletePhoto(photo.id);
+                }}
+                disabled={isLoading}
+                style={{
+                  backgroundColor: 'white', color: 'var(--color-danger)',
+                  width: '24px', height: '24px', borderRadius: '6px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '0.8rem', boxShadow: 'var(--shadow-soft)'
+                }}
+                title="Delete photo"
+              >
+                🗑️
+              </button>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Photo Modal */}
+      {/* Photo Modal (Lightbox) */}
       {selectedPhoto && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center p-4">
+        <div
+          onClick={closePhotoModal}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 3000,
+            backgroundColor: 'rgba(0,0,0,0.9)',
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
+            padding: '1rem'
+          }}
+        >
           {/* Close Button */}
           <button
             onClick={closePhotoModal}
-            className="absolute top-4 right-4 text-white text-2xl hover:text-gray-300 z-10"
+            style={{
+              position: 'absolute', top: '1.5rem', right: '1.5rem',
+              color: 'white', fontSize: '1.5rem', background: 'none', border: 'none'
+            }}
           >
             ✕
           </button>
-          
+
           {/* Navigation Buttons */}
           {photos.length > 1 && (
             <>
               <button
-                onClick={() => navigatePhoto('prev')}
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white text-3xl hover:text-gray-300 z-10"
+                onClick={(e) => { e.stopPropagation(); navigatePhoto('prev'); }}
+                style={{
+                  position: 'absolute', left: '1.5rem', top: '50%',
+                  transform: 'translateY(-50%)', color: 'white',
+                  fontSize: '3rem', background: 'none', border: 'none'
+                }}
               >
                 ‹
               </button>
               <button
-                onClick={() => navigatePhoto('next')}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white text-3xl hover:text-gray-300 z-10"
+                onClick={(e) => { e.stopPropagation(); navigatePhoto('next'); }}
+                style={{
+                  position: 'absolute', right: '1.5rem', top: '50%',
+                  transform: 'translateY(-50%)', color: 'white',
+                  fontSize: '3rem', background: 'none', border: 'none'
+                }}
               >
                 ›
               </button>
             </>
           )}
-          
+
           {/* Photo Container */}
-          <div className="max-w-4xl max-h-full flex flex-col">
-            {/* Main Photo */}
-            <div className="flex-1 flex items-center justify-center">
-              <img
-                src={selectedPhoto.photo.url}
-                alt={`Plant photo ${selectedPhoto.index + 1}`}
-                className="max-w-full max-h-full object-contain"
-              />
-            </div>
-            
+          <div
+            style={{ maxWidth: '100%', maxHeight: '80vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={selectedPhoto.photo.url}
+              alt={`Plant photo ${selectedPhoto.index + 1}`}
+              style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: '16px', boxShadow: '0 20px 50px rgba(0,0,0,0.5)' }}
+            />
+
             {/* Photo Info */}
-            <div className="bg-black bg-opacity-50 text-white p-4 mt-4 rounded">
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="text-sm text-gray-300">
-                    Photo {selectedPhoto.index + 1} of {photos.length}
-                  </div>
-                  <div className="text-lg font-medium">
-                    {formatDate(selectedPhoto.photo.createdAt)}
-                  </div>
-                  {selectedPhoto.photo.metadata && (
-                    <div className="text-sm text-gray-300 mt-1">
-                      {selectedPhoto.photo.metadata.dimensions && (
-                        <span>
-                          {selectedPhoto.photo.metadata.dimensions.width} × {selectedPhoto.photo.metadata.dimensions.height} • 
-                        </span>
-                      )}
-                      <span> {formatFileSize(selectedPhoto.photo.metadata.size)}</span>
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex space-x-2">
-                  {selectedPhoto.photo.isPrimary ? (
-                    <span className="bg-blue-600 text-white px-3 py-1 rounded text-sm">
-                      Primary Photo
-                    </span>
-                  ) : (
-                    <button
-                      onClick={() => handleSetPrimary(selectedPhoto.photo.id)}
-                      disabled={isLoading}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm disabled:opacity-50"
-                    >
-                      Set as Primary
-                    </button>
-                  )}
+            <div style={{ marginTop: '1.5rem', textAlign: 'center', color: 'white' }}>
+              <div style={{ fontSize: '0.8rem', opacity: 0.6, marginBottom: '0.25rem' }}>
+                Photo {selectedPhoto.index + 1} of {photos.length}
+              </div>
+              <div style={{ fontWeight: 800, fontSize: '1.1rem' }}>
+                {formatDate(selectedPhoto.photo.createdAt)}
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', justifyContent: 'center' }}>
+                {!selectedPhoto.photo.isPrimary && (
                   <button
-                    onClick={() => handleDeletePhoto(selectedPhoto.photo.id)}
+                    onClick={() => handleSetPrimary(selectedPhoto.photo.id)}
                     disabled={isLoading}
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm disabled:opacity-50"
+                    className="btn btn-primary"
+                    style={{ padding: '0.6rem 1.2rem', fontSize: '0.85rem' }}
                   >
-                    Delete
+                    Set as Primary
                   </button>
-                </div>
+                )}
+                <button
+                  onClick={() => handleDeletePhoto(selectedPhoto.photo.id)}
+                  disabled={isLoading}
+                  className="btn"
+                  style={{ backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)', padding: '0.6rem 1.2rem', fontSize: '0.85rem' }}
+                >
+                  Delete
+                </button>
               </div>
             </div>
-          </div>
-          
-          {/* Instructions */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm text-center">
-            <div>Use arrow keys to navigate • ESC to close</div>
           </div>
         </div>
       )}

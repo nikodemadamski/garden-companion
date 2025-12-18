@@ -8,6 +8,7 @@ import AppShell from '@/components/Layout/AppShell';
 import GardenDashboard from '@/components/Dashboard/GardenDashboard';
 import ExploreView from '@/components/Explore/ExploreView';
 import WeatherAlertBanner from '@/components/Weather/WeatherAlertBanner';
+import GardenGallery from '@/components/Gallery/GardenGallery';
 
 export default function Home() {
   const { activeTab, session, loginStreak, wateringStreak, signOut } = useGarden();
@@ -75,6 +76,10 @@ export default function Home() {
             Sign Out
           </button>
         </div>
+      )}
+
+      {activeTab === 'gallery' && (
+        <GardenGallery />
       )}
 
       {/* Hidden trigger for the Add Plant modal (connected to AppShell button) */}
