@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { Plant, GardenType, JournalEntry } from '@/types/plant';
 import { HistoricalWeatherData, WeatherData, fetchLocalWeather } from '@/services/weatherService';
 import { supabase } from '@/lib/supabaseClient';
@@ -91,28 +91,48 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             if (plantsError) throw plantsError;
 
             if (plantsData) {
-                const mappedPlants: Plant[] = plantsData.map((p: any) => ({
-                    id: p.id,
-                    name: p.name,
-                    species: p.species,
-                    type: p.type,
-                    location: p.location,
-                    waterFrequencyDays: p.water_frequency_days,
-                    lastWateredDate: p.last_watered_date,
-                    imageUrl: p.image_url,
-                    notes: p.notes,
-                    dateAdded: p.date_added,
-                    journal: p.journal,
-                    perenualId: p.perenual_id,
-                    room: p.room,
-                    snoozeUntil: p.snooze_until,
-                    status: p.status,
-                    nickname: p.nickname,
-                    gotchaDate: p.gotcha_date,
-                    potType: p.pot_type,
-                    xp: p.xp || 0,
-                    level: p.level || 1
-                }));
+                const mappedPlants: Plant[] = plantsData.map((p: any) => {
+                    const plant: Plant = {
+                        id: p.id,
+                        name: p.name,
+                        species: p.species,
+                        type: p.type,
+                        location: p.location,
+                        waterFrequencyDays: p.water_frequency_days,
+                        lastWateredDate: p.last_watered_date,
+                        imageUrl: p.image_url,
+                        notes: p.notes,
+                        dateAdded: p.date_added,
+                        journal: p.journal,
+                        perenualId: p.perenual_id,
+                        room: p.room,
+                        snoozeUntil: p.snooze_until,
+                        status: p.status,
+                        nickname: p.nickname,
+                        gotchaDate: p.gotcha_date,
+                        potType: p.pot_type,
+                        xp: p.xp || 0,
+                        level: p.level || 1
+                    };
+
+                    // Phase 7: Automatic Hospital Transition
+                    if (plant.status !== 'hospital') {
+                        const status = calculateWateringStatus(plant);
+                        if (status.status === 'overdue') {
+                            const nextWater = new Date(plant.lastWateredDate);
+                            nextWater.setDate(nextWater.getDate() + (plant.waterFrequencyDays || 7));
+                            const today = new Date();
+                            const diffTime = today.getTime() - nextWater.getTime();
+                            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+                            if (diffDays >= 3) {
+                                plant.status = 'hospital';
+                                (supabase.from('plants') as any).update({ status: 'hospital' }).eq('id', plant.id).then();
+                            }
+                        }
+                    }
+                    return plant;
+                });
                 setPlants(mappedPlants);
             }
 
@@ -124,7 +144,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 .maybeSingle();
 
             if (settingsData && !settingsError) {
-                const currentSettings = settingsData as any; // Type assertion for compatibility
+                const currentSettings = settingsData as any;
                 if (currentSettings.rooms) setRooms(currentSettings.rooms);
                 if (currentSettings.login_streak) setLoginStreak(currentSettings.login_streak);
                 if (currentSettings.watering_streak) setWateringStreak(currentSettings.watering_streak);
@@ -142,10 +162,9 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                     if (lastLogin === yesterdayStr) {
                         newStreak += 1;
                     } else {
-                        newStreak = 1; // Reset or start new
+                        newStreak = 1;
                     }
 
-                    // Update DB
                     await (supabase.from('user_settings') as any).upsert({
                         user_id: userId,
                         last_login_date: today,
@@ -154,7 +173,6 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                     setLoginStreak(newStreak);
                 }
             } else {
-                // Initialize settings for new user
                 const today = new Date().toISOString().split('T')[0];
                 await (supabase.from('user_settings') as any).upsert({
                     user_id: userId,
@@ -188,12 +206,8 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     };
 
     const addPlant = async (plant: Plant) => {
-        // Optimistic update
         setPlants((prev) => [...prev, plant]);
-
         const { error } = await (supabase.from('plants') as any).insert({
-            // id: plant.id, // Let Supabase generate ID or use UUID? Better to let Supabase gen, but we need it for UI.
-            // If we use Math.random().toString(36).substring(2, 11) in frontend, we can send it.
             id: plant.id,
             user_id: session?.user.id,
             name: plant.name,
@@ -216,22 +230,15 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             level: plant.level,
             journal: plant.journal || []
         });
-
-        if (error) {
-            console.error('Error adding plant:', error);
-            // Revert optimistic update?
-        }
+        if (error) console.error('Error adding plant:', error);
     };
 
     const updatePlant = async (updatedPlant: Plant) => {
         const oldPlant = plants.find(p => p.id === updatedPlant.id);
         setPlants((prev) => prev.map((p) => (p.id === updatedPlant.id ? updatedPlant : p)));
 
-        // Check if watered
         if (oldPlant && oldPlant.lastWateredDate !== updatedPlant.lastWateredDate) {
             const today = new Date().toISOString().split('T')[0];
-
-            // Fetch current settings to check last watered date
             const { data: settings } = await (supabase
                 .from('user_settings') as any)
                 .select('*')
@@ -269,7 +276,6 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             level: updatedPlant.level,
             journal: updatedPlant.journal
         }).eq('id', updatedPlant.id);
-
         if (error) console.error('Error updating plant:', error);
     };
 
@@ -283,8 +289,6 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         if (!rooms.includes(name)) {
             const newRooms = [...rooms, name];
             setRooms(newRooms);
-
-            // Upsert settings
             const { error } = await (supabase.from('user_settings') as any).upsert({
                 user_id: session?.user.id,
                 rooms: newRooms
@@ -296,7 +300,6 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     const deleteRoom = async (name: string) => {
         const newRooms = rooms.filter(r => r !== name);
         setRooms(newRooms);
-
         const { error } = await (supabase.from('user_settings') as any).upsert({
             user_id: session?.user.id,
             rooms: newRooms
@@ -348,7 +351,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         return Math.round(totalStatus / plants.length);
     };
 
-    const gardenRank = React.useMemo(() => {
+    const gardenRank = useMemo(() => {
         try {
             return GardenEngine.getGardenRank(calculateHarmony());
         } catch (e) {
@@ -374,21 +377,17 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         let frequency = plant.waterFrequencyDays || 7;
         let reason: 'rain' | 'heat' | 'cold' | undefined;
 
-        // P7: Hospital Logic
         if (plant.status === 'hospital') {
             return { status: 'ok', label: 'Recovering ❤️‍🩹', color: '#E53E3E', adjustmentReason: undefined };
         }
 
-        // Smart Logic for Outdoor Plants
         if (plant.type === 'outdoor' && history && history.length > 0) {
-            // 1. Rain Check (Last 3 days)
             const recentRain = history.slice(0, 3).reduce((sum, day) => sum + (day.rainSum || 0), 0);
             if (recentRain > 10) {
                 frequency += 3;
                 reason = 'rain';
             }
 
-            // 2. Heat Check (Last 7 days avg max temp)
             const avgTemp = history.reduce((sum, day) => sum + (day.maxTemp || 0), 0) / history.length;
             if (avgTemp > 30) {
                 frequency = Math.max(1, frequency - 2);
@@ -399,7 +398,6 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             }
         }
 
-        // P4: Snooze Logic
         if (plant.snoozeUntil) {
             const snoozeDate = new Date(plant.snoozeUntil);
             if (!isNaN(snoozeDate.getTime())) {
@@ -431,8 +429,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     const [season, setSeason] = useState<'Spring' | 'Summer' | 'Autumn' | 'Winter'>('Spring');
 
     useEffect(() => {
-        const month = new Date().getMonth(); // 0-11
-        // Northern Hemisphere
+        const month = new Date().getMonth();
         if (month >= 2 && month <= 4) setSeason('Spring');
         else if (month >= 5 && month <= 7) setSeason('Summer');
         else if (month >= 8 && month <= 10) setSeason('Autumn');
@@ -467,18 +464,10 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 addRoom,
                 deleteRoom,
                 exportGarden: () => {
-                    const data = {
-                        plants,
-                        rooms,
-                        version: '1.0',
-                        exportDate: new Date().toISOString()
-                    };
+                    const data = { plants, rooms, version: '1.0', exportDate: new Date().toISOString() };
                     return JSON.stringify(data, null, 2);
                 },
                 importGarden: (jsonString: string) => {
-                    // Import logic might need to be updated to save to DB?
-                    // For now, let's keep it local or warn user.
-                    // Implementing full import to DB is complex.
                     alert("Import is currently only local-session based in this version.");
                     return false;
                 },

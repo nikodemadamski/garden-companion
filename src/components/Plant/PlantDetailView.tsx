@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { Plant, JournalEntry } from '@/types/plant';
+import { Plant } from '@/types/plant';
 import { useGarden } from '@/context/GardenContext';
 import ShareCardModal from './ShareCardModal';
 import confetti from 'canvas-confetti';
@@ -19,6 +19,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
 
     const status = calculateWateringStatus(plant);
     const isThirsty = status.status !== 'ok';
+    const isHospital = plant.status === 'hospital';
 
     // Lifecycle Logic
     const getGrowthStage = (level: number) => {
@@ -32,6 +33,10 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
     const stage = getGrowthStage(plant.level);
     const progressToNextStage = (plant.level % 5) * 20 + (plant.xp / (plant.level * 100) * 20);
 
+    // Phase 8: Personalities
+    const personalities = ['Drama Queen 💅', 'Sun Seeker ☀️', 'Quiet Observer 😶', 'Social Butterfly 🦋', 'Night Owl 🦉'];
+    const personality = personalities[plant.id.charCodeAt(0) % personalities.length];
+
     const handleWater = () => {
         const updated = { ...plant, lastWateredDate: new Date().toISOString() };
         updatePlant(updated);
@@ -41,6 +46,28 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
             spread: 70,
             origin: { y: 0.8 },
             colors: ['#3182CE', '#63B3ED', '#BEE3F8']
+        });
+    };
+
+    const handleFirstAid = () => {
+        const updated = {
+            ...plant,
+            status: 'healthy' as const,
+            lastWateredDate: new Date().toISOString()
+        };
+        updatePlant(updated);
+        awardXP(plant.id, 50);
+        addJournalEntry(plant.id, {
+            id: Math.random().toString(36).substring(2, 11),
+            date: new Date().toISOString(),
+            note: "❤️‍🩹 First Aid administered! Recovered from the hospital.",
+            type: 'milestone'
+        });
+        confetti({
+            particleCount: 200,
+            spread: 100,
+            origin: { y: 0.6 },
+            colors: ['#FF6B6B', '#48BB78', '#FFF']
         });
     };
 
@@ -68,7 +95,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
         <div style={{
             position: 'fixed',
             top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: isThirsty ? '#FFF5F5' : '#F0FFF4',
+            backgroundColor: isHospital ? '#FFF5F5' : (isThirsty ? '#FFF5F5' : '#F0FFF4'),
             zIndex: 2000,
             display: 'flex',
             flexDirection: 'column',
@@ -95,30 +122,44 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                 padding: '2rem',
                 textAlign: 'center'
             }}>
-                {/* Stage Badge */}
-                <div style={{
-                    backgroundColor: stage.color,
-                    color: 'white',
-                    padding: '6px 16px',
-                    borderRadius: '20px',
-                    fontSize: '0.8rem',
-                    fontWeight: 900,
-                    textTransform: 'uppercase',
-                    marginBottom: '1.5rem',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                }}>
-                    {stage.name}
+                {/* Stage & Personality Badges */}
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                    <div style={{
+                        backgroundColor: stage.color,
+                        color: 'white',
+                        padding: '6px 16px',
+                        borderRadius: '20px',
+                        fontSize: '0.8rem',
+                        fontWeight: 900,
+                        textTransform: 'uppercase',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}>
+                        {stage.name}
+                    </div>
+                    <div style={{
+                        backgroundColor: 'white',
+                        color: '#4A5568',
+                        padding: '6px 16px',
+                        borderRadius: '20px',
+                        fontSize: '0.8rem',
+                        fontWeight: 800,
+                        border: '1px solid #E2E8F0',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                    }}>
+                        {personality}
+                    </div>
                 </div>
 
                 {/* Big Avatar */}
                 <div style={{
                     fontSize: '8rem',
                     marginBottom: '1rem',
-                    filter: isThirsty ? 'grayscale(0.5) contrast(0.8)' : 'none',
+                    filter: (isThirsty || isHospital) ? 'grayscale(0.5) contrast(0.8)' : 'none',
                     transition: 'all 0.5s ease',
-                    transform: isThirsty ? 'scale(0.9)' : 'scale(1.1)'
+                    transform: (isThirsty || isHospital) ? 'scale(0.9)' : 'scale(1.1)',
+                    animation: isHospital ? 'pulse 2s infinite' : 'none'
                 }}>
-                    {stage.icon}
+                    {isHospital ? '🥀' : stage.icon}
                 </div>
 
                 <h1 style={{ fontSize: '2.5rem', fontWeight: 900, margin: '0 0 0.5rem 0', color: '#2D3748' }}>
@@ -128,21 +169,37 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                     Level {plant.level} • {plant.rarity || 'Common'}
                 </p>
 
+                {isHospital && (
+                    <div style={{
+                        marginTop: '1.5rem',
+                        padding: '0.75rem 1.5rem',
+                        backgroundColor: '#FED7D7',
+                        color: '#C53030',
+                        borderRadius: '15px',
+                        fontWeight: 800,
+                        fontSize: '0.9rem'
+                    }}>
+                        ❤️‍🩹 Currently in the Hospital Wing
+                    </div>
+                )}
+
                 {/* Growth Path Visualization */}
-                <div style={{ width: '80%', maxWidth: '300px', marginTop: '2rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: 800, color: '#A0AEC0', marginBottom: '0.5rem' }}>
-                        <span>{stage.name}</span>
-                        <span>NEXT STAGE</span>
+                {!isHospital && (
+                    <div style={{ width: '80%', maxWidth: '300px', marginTop: '2rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: 800, color: '#A0AEC0', marginBottom: '0.5rem' }}>
+                            <span>{stage.name}</span>
+                            <span>NEXT STAGE</span>
+                        </div>
+                        <div style={{ height: '12px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '6px', overflow: 'hidden' }}>
+                            <div style={{
+                                height: '100%',
+                                width: `${progressToNextStage}%`,
+                                backgroundColor: stage.color,
+                                transition: 'width 1s ease-out'
+                            }} />
+                        </div>
                     </div>
-                    <div style={{ height: '12px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '6px', overflow: 'hidden' }}>
-                        <div style={{
-                            height: '100%',
-                            width: `${progressToNextStage}%`,
-                            backgroundColor: stage.color,
-                            transition: 'width 1s ease-out'
-                        }} />
-                    </div>
-                </div>
+                )}
             </section>
 
             {/* Action Zone: Big Buttons */}
@@ -156,7 +213,29 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                 flexDirection: 'column',
                 gap: '1rem'
             }}>
-                {isLogging ? (
+                {isHospital ? (
+                    <button
+                        onClick={handleFirstAid}
+                        style={{
+                            backgroundColor: '#E53E3E',
+                            color: 'white',
+                            padding: '1.8rem',
+                            borderRadius: '24px',
+                            border: 'none',
+                            fontWeight: 900,
+                            fontSize: '1.2rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            boxShadow: '0 8px 25px rgba(229, 62, 62, 0.3)',
+                            animation: 'bounce 2s infinite'
+                        }}
+                    >
+                        <span style={{ fontSize: '2rem' }}>❤️‍🩹</span>
+                        ADMINISTER FIRST AID
+                    </button>
+                ) : isLogging ? (
                     <form onSubmit={handleLog} style={{ display: 'flex', gap: '0.5rem', animation: 'fade-in 0.3s' }}>
                         <input
                             autoFocus

@@ -43,51 +43,72 @@ export default function PlantCard({ plant, history, onClick }: PlantCardProps) {
         return '🌱';
     };
 
+    const isHospital = plant.status === 'hospital';
+
     return (
         <div
             onClick={onClick}
-            className="glass-panel animate-slide-up"
+            className={`plant-card ${isHospital ? 'hospital-mode' : ''}`}
             style={{
-                padding: '1.25rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1.25rem',
-                cursor: 'pointer',
-                backgroundColor: 'white',
+                backgroundColor: isHospital ? '#FFF5F5' : 'white',
                 borderRadius: '24px',
-                border: status.status === 'due' ? '2px solid #FFCC00' : '1px solid rgba(0,0,0,0.03)',
-                boxShadow: '0 8px 20px rgba(0,0,0,0.04)',
+                padding: '1.2rem',
+                boxShadow: isHospital ? '0 8px 20px rgba(229, 62, 62, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.8rem',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                border: isHospital ? '2px solid #FEB2B2' : '1px solid #EDF2F7',
                 position: 'relative',
                 overflow: 'hidden'
             }}
         >
-            {/* Chibi Avatar Container */}
+            {isHospital && (
+                <div style={{
+                    position: 'absolute',
+                    top: '0.5rem',
+                    right: '0.5rem',
+                    backgroundColor: '#E53E3E',
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '10px',
+                    fontSize: '0.6rem',
+                    fontWeight: 900,
+                    zIndex: 2
+                }}>
+                    HOSPITAL ❤️‍🩹
+                </div>
+            )}
+
+            {/* Plant Image / Avatar */}
             <div style={{
-                width: '80px',
-                height: '80px',
-                backgroundColor: status.status === 'due' ? '#FFF9E6' : '#F0FFF4',
-                borderRadius: '20px',
+                height: '140px',
+                backgroundColor: isHospital ? '#FED7D7' : '#F7FAFC',
+                borderRadius: '18px',
                 display: 'flex',
-                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                flexShrink: 0,
-                border: '2px solid rgba(0,0,0,0.02)'
+                fontSize: '4rem',
+                position: 'relative'
             }}>
-                <span style={{ fontSize: '2.2rem', marginBottom: '-5px' }}>{getIllustration()}</span>
-                <span style={{
+                {isHospital ? '🥀' : (plant.level >= 10 ? '🌳' : plant.level >= 5 ? '🌿' : '🌱')}
+
+                {/* Status Badge */}
+                <div style={{
+                    position: 'absolute',
+                    bottom: '-10px',
+                    right: '10px',
+                    backgroundColor: status.color,
+                    color: 'white',
+                    padding: '4px 10px',
+                    borderRadius: '12px',
                     fontSize: '0.7rem',
-                    fontWeight: 900,
-                    color: 'var(--color-primary-dark)',
-                    fontFamily: 'monospace',
-                    backgroundColor: 'white',
-                    padding: '2px 6px',
-                    borderRadius: '10px',
-                    marginTop: '4px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                    fontWeight: 800,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
                 }}>
-                    {getChibiFace()}
-                </span>
+                    {status.label}
+                </div>
             </div>
 
             {/* Info Section - Simplified */}

@@ -18,8 +18,24 @@ export default function ExploreView() {
         { name: 'Watermelon Peperomia', rarity: 'Common', icon: '🍉', species: 'Peperomia Argyreia' },
         { name: 'String of Hearts', rarity: 'Common', icon: '💕', species: 'Ceropegia Woodii' }
     ];
+    const [pullsToday, setPullsToday] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('garden_pulls_today');
+            const date = localStorage.getItem('garden_pull_date');
+            const today = new Date().toDateString();
+            if (date === today) return parseInt(saved || '0');
+        }
+        return 0;
+    });
+
+    const PULL_LIMIT = 3;
 
     const handlePull = () => {
+        if (pullsToday >= PULL_LIMIT) {
+            alert("You've used all your free pulls for today! Share your garden to get one more. ✨");
+            return;
+        }
+
         setIsPulling(true);
         setDiscoveredPlant(null);
 
@@ -28,7 +44,23 @@ export default function ExploreView() {
             const random = rarePlants[Math.floor(Math.random() * rarePlants.length)];
             setDiscoveredPlant(random);
             setIsPulling(false);
+
+            const newCount = pullsToday + 1;
+            setPullsToday(newCount);
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('garden_pulls_today', newCount.toString());
+                localStorage.setItem('garden_pull_date', new Date().toDateString());
+            }
         }, 1500);
+    };
+
+    const handleShareForPull = () => {
+        // Mock sharing
+        alert("Sharing your garden... 🔗");
+        setTimeout(() => {
+            setPullsToday(prev => Math.max(0, prev - 1));
+            alert("Extra pull granted! (๑>ᴗ<๑)");
+        }, 1000);
     };
 
     const handleAdopt = () => {
@@ -71,26 +103,44 @@ export default function ExploreView() {
                 <div style={{ position: 'relative', zIndex: 2 }}>
                     <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '0.5rem' }}>Daily Discovery</h2>
                     <p style={{ fontSize: '1rem', fontWeight: 700, opacity: 0.9, marginBottom: '1.5rem' }}>
-                        Pull a random rare plant! ✨
+                        {pullsToday >= PULL_LIMIT ? 'Limit reached! Come back tomorrow or share.' : `Pull a random rare plant! (${PULL_LIMIT - pullsToday} left)`}
                     </p>
-                    <button
-                        onClick={handlePull}
-                        disabled={isPulling}
-                        style={{
-                            backgroundColor: 'white',
-                            color: '#FF8C00',
-                            padding: '1rem 2rem',
-                            borderRadius: '20px',
-                            border: 'none',
-                            fontWeight: 900,
-                            fontSize: '1.1rem',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                            cursor: isPulling ? 'default' : 'pointer',
-                            transform: isPulling ? 'scale(0.95)' : 'none',
-                            transition: 'all 0.2s ease'
-                        }}>
-                        {isPulling ? 'SPINNING...' : 'PULL NOW (Free)'}
-                    </button>
+                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+                        <button
+                            onClick={handlePull}
+                            disabled={isPulling || pullsToday >= PULL_LIMIT}
+                            style={{
+                                backgroundColor: pullsToday >= PULL_LIMIT ? '#E2E8F0' : 'white',
+                                color: pullsToday >= PULL_LIMIT ? '#A0AEC0' : '#FF8C00',
+                                padding: '1rem 2rem',
+                                borderRadius: '20px',
+                                border: 'none',
+                                fontWeight: 900,
+                                fontSize: '1.1rem',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                                cursor: (isPulling || pullsToday >= PULL_LIMIT) ? 'default' : 'pointer',
+                                transform: isPulling ? 'scale(0.95)' : 'none',
+                                transition: 'all 0.2s ease'
+                            }}>
+                            {isPulling ? 'SPINNING...' : pullsToday >= PULL_LIMIT ? 'LIMIT REACHED' : 'PULL NOW (Free)'}
+                        </button>
+                        {pullsToday >= PULL_LIMIT && (
+                            <button
+                                onClick={handleShareForPull}
+                                style={{
+                                    backgroundColor: 'rgba(255,255,255,0.2)',
+                                    color: 'white',
+                                    padding: '1rem 1.5rem',
+                                    borderRadius: '20px',
+                                    border: '2px solid white',
+                                    fontWeight: 900,
+                                    fontSize: '1rem',
+                                    cursor: 'pointer'
+                                }}>
+                                🔗 SHARE FOR +1
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <div style={{
                     position: 'absolute',
