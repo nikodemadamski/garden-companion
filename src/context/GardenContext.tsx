@@ -6,6 +6,7 @@ import { HistoricalWeatherData, WeatherData, fetchLocalWeather } from '@/service
 import { supabase } from '@/lib/supabaseClient';
 import Login from '@/components/Auth/Login';
 import { Session } from '@supabase/supabase-js';
+import { GardenEngine } from '@/services/gardenEngine';
 
 interface WateringStatus {
     status: 'ok' | 'due' | 'overdue';
@@ -39,6 +40,7 @@ interface GardenContextType {
     setActiveTab: (tab: 'dashboard' | 'plants' | 'explore' | 'profile') => void;
     awardXP: (plantId: string, amount: number) => void;
     calculateHarmony: () => number;
+    gardenRank: { title: string; icon: string; color: string };
 }
 
 const GardenContext = createContext<GardenContextType | undefined>(undefined);
@@ -314,27 +316,24 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     };
 
     const awardXP = (plantId: string, amount: number) => {
-        setPlants(prev => prev.map(p => {
-            if (p.id === plantId) {
-                const newXP = p.xp + amount;
-                const nextLevelXP = p.level * 100;
-                if (newXP >= nextLevelXP) {
-                    return { ...p, xp: newXP - nextLevelXP, level: p.level + 1 };
-                }
-                return { ...p, xp: newXP };
-            }
-            return p;
-        }));
-
-        // Persist to DB
         const plant = plants.find(p => p.id === plantId);
-        if (plant) {
-            const updated = { ...plant, xp: plant.xp + amount };
-            if (updated.xp >= updated.level * 100) {
-                updated.xp -= updated.level * 100;
-                updated.level += 1;
-            }
-            updatePlant(updated);
+        if (!plant) return;
+
+        const result = GardenEngine.processXPGain(plant, amount);
+
+        const updatedPlant: Plant = {
+            ...plant,
+            xp: result.didLevelUp ? (plant.xp + amount) % (plant.level * 100) : plant.xp + amount,
+            level: result.newLevel,
+            journal: result.milestoneEntry
+                ? [...(plant.journal || []), result.milestoneEntry]
+                : plant.journal
+        };
+
+        updatePlant(updatedPlant);
+
+        if (result.didLevelUp) {
+            alert(`(๑>ᴗ<๑) ${plant.nickname || plant.name} reached Level ${result.newLevel}!`);
         }
     };
 
@@ -348,6 +347,8 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         }, 0);
         return Math.round(totalStatus / plants.length);
     };
+
+    const gardenRank = GardenEngine.getGardenRank(calculateHarmony());
 
     const getPlantsByGarden = (type: GardenType) => {
         return plants.filter((p) => p.type === type);
@@ -473,7 +474,8 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 activeTab,
                 setActiveTab,
                 awardXP,
-                calculateHarmony
+                calculateHarmony,
+                gardenRank
             }}
         >
             {children}

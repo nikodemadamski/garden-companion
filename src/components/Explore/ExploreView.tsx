@@ -207,6 +207,46 @@ export default function ExploreView() {
                     ))}
                 </div>
             </section>
+            {/* Community Leaderboard */}
+            <section>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>🏆 Top Gardeners (Ireland)</h2>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary)' }}>View All</span>
+                </div>
+                <div className="glass-panel" style={{ padding: '1rem', borderRadius: '24px', backgroundColor: 'white', border: '1px solid #F1F5F9' }}>
+                    {[
+                        { name: 'Aoife from Cork', score: 98, rank: 'Forest Guardian', avatar: '👩‍🌾' },
+                        { name: 'Liam in Dublin', score: 92, rank: 'Master Gardener', avatar: '👨‍🌾' },
+                        { name: 'You', score: 85, rank: 'Master Gardener', avatar: '👤', isUser: true },
+                        { name: 'Siobhan (Galway)', score: 78, rank: 'Green Thumb', avatar: '👩‍🌾' }
+                    ].map((user, idx) => (
+                        <div key={idx} style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '1rem',
+                            padding: '0.75rem',
+                            borderRadius: '16px',
+                            backgroundColor: user.isUser ? '#F0FFF4' : 'transparent',
+                            marginBottom: idx < 3 ? '0.5rem' : 0
+                        }}>
+                            <div style={{ fontSize: '1.2rem', fontWeight: 900, width: '24px', color: idx === 0 ? '#FFD700' : idx === 1 ? '#C0C0C0' : '#CD7F32' }}>
+                                {idx + 1}
+                            </div>
+                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>
+                                {user.avatar}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>{user.name}</div>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-light)' }}>{user.rank}</div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontWeight: 900, color: 'var(--color-primary)' }}>{user.score}%</div>
+                                <div style={{ fontSize: '0.6rem', fontWeight: 800, color: 'var(--color-text-light)' }}>HARMONY</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
         </div>
     );
 }
