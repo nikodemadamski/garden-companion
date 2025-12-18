@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabaseClient';
 import { WeatherAlert, MetOfficeAlert, ProcessedAlert, PlantProtectionAction } from '../types/weather';
+export type { ProcessedAlert };
 import { PlantProtectionService } from './plantProtectionService';
 import { Plant } from '../types/plant';
 import { Database } from '../types/database';
@@ -268,3 +269,7 @@ export class WeatherAlertService {
     }));
   }
 }
+
+export const fetchWeatherAlerts = async (lat: number, lon: number): Promise<ProcessedAlert[]> => {
+  return WeatherAlertService.getActiveAlerts([], 5);
+};

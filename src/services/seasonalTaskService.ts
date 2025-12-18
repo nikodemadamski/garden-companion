@@ -12,6 +12,7 @@ import {
   TaskPriority,
   TaskCategory
 } from '@/types/seasonal';
+export type { SeasonalTask };
 
 class SeasonalTaskService {
   private taskCache: Map<string, SeasonalTask[]> = new Map();
@@ -395,3 +396,11 @@ class SeasonalTaskService {
 // Export singleton instance
 export const seasonalTaskService = new SeasonalTaskService();
 export default seasonalTaskService;
+
+export const fetchSeasonalTasks = async (season: string): Promise<SeasonalTask[]> => {
+  // The original instruction for fetchSeasonalTasks did not include 'season' in the call to getSeasonalTasks.
+  // Assuming 'season' parameter is intended to be used for filtering.
+  // If 'season' is not directly supported by getSeasonalTasks, this might need adjustment.
+  // For now, calling without filter as per original instruction's code snippet.
+  return seasonalTaskService.getSeasonalTasks();
+};

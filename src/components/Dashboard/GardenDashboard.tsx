@@ -32,7 +32,7 @@ export default function GardenDashboard() {
                 setTasks(fetchedTasks);
 
                 // Generate AI Daily Plan
-                const plan = await AIService.generateDailyPlan(plants, weather);
+                const plan = await AIService.generateDailyPlan(plants, weather, fetchedAlerts);
                 setDailyPlan(plan.map(p => ({ ...p, completed: false })));
             } catch (error) {
                 console.error("Error loading dashboard data", error);
@@ -208,26 +208,32 @@ export default function GardenDashboard() {
                 {alerts.length > 0 && (
                     <div>
                         <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1rem' }}>Weather Alerts</h2>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {alerts.map((alert, idx) => (
-                                <WeatherAlertBanner key={idx} alert={alert} />
-                            ))}
-                        </div>
+                        <WeatherAlertBanner />
                     </div>
                 )}
 
                 <div>
                     <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1rem' }}>{season} Tasks</h2>
                     <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '24px', backgroundColor: 'white', border: '1px solid #F1F5F9' }}>
-                        {tasks.map((task, idx) => (
-                            <div key={idx} style={{ marginBottom: idx === tasks.length - 1 ? 0 : '1rem', display: 'flex', gap: '1rem' }}>
-                                <div style={{ fontSize: '1.5rem' }}>{task.icon}</div>
-                                <div>
-                                    <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{task.title}</div>
-                                    <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', margin: '0.2rem 0 0' }}>{task.description}</p>
+                        {tasks.map((task, idx) => {
+                            const categoryIcons = {
+                                planting: '🌱',
+                                maintenance: '✂️',
+                                harvesting: '🧺',
+                                preparation: '🧹'
+                            };
+                            const icon = categoryIcons[task.category] || '🌿';
+
+                            return (
+                                <div key={idx} style={{ marginBottom: idx === tasks.length - 1 ? 0 : '1rem', display: 'flex', gap: '1rem' }}>
+                                    <div style={{ fontSize: '1.5rem' }}>{icon}</div>
+                                    <div>
+                                        <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{task.title}</div>
+                                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', margin: '0.2rem 0 0' }}>{task.description}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
             </section>
