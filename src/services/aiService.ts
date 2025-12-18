@@ -94,7 +94,7 @@ export class AIService {
         return `I'm your Garden AI. I'm monitoring your ${plants.length} plants and the current ${weather ? Math.round(weather.temperature) : '--'}°C weather. How can I help you stay on top of your garden today?`;
     }
 
-    static generateDailyPlan(plants: Plant[], weather: WeatherData | null, alerts: ProcessedAlert[]): { id: string, task: string, priority: 'high' | 'medium' | 'low', completed: boolean, autoCompleted?: boolean }[] {
+    static generateDailyPlan(plants: Plant[], weather: WeatherData | null, alerts: ProcessedAlert[], seasonalTasks: any[] = []): { id: string, task: string, priority: 'high' | 'medium' | 'low', completed: boolean, autoCompleted?: boolean }[] {
         const plan: { id: string, task: string, priority: 'high' | 'medium' | 'low', completed: boolean, autoCompleted?: boolean }[] = [];
 
         // 1. Smart Rain-Check Logic
@@ -129,7 +129,17 @@ export class AIService {
             });
         });
 
-        // 3. Seasonal Maintenance (Simplified)
+        // 3. Seasonal Tasks (Month-based)
+        seasonalTasks.slice(0, 3).forEach(task => {
+            plan.push({
+                id: `seasonal-${task.id}`,
+                task: task.title,
+                priority: task.priority || 'medium',
+                completed: false
+            });
+        });
+
+        // 4. Seasonal Maintenance (Simplified)
         if (weather && weather.temperature < 5) {
             plan.push({ id: 'frost-check', task: 'Check for ground frost', priority: 'high', completed: false });
         }

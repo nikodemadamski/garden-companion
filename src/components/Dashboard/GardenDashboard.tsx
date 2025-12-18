@@ -10,7 +10,7 @@ import GardenerAI from '@/components/AI/GardenerAI';
 import { ProductiveService } from '@/services/productiveService';
 
 export default function GardenDashboard() {
-    const { plants, weather, calculateWateringStatus, setActiveTab, gardenRank: rank, seeds, awardXP, calculateHarmony, season, addPlant, productiveData } = useGarden();
+    const { plants, weather, calculateWateringStatus, setActiveTab, gardenRank: rank, seeds, awardXP, calculateHarmony, season, addPlant, productiveData, addSeed } = useGarden();
     const harmony = calculateHarmony();
 
     const [alerts, setAlerts] = useState<ProcessedAlert[]>([]);
@@ -32,7 +32,7 @@ export default function GardenDashboard() {
                 setTasks(fetchedTasks);
 
                 // Generate AI Daily Plan
-                const plan = await AIService.generateDailyPlan(plants, weather, fetchedAlerts);
+                const plan = await AIService.generateDailyPlan(plants, weather, fetchedAlerts, fetchedTasks);
                 setDailyPlan(plan.map(p => ({ ...p, completed: false })));
             } catch (error) {
                 console.error("Error loading dashboard data", error);
@@ -59,7 +59,19 @@ export default function GardenDashboard() {
         }));
     };
 
-    const productivePlants = plants.filter(p => p.species && productiveData[p.species]);
+    const getPlantProductiveData = (species: string | undefined) => {
+        if (!species) return undefined;
+        // Try exact match
+        if (productiveData[species]) return productiveData[species];
+        // Try partial match
+        const key = Object.keys(productiveData).find(k =>
+            species.toLowerCase().includes(k.toLowerCase()) ||
+            k.toLowerCase().includes(species.toLowerCase())
+        );
+        return key ? productiveData[key] : undefined;
+    };
+
+    const productivePlants = plants.filter(p => getPlantProductiveData(p.species));
     const productivityScore = productivePlants.length > 0
         ? Math.round((productivePlants.filter(p => calculateWateringStatus(p).status === 'ok').length / productivePlants.length) * 100)
         : 100;
@@ -94,7 +106,7 @@ export default function GardenDashboard() {
     }, {} as Record<string, number>);
 
     const successionAlerts = plants.reduce((acc, p) => {
-        const data = p.species ? productiveData[p.species] : undefined;
+        const data = getPlantProductiveData(p.species);
         if (data?.successionDays) {
             const addedDate = new Date(p.dateAdded);
             const today = new Date();
@@ -148,10 +160,21 @@ export default function GardenDashboard() {
                                             samples.forEach(s => {
                                                 const { id: _, ...rest } = s;
                                                 // @ts-ignore
-                                                const newPlant = { ...rest, id: Math.random().toString(36).substring(2, 11) };
+                                                const newPlant = {
+                                                    ...rest,
+                                                    id: Math.random().toString(36).substring(2, 11),
+                                                    journal: [
+                                                        { id: 'j1', date: new Date().toISOString(), note: 'Initial planting', type: 'note' },
+                                                        { id: 'j2', date: new Date().toISOString(), note: 'First harvest!', type: 'harvest', harvestAmount: 5, harvestUnit: 'units' }
+                                                    ]
+                                                };
                                                 // @ts-ignore
                                                 addPlant(newPlant);
                                             });
+
+                                            // Add some sample seeds to the vault
+                                            addSeed({ id: 's1', name: 'Heirloom Tomato', species: 'Tomato', quantity: 10, dateAdded: new Date().toISOString(), category: 'vegetable' });
+                                            addSeed({ id: 's2', name: 'Genovese Basil', species: 'Basil', quantity: 50, dateAdded: new Date().toISOString(), category: 'herb' });
                                         }}
                                         style={{
                                             backgroundColor: 'rgba(255,255,255,0.2)',
@@ -210,7 +233,7 @@ export default function GardenDashboard() {
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         {productivePlants.length > 0 ? productivePlants.slice(0, 4).map(p => {
-                            const data = p.species ? productiveData[p.species] : undefined;
+                            const data = getPlantProductiveData(p.species);
                             const daysLeft = Math.max(0, (data?.harvestDays || 30) - (p.level * 2));
                             return (
                                 <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
