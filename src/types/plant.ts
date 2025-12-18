@@ -27,6 +27,7 @@ export interface Plant {
     imageUrl?: string;
     xp: number; // New: Experience points
     level: number; // New: Plant level
+    rarity?: 'Common' | 'Rare' | 'Legendary'; // New: Rarity tier
     notes?: string;
     dateAdded: string;
     journal?: JournalEntry[];

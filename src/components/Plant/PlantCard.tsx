@@ -15,16 +15,23 @@ export default function PlantCard({ plant, history, onClick }: PlantCardProps) {
     const { calculateWateringStatus, weather } = useGarden();
     const status = calculateWateringStatus(plant, history);
 
-    // Kawaii Chibi Faces
+    // Kawaii Chibi Faces + Evolution Accessories
     const getChibiFace = () => {
-        if (status.status === 'overdue') return ' ( >_< ) '; // Distressed
-        if (status.status === 'due') return ' ( o_o ) '; // Thirsty
-        if (status.adjustmentReason === 'rain') return ' ( ^_^ ) '; // Happy/Rain
-        if (status.adjustmentReason === 'heat') return ' ( ;-_-) '; // Sweating
+        let face = '';
+        if (status.status === 'overdue') face = ' ( >_< ) ';
+        else if (status.status === 'due') face = ' ( o_o ) ';
+        else if (status.adjustmentReason === 'rain') face = ' ( ^_^ ) ';
+        else if (status.adjustmentReason === 'heat') face = ' ( ;-_-) ';
+        else {
+            const happyFaces = [' ( ^.^) ', ' (◕‿◕) ', ' (๑>ᴗ<๑) ', ' (✿◠‿◠) '];
+            face = happyFaces[plant.id.charCodeAt(0) % happyFaces.length];
+        }
 
-        const happyFaces = [' ( ^.^) ', ' (◕‿◕) ', ' (๑>ᴗ<๑) ', ' (✿◠‿◠) '];
-        const index = plant.id.charCodeAt(0) % happyFaces.length;
-        return happyFaces[index];
+        // Evolution: Add Crown for Level 5+
+        if (plant.level >= 5) {
+            return `👑${face}✨`;
+        }
+        return face;
     };
 
     const getIllustration = () => {
@@ -86,15 +93,30 @@ export default function PlantCard({ plant, history, onClick }: PlantCardProps) {
             {/* Info Section - Simplified */}
             <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
-                    <h3 style={{
-                        fontSize: '1.1rem',
-                        fontWeight: 800,
-                        margin: 0,
-                        color: '#2D3748',
-                        letterSpacing: '-0.01em'
-                    }}>
-                        {plant.nickname || plant.name}
-                    </h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <h3 style={{
+                            fontSize: '1.1rem',
+                            fontWeight: 800,
+                            margin: 0,
+                            color: '#2D3748',
+                            letterSpacing: '-0.01em'
+                        }}>
+                            {plant.nickname || plant.name}
+                        </h3>
+                        {plant.rarity && (
+                            <span style={{
+                                fontSize: '0.6rem',
+                                fontWeight: 900,
+                                backgroundColor: plant.rarity === 'Legendary' ? '#FFD700' : plant.rarity === 'Rare' ? '#5856D6' : '#E2E8F0',
+                                color: plant.rarity === 'Common' ? '#64748B' : 'white',
+                                padding: '1px 4px',
+                                borderRadius: '4px',
+                                textTransform: 'uppercase'
+                            }}>
+                                {plant.rarity}
+                            </span>
+                        )}
+                    </div>
                     <span style={{
                         fontSize: '0.7rem',
                         fontWeight: 900,
