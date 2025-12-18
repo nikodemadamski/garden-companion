@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef } from 'react';
 import { Plant } from '@/types/plant';
 import { toPng } from 'html-to-image';

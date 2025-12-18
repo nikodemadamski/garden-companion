@@ -48,7 +48,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
         e.preventDefault();
         if (!note.trim()) return;
         addJournalEntry(plant.id, {
-            id: crypto.randomUUID(),
+            id: Math.random().toString(36).substring(2, 11),
             date: new Date().toISOString(),
             note: note,
             type: 'note'

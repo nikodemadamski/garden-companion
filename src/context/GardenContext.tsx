@@ -193,7 +193,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
 
         const { error } = await (supabase.from('plants') as any).insert({
             // id: plant.id, // Let Supabase generate ID or use UUID? Better to let Supabase gen, but we need it for UI.
-            // If we use crypto.randomUUID() in frontend, we can send it.
+            // If we use Math.random().toString(36).substring(2, 11) in frontend, we can send it.
             id: plant.id,
             user_id: session?.user.id,
             name: plant.name,

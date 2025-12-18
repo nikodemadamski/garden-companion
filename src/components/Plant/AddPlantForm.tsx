@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useGarden } from '@/context/GardenContext';
 import { Plant } from '@/types/plant';
@@ -53,7 +55,7 @@ export default function AddPlantForm({ onClose }: { onClose: () => void }) {
 
     const handleConfirm = () => {
         const newPlant: Plant = {
-            id: crypto.randomUUID(),
+            id: Math.random().toString(36).substring(2, 11),
             ...formData,
             type: currentGarden,
             lastWateredDate: new Date().toISOString(),

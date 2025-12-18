@@ -59,8 +59,7 @@ export class PhotoService {
   static async checkUserQuota(userId: string, plantId: string): Promise<{ canUpload: boolean; reason?: string }> {
     try {
       // Check total photos for user
-      const { count: totalPhotos } = await supabase
-        .from('plant_photos')
+      const { count: totalPhotos } = await (supabase.from('plant_photos') as any)
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId);
 
@@ -72,8 +71,7 @@ export class PhotoService {
       }
 
       // Check photos for specific plant
-      const { count: plantPhotos } = await supabase
-        .from('plant_photos')
+      const { count: plantPhotos } = await (supabase.from('plant_photos') as any)
         .select('*', { count: 'exact', head: true })
         .eq('user_id', userId)
         .eq('plant_id', plantId);
@@ -247,16 +245,14 @@ export class PhotoService {
 
       // If this is set as primary, unset other primary photos for this plant
       if (isPrimary) {
-        await supabase
-          .from('plant_photos')
+        await (supabase.from('plant_photos') as any)
           .update({ is_primary: false } as any)
           .eq('plant_id', plantId)
           .eq('user_id', userId);
       }
 
       // Save photo record to database
-      const { data: photoData, error: dbError } = await supabase
-        .from('plant_photos')
+      const { data: photoData, error: dbError } = await (supabase.from('plant_photos') as any)
         .insert({
           plant_id: plantId,
           user_id: userId,
@@ -298,8 +294,7 @@ export class PhotoService {
    */
   static async getPlantPhotos(plantId: string, userId: string): Promise<PlantPhoto[]> {
     try {
-      const { data, error } = await supabase
-        .from('plant_photos')
+      const { data, error } = await (supabase.from('plant_photos') as any)
         .select('*')
         .eq('plant_id', plantId)
         .eq('user_id', userId)
@@ -330,8 +325,7 @@ export class PhotoService {
    */
   static async getPrimaryPhoto(plantId: string, userId: string): Promise<PlantPhoto | null> {
     try {
-      const { data, error } = await supabase
-        .from('plant_photos')
+      const { data, error } = await (supabase.from('plant_photos') as any)
         .select('*')
         .eq('plant_id', plantId)
         .eq('user_id', userId)
@@ -368,15 +362,13 @@ export class PhotoService {
   static async setPrimaryPhoto(photoId: string, plantId: string, userId: string): Promise<void> {
     try {
       // First, unset all primary photos for this plant
-      await supabase
-        .from('plant_photos')
+      await (supabase.from('plant_photos') as any)
         .update({ is_primary: false })
         .eq('plant_id', plantId)
         .eq('user_id', userId);
 
       // Then set the specified photo as primary
-      const { error } = await supabase
-        .from('plant_photos')
+      const { error } = await (supabase.from('plant_photos') as any)
         .update({ is_primary: true } as any)
         .eq('id', photoId)
         .eq('user_id', userId);
@@ -396,8 +388,7 @@ export class PhotoService {
   static async deletePhoto(photoId: string, userId: string): Promise<void> {
     try {
       // Get photo details first
-      const { data: photo, error: fetchError } = await supabase
-        .from('plant_photos')
+      const { data: photo, error: fetchError } = await (supabase.from('plant_photos') as any)
         .select('*')
         .eq('id', photoId)
         .eq('user_id', userId)
@@ -415,8 +406,7 @@ export class PhotoService {
       const thumbnailFileName = thumbnailUrlParts ? thumbnailUrlParts.slice(-3).join('/') : null;
 
       // Delete from database first
-      const { error: dbError } = await supabase
-        .from('plant_photos')
+      const { error: dbError } = await (supabase.from('plant_photos') as any)
         .delete()
         .eq('id', photoId)
         .eq('user_id', userId);
@@ -454,8 +444,7 @@ export class PhotoService {
     quotaUsagePercent: number;
   }> {
     try {
-      const { data, error } = await supabase
-        .from('plant_photos')
+      const { data, error } = await (supabase.from('plant_photos') as any)
         .select('metadata')
         .eq('user_id', userId);
 
@@ -488,8 +477,7 @@ export class PhotoService {
   static async cleanupOrphanedPhotos(userId: string): Promise<number> {
     try {
       // Find photos that don't have corresponding plants
-      const { data: orphanedPhotos, error } = await supabase
-        .from('plant_photos')
+      const { data: orphanedPhotos, error } = await (supabase.from('plant_photos') as any)
         .select('id, url, thumbnail_url')
         .eq('user_id', userId)
         .not('plant_id', 'in', `(SELECT id FROM plants WHERE user_id = '${userId}')`);

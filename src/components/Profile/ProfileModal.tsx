@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { useGarden } from '@/context/GardenContext';
 import DashboardModal from '@/components/Analysis/DashboardModal';

@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import { useGarden } from '@/context/GardenContext';
 import { Plant } from '@/types/plant';

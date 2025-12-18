@@ -35,7 +35,7 @@ export default function ExploreView() {
         if (!discoveredPlant) return;
 
         const newPlant: Plant = {
-            id: crypto.randomUUID(),
+            id: Math.random().toString(36).substring(2, 11),
             name: discoveredPlant.name,
             species: discoveredPlant.species,
             room: 'Living Room',

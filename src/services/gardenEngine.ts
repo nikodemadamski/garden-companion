@@ -24,7 +24,7 @@ export const GardenEngine = {
                 newLevel,
                 didLevelUp: true,
                 milestoneEntry: {
-                    id: crypto.randomUUID(),
+                    id: Math.random().toString(36).substring(2, 11),
                     date: new Date().toISOString(),
                     note: `🎉 Reached Level ${newLevel}! ${newLevel >= 5 ? '👑' : '✨'}`,
                     type: 'milestone'

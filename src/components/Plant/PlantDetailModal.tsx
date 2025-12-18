@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { Plant, JournalEntry } from '@/types/plant';
 import { useGarden } from '@/context/GardenContext';
@@ -126,7 +128,7 @@ export default function PlantDetailModal({ plant, onClose }: PlantDetailModalPro
     const handleAddEntry = (e: React.FormEvent) => {
         e.preventDefault();
         const entry: JournalEntry = {
-            id: crypto.randomUUID(),
+            id: Math.random().toString(36).substring(2, 11),
             date: new Date().toISOString(),
             note,
             heightCm: height ? parseFloat(height) : undefined,
