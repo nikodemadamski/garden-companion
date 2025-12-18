@@ -15,118 +15,131 @@ export default function PlantCard({ plant, history, onClick }: PlantCardProps) {
     const { calculateWateringStatus, weather } = useGarden();
     const status = calculateWateringStatus(plant, history);
 
-    // Tamagotchi Logic: Determine Face
-    const getFace = () => {
-        if (status.status === 'overdue') return '😵';
-        if (status.status === 'due') return '😫';
-        if (status.adjustmentReason === 'heat') return '🥵';
-        if (status.adjustmentReason === 'cold') return '🥶';
-        if (status.adjustmentReason === 'rain') return '😌';
+    // Kawaii Chibi Faces
+    const getChibiFace = () => {
+        if (status.status === 'overdue') return ' ( >_< ) '; // Distressed
+        if (status.status === 'due') return ' ( o_o ) '; // Thirsty
+        if (status.adjustmentReason === 'rain') return ' ( ^_^ ) '; // Happy/Rain
+        if (status.adjustmentReason === 'heat') return ' ( ;-_-) '; // Sweating
 
-        const happyFaces = ['🙂', '😊', '😄', '😌'];
+        const happyFaces = [' ( ^.^) ', ' (◕‿◕) ', ' (๑>ᴗ<๑) ', ' (✿◠‿◠) '];
         const index = plant.id.charCodeAt(0) % happyFaces.length;
         return happyFaces[index];
     };
-
-    const showScarf = weather && weather.temperature < 10 && plant.type === 'outdoor';
 
     const getIllustration = () => {
         const type = plant.species?.toLowerCase() || '';
         if (type.includes('cactus') || type.includes('succulent')) return '🌵';
         if (type.includes('fern')) return '🌿';
-        if (type.includes('flower') || type.includes('rose') || type.includes('lily')) return '🌺';
-        if (type.includes('tree') || type.includes('fig')) return '🌳';
-        if (type.includes('palm')) return '🌴';
-        return '🪴';
+        if (type.includes('flower') || type.includes('rose')) return '🌸';
+        if (type.includes('tree')) return '🌳';
+        return '🌱';
     };
 
     return (
         <div
             onClick={onClick}
-            className="glass-panel"
+            className="glass-panel animate-slide-up"
             style={{
-                padding: '1rem',
+                padding: '1.25rem',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '1rem',
+                gap: '1.25rem',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
                 backgroundColor: 'white',
-                borderRadius: '20px',
-                border: status.status === 'due' ? '1px solid var(--color-warning)' : '1px solid rgba(0,0,0,0.03)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
+                borderRadius: '24px',
+                border: status.status === 'due' ? '2px solid #FFCC00' : '1px solid rgba(0,0,0,0.03)',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.04)',
+                position: 'relative',
+                overflow: 'hidden'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
         >
-            {/* Left Side: Illustration & Face */}
+            {/* Chibi Avatar Container */}
             <div style={{
-                width: '70px',
-                height: '70px',
-                backgroundColor: '#F8F9FA',
-                borderRadius: '16px',
+                width: '80px',
+                height: '80px',
+                backgroundColor: status.status === 'due' ? '#FFF9E6' : '#F0FFF4',
+                borderRadius: '20px',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                position: 'relative',
-                flexShrink: 0
+                flexShrink: 0,
+                border: '2px solid rgba(0,0,0,0.02)'
             }}>
-                <span style={{ fontSize: '2.5rem' }}>{getIllustration()}</span>
+                <span style={{ fontSize: '2.2rem', marginBottom: '-5px' }}>{getIllustration()}</span>
                 <span style={{
-                    position: 'absolute',
-                    bottom: '-5px',
-                    right: '-5px',
-                    fontSize: '1.2rem',
+                    fontSize: '0.7rem',
+                    fontWeight: 900,
+                    color: 'var(--color-primary-dark)',
+                    fontFamily: 'monospace',
                     backgroundColor: 'white',
-                    borderRadius: '50%',
-                    width: '24px',
-                    height: '24px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                    padding: '2px 6px',
+                    borderRadius: '10px',
+                    marginTop: '4px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
                 }}>
-                    {getFace()}
+                    {getChibiFace()}
                 </span>
-                {showScarf && (
-                    <span style={{ position: 'absolute', top: '-5px', left: '-5px', fontSize: '1.2rem' }}>🧣</span>
-                )}
             </div>
 
-            {/* Right Side: Info */}
+            {/* Info Section - Simplified */}
             <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.25rem' }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {plant.name}
-                    </h3>
-                    <span style={{
-                        fontSize: '0.7rem',
-                        fontWeight: 800,
-                        color: status.color,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em'
-                    }}>
-                        {status.status === 'ok' ? 'Healthy' : status.status === 'due' ? 'Thirsty' : 'Overdue'}
-                    </span>
-                </div>
-                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-light)', marginBottom: '0.5rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {plant.species || 'Unknown Species'} • {plant.room || 'Outdoor'}
+                <h3 style={{
+                    fontSize: '1.1rem',
+                    fontWeight: 800,
+                    margin: '0 0 0.2rem 0',
+                    color: '#2D3748',
+                    letterSpacing: '-0.01em'
+                }}>
+                    {plant.nickname || plant.name}
+                </h3>
+                <p style={{
+                    fontSize: '0.8rem',
+                    color: 'var(--color-text-light)',
+                    margin: '0 0 0.75rem 0',
+                    fontWeight: 600
+                }}>
+                    {plant.room || 'Outdoor'} • {status.label.split('in')[1] || 'Healthy'}
                 </p>
 
-                {/* Progress Bar */}
-                <div style={{ width: '100%', height: '6px', backgroundColor: '#EDF2F7', borderRadius: '3px', overflow: 'hidden' }}>
+                {/* Minimalist Progress Bar */}
+                <div style={{
+                    width: '100%',
+                    height: '8px',
+                    backgroundColor: '#EDF2F7',
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(0,0,0,0.02)'
+                }}>
                     <div style={{
                         height: '100%',
-                        width: status.status === 'overdue' ? '100%' : status.status === 'due' ? '85%' : '40%',
+                        width: status.status === 'overdue' ? '100%' : status.status === 'due' ? '90%' : '30%',
                         backgroundColor: status.color,
-                        transition: 'width 0.5s ease'
+                        borderRadius: '10px',
+                        transition: 'width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)'
                     }} />
                 </div>
             </div>
 
-            {/* Chevron */}
-            <div style={{ opacity: 0.2, fontSize: '1.2rem' }}>›</div>
+            {/* Anime-style Status Tag */}
+            {status.status !== 'ok' && (
+                <div style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    backgroundColor: status.color,
+                    color: 'white',
+                    fontSize: '0.6rem',
+                    fontWeight: 900,
+                    padding: '2px 8px',
+                    borderRadius: '8px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                }}>
+                    {status.status}
+                </div>
+            )}
         </div>
     );
 }
-

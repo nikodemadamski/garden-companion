@@ -3,24 +3,20 @@ import { useGarden } from '@/context/GardenContext';
 import { Plant } from '@/types/plant';
 import { identifyPlant } from '@/services/plantIdService';
 import { PLANT_CATEGORIES, PlantCategory } from '@/data/plantCategories';
-import { PlantTemplate } from '@/data/popularPlants';
-import { searchPlants, fetchPlantDetails } from '@/services/plantService';
+import { searchPlants } from '@/services/plantService';
 
 export default function AddPlantForm({ onClose }: { onClose: () => void }) {
     const { addPlant, currentGarden, rooms, addRoom } = useGarden();
     const [step, setStep] = useState<'viewfinder' | 'analyzing' | 'confirm' | 'manual'>('viewfinder');
     const [previewUrl, setPreviewUrl] = useState<string>('');
-    const [identifiedPlant, setIdentifiedPlant] = useState<PlantTemplate | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Manual Form State
     const [formData, setFormData] = useState<{
         name: string;
         species: string;
         location: string;
         waterFrequencyDays: number;
         imageUrl: string;
-        perenualId?: number;
         room: string;
     }>({
         name: '',
@@ -35,30 +31,22 @@ export default function AddPlantForm({ onClose }: { onClose: () => void }) {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // 1. Show Preview & Analyzing State
         const objectUrl = URL.createObjectURL(file);
         setPreviewUrl(objectUrl);
         setStep('analyzing');
 
         try {
-            // 2. Simulate AI Analysis
             const result = await identifyPlant(file);
-            setIdentifiedPlant(result);
-
-            // Pre-fill form data for confirmation
             setFormData({
                 name: result.common_name,
                 species: result.scientific_name[0] || '',
-                location: 'Living Room', // Default
+                location: 'Living Room',
                 waterFrequencyDays: result.water_frequency_days,
                 imageUrl: result.default_image || objectUrl,
-                room: formData.room // Keep existing selection
+                room: formData.room
             });
-
             setStep('confirm');
         } catch (error) {
-            console.error("Scanning failed", error);
-            alert("Could not identify. Please try manual add.");
             setStep('manual');
         }
     };
@@ -75,266 +63,180 @@ export default function AddPlantForm({ onClose }: { onClose: () => void }) {
         onClose();
     };
 
-    // Viewfinder Screen
     if (step === 'viewfinder') {
         return (
-            <div style={{
+            <div className="animate-fade-in" style={{
                 position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                backgroundColor: 'black', zIndex: 2000,
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+                backgroundColor: 'rgba(0,0,0,0.9)', zIndex: 2000,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                padding: '2rem'
             }}>
-                <button
-                    onClick={onClose}
-                    style={{ position: 'absolute', top: '2rem', right: '2rem', color: 'white', fontSize: '2rem' }}
-                >✕</button>
+                <button onClick={onClose} style={{ position: 'absolute', top: '2rem', right: '2rem', color: 'white', fontSize: '1.5rem', background: 'none', border: 'none' }}>✕</button>
 
-                <div style={{ textAlign: 'center', color: 'white', marginBottom: '4rem' }}>
-                    <h2 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Scan your Plant</h2>
-                    <p style={{ opacity: 0.8 }}>Point your camera at the leaves</p>
+                <div style={{ textAlign: 'center', color: 'white', marginBottom: '3rem' }}>
+                    <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '0.5rem' }}>New Plant Friend!</h2>
+                    <p style={{ opacity: 0.7 }}>Take a photo to identify instantly ✨</p>
                 </div>
 
-                {/* Camera Trigger */}
                 <div
                     onClick={() => fileInputRef.current?.click()}
                     style={{
-                        width: '80px', height: '80px',
+                        width: '120px', height: '120px',
                         borderRadius: '50%',
-                        border: '4px solid white',
-                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        border: '6px solid white',
+                        backgroundColor: 'rgba(255,255,255,0.1)',
                         cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: '0 0 30px rgba(255,255,255,0.2)'
                     }}
                 >
-                    <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'white' }} />
+                    <div style={{ width: '90px', height: '90px', borderRadius: '50%', backgroundColor: 'white' }} />
                 </div>
 
-                <input
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    style={{ display: 'none' }}
-                />
+                <input type="file" accept="image/*" capture="environment" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} />
 
-                <button
-                    onClick={() => setStep('manual')}
-                    style={{ marginTop: '3rem', color: 'white', textDecoration: 'underline' }}
-                >
+                <button onClick={() => setStep('manual')} style={{ marginTop: '3rem', color: 'white', opacity: 0.6, fontSize: '0.9rem', background: 'none', border: 'none', textDecoration: 'underline' }}>
                     Or add manually
                 </button>
             </div>
         );
     }
 
-    // Analyzing Screen (Cute Animation)
     if (step === 'analyzing') {
         return (
             <div style={{
                 position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                backgroundColor: '#FDFBF7', zIndex: 2000,
+                backgroundColor: 'white', zIndex: 2000,
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
             }}>
-                <div style={{ fontSize: '5rem', marginBottom: '2rem' }} className="animate-pulse">🌱</div>
-                <h2 style={{ fontSize: '1.5rem', color: 'var(--color-text)' }}>Analyzing leaf patterns...</h2>
-                <div style={{
-                    width: '200px', height: '200px',
-                    marginTop: '2rem', borderRadius: '20px',
-                    backgroundImage: `url(${previewUrl})`, backgroundSize: 'cover', backgroundPosition: 'center',
-                    opacity: 0.5
-                }} />
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }} className="animate-bounce">🔍🌱</div>
+                <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Thinking...</h2>
+                <p style={{ color: 'var(--color-text-light)' }}>Identifying your green friend</p>
             </div>
         );
     }
 
-    // Confirmation Screen
     if (step === 'confirm') {
         return (
             <div style={{
                 position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
                 backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 2000,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem'
+                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem'
             }}>
-                <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '2rem', textAlign: 'center', backgroundColor: '#FDFBF7' }}>
+                <div className="glass-panel animate-slide-up" style={{ width: '100%', maxWidth: '400px', padding: '1.5rem', textAlign: 'center', backgroundColor: 'white', borderRadius: '32px' }}>
                     <div style={{
-                        width: '100%', height: '200px',
-                        borderRadius: '16px', marginBottom: '1.5rem',
+                        width: '100%', height: '250px',
+                        borderRadius: '24px', marginBottom: '1.5rem',
                         backgroundImage: `url(${formData.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center'
                     }} />
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.25rem' }}>Found it!</h2>
+                    <h1 style={{ fontSize: '2rem', color: 'var(--color-primary)', marginBottom: '1.5rem' }}>{formData.name}</h1>
 
-                    <h2 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>I think this is a...</h2>
-                    <h1 style={{ fontSize: '2.5rem', color: 'var(--color-primary)', marginBottom: '1rem', lineHeight: 1.1 }}>
-                        {formData.name}
-                    </h1>
-                    <p style={{ color: 'var(--color-text-light)', marginBottom: '2rem' }}>
-                        {formData.species}
-                    </p>
-
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                        <button
-                            onClick={() => setStep('manual')}
-                            className="btn"
-                            style={{ flex: 1, backgroundColor: '#EDF2F7', color: '#4A5568' }}
-                        >
-                            No, edit
-                        </button>
-                        <button
-                            onClick={handleConfirm}
-                            className="btn btn-primary"
-                            style={{ flex: 1 }}
-                        >
-                            Yes! Add it
-                        </button>
+                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                        <button onClick={() => setStep('manual')} className="btn" style={{ flex: 1, backgroundColor: '#F1F5F9' }}>Edit</button>
+                        <button onClick={handleConfirm} className="btn btn-primary" style={{ flex: 1 }}>Looks Good!</button>
                     </div>
                 </div>
             </div>
         );
     }
 
-    // Manual Fallback (Simplified for brevity, can be expanded)
     return (
         <div style={{
             position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
             backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000,
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
+            display: 'flex', alignItems: 'flex-end', justifyContent: 'center'
         }}>
-            <div className="glass-panel" style={{ width: '100%', maxWidth: '500px', padding: '2rem', backgroundColor: '#FDFBF7' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                    <h2>Add Manually</h2>
-                    <button onClick={onClose}>✕</button>
+            <div className="animate-slide-up" style={{
+                width: '100%',
+                maxWidth: '500px',
+                padding: '2rem',
+                backgroundColor: 'white',
+                borderRadius: '32px 32px 0 0',
+                maxHeight: '90vh',
+                overflowY: 'auto'
+            }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                    <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Add Manually</h2>
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '1.2rem' }}>✕</button>
                 </div>
 
-                {/* Quick Categories */}
-                <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '1rem', marginBottom: '1rem' }}>
-                    {PLANT_CATEGORIES.map(cat => (
-                        <button
-                            key={cat.id}
-                            onClick={() => setFormData({
-                                ...formData,
-                                name: cat.label.split('/')[0].trim(),
-                                species: cat.label,
-                                location: cat.defaultLocation,
-                                waterFrequencyDays: cat.defaultWaterFrequency,
-                                imageUrl: cat.defaultImage,
-                                room: formData.room
-                            })}
-                            style={{
-                                padding: '0.5rem 1rem', borderRadius: '20px',
-                                border: '1px solid #E2E8F0', whiteSpace: 'nowrap',
-                                display: 'flex', alignItems: 'center', gap: '0.5rem'
-                            }}
-                        >
-                            <span>{cat.icon}</span> {cat.label}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Search (Perenual) */}
-                <div style={{ marginBottom: '1.5rem', position: 'relative' }}>
-                    <input
-                        placeholder="Search Plants (e.g. 'Monstera')"
-                        onChange={async (e) => {
-                            if (e.target.value.length > 2) {
-                                const results = await searchPlants(e.target.value);
-                                // Simple dropdown for results
-                                const dropdown = document.getElementById('search-results');
-                                if (dropdown) {
-                                    dropdown.innerHTML = results.slice(0, 5).map(p => `
-                                        <div class="search-item" data-id="${p.id}" style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 0.5rem;">
-                                            <img src="${p.default_image || ''}" style="width: 30px; height: 30px; border-radius: 4px; object-fit: cover;" />
-                                            <div>
-                                                <div style="font-weight: bold;">${p.common_name}</div>
-                                                <div style="font-size: 0.8rem; color: #666;">${p.scientific_name[0]}</div>
-                                            </div>
-                                        </div>
-                                    `).join('');
-
-                                    // Add click listeners (hacky for now, but effective)
-                                    dropdown.querySelectorAll('.search-item').forEach((item, index) => {
-                                        item.addEventListener('click', () => {
-                                            const p = results[index];
-                                            setFormData({
-                                                name: p.common_name,
-                                                species: p.scientific_name[0] || '',
-                                                location: p.sunlight.join(', '),
-                                                waterFrequencyDays: p.water_frequency_days,
-                                                imageUrl: p.default_image || '',
-                                                perenualId: parseInt(p.id || '0'),
-                                                room: formData.room
-                                            });
-                                            // Clear results
-                                            dropdown.innerHTML = '';
-                                        });
-                                    });
-                                }
-                            }
-                        }}
-                        style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0' }}
-                    />
-                    <div id="search-results" style={{
-                        position: 'absolute', top: '100%', left: 0, right: 0,
-                        backgroundColor: 'white', borderRadius: '12px',
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.1)', zIndex: 10,
-                        maxHeight: '200px', overflowY: 'auto'
-                    }} />
-                </div>
-
-                {/* Room Selector */}
-                <div style={{ marginBottom: '1.5rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: '#666' }}>Room</label>
-                    <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {/* Simplified Room Selector */}
+                <div style={{ marginBottom: '2rem' }}>
+                    <p style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--color-text-light)' }}>Where will it live?</p>
+                    <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
                         {rooms.map(room => (
                             <button
                                 key={room}
-                                type="button"
                                 onClick={() => setFormData({ ...formData, room })}
                                 style={{
-                                    padding: '0.5rem 1rem',
+                                    padding: '0.6rem 1.2rem',
                                     borderRadius: '20px',
-                                    border: formData.room === room ? '2px solid var(--color-primary)' : '1px solid #E2E8F0',
-                                    backgroundColor: formData.room === room ? '#F0FFF4' : 'white',
-                                    color: formData.room === room ? 'var(--color-primary)' : '#4A5568',
-                                    fontSize: '0.9rem',
-                                    cursor: 'pointer'
+                                    border: 'none',
+                                    backgroundColor: formData.room === room ? 'var(--color-primary)' : '#F1F5F9',
+                                    color: formData.room === room ? 'white' : 'var(--color-text)',
+                                    fontWeight: 700,
+                                    fontSize: '0.85rem',
+                                    whiteSpace: 'nowrap'
                                 }}
                             >
                                 {room}
                             </button>
                         ))}
-                        <button
-                            type="button"
-                            onClick={() => {
-                                const newRoom = prompt("Enter new room name:");
-                                if (newRoom) {
-                                    addRoom(newRoom);
-                                    setFormData({ ...formData, room: newRoom });
-                                }
-                            }}
-                            style={{
-                                padding: '0.5rem 1rem',
-                                borderRadius: '20px',
-                                border: '1px dashed #CBD5E0',
-                                color: '#718096',
-                                fontSize: '0.9rem',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            + Add
-                        </button>
                     </div>
                 </div>
 
-                <form onSubmit={(e) => { e.preventDefault(); handleConfirm(); }}>
+                {/* Simplified Input */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                    <p style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--color-text-light)' }}>What's its name?</p>
                     <input
                         className="input"
-                        placeholder="Plant Name"
+                        placeholder="e.g. Monstera or 'Lily'"
                         value={formData.name}
                         onChange={e => setFormData({ ...formData, name: e.target.value })}
-                        style={{ width: '100%', padding: '1rem', marginBottom: '1rem', borderRadius: '12px', border: '1px solid #E2E8F0' }}
-                        required
+                        style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', border: '1px solid #E2E8F0', fontSize: '1rem' }}
                     />
-                    <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Add Plant</button>
-                </form>
+                </div>
+
+                {/* Quick Templates */}
+                <div style={{ marginBottom: '2rem' }}>
+                    <p style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--color-text-light)' }}>Quick Start</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                        {PLANT_CATEGORIES.slice(0, 4).map(cat => (
+                            <button
+                                key={cat.id}
+                                onClick={() => setFormData({
+                                    ...formData,
+                                    name: cat.label.split('/')[0].trim(),
+                                    species: cat.label,
+                                    waterFrequencyDays: cat.defaultWaterFrequency,
+                                    imageUrl: cat.defaultImage
+                                })}
+                                style={{
+                                    padding: '1rem',
+                                    borderRadius: '16px',
+                                    border: '1px solid #F1F5F9',
+                                    backgroundColor: 'white',
+                                    textAlign: 'left',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem'
+                                }}
+                            >
+                                <span style={{ fontSize: '1.5rem' }}>{cat.icon}</span>
+                                <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{cat.label.split('/')[0]}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <button
+                    onClick={handleConfirm}
+                    className="btn btn-primary"
+                    style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', fontSize: '1.1rem', fontWeight: 800 }}
+                >
+                    Add to Garden ✨
+                </button>
             </div>
         </div>
     );

@@ -10,13 +10,9 @@ export interface AIChatMessage {
 
 export class AIService {
     static async getGardeningAdvice(query: string, plants: Plant[], weather: WeatherData | null): Promise<string> {
-        // In a real app, this would call an LLM API (OpenAI, Claude, etc.)
-        // For this "free AI assistance", we'll use a sophisticated rule-based engine 
-        // that feels like an AI by using the user's specific garden context.
-
         const queryLower = query.toLowerCase();
-        const plantNames = plants.map(p => p.name).join(', ');
 
+        // Expert logic for Irish Climate
         if (queryLower.includes('water') || queryLower.includes('thirsty')) {
             const thirsty = plants.filter(p => {
                 const lastWatered = new Date(p.lastWateredDate);
@@ -26,46 +22,43 @@ export class AIService {
             });
 
             if (thirsty.length > 0) {
-                return `Based on your garden data, ${thirsty.length} of your plants are thirsty: ${thirsty.map(p => p.name).join(', ')}. ${weather?.isRaining ? "However, it's raining in Dublin right now, so you can skip the outdoor ones!" : "I recommend watering them this evening."}`;
+                const outdoorThirsty = thirsty.filter(p => p.type === 'outdoor');
+                if (weather?.rainSum24h && weather.rainSum24h > 2 && outdoorThirsty.length > 0) {
+                    return `Good news! It rained ${weather.rainSum24h}mm in Dublin recently. Nature has already watered your ${outdoorThirsty.map(p => p.name).join(', ')}. You only need to check your indoor plants today! ✨`;
+                }
+                return `I've analyzed your garden. ${thirsty.length} plants need attention. ${weather?.isRaining ? "It's raining now, so hold off on the outdoor ones!" : "The soil is likely dry—time for a drink."}`;
             }
-            return "All your plants seem well-hydrated for now! I'll let you know if that changes based on the weather forecast.";
+            return "Your garden is perfectly hydrated! The Irish mist is doing its job. ( ^_^) ";
         }
 
-        if (queryLower.includes('weather') || queryLower.includes('forecast') || queryLower.includes('ireland')) {
-            if (!weather) return "I'm still fetching the latest Irish weather data. One moment!";
-            let advice = `Currently in Ireland, it's ${Math.round(weather.temperature)}°C and ${weather.isRaining ? 'raining' : 'clear'}. `;
-            if (weather.temperature < 5) advice += "It's quite cold! Make sure your sensitive outdoor plants are covered or moved inside.";
-            else if (weather.temperature > 20) advice += "It's a warm day for Ireland! Your pots might dry out faster than usual.";
-            return advice;
+        if (queryLower.includes('sick') || queryLower.includes('yellow') || queryLower.includes('brown')) {
+            return "Brown tips usually mean low humidity (common in Irish heated homes!), while yellow leaves often mean overwatering. Which plant is showing these signs? I can check its specific care history.";
         }
 
-        if (queryLower.includes('diagnostic') || queryLower.includes('sick') || queryLower.includes('yellow')) {
-            return "I can help with that! Please use the Diagnostic Wizard in the 'Explore' tab for a step-by-step analysis, or tell me more about the symptoms (e.g., are the leaves drooping or spotted?).";
-        }
-
-        // Default "AI" response that uses context
-        return `I'm your Garden AI. I see you have ${plants.length} plants including ${plants.slice(0, 2).map(p => p.name).join(' and ')}. How can I help you with your ${weather?.isRaining ? 'rainy' : 'sunny'} day gardening today?`;
+        return `I'm your Garden AI. I'm monitoring your ${plants.length} plants and the current ${weather?.temperature}°C Dublin weather. How can I help you stay on top of your garden today?`;
     }
 
-    static generateDailyPlan(plants: Plant[], weather: WeatherData | null, alerts: ProcessedAlert[]): { id: string, task: string, priority: 'high' | 'medium' | 'low', completed: boolean }[] {
-        const plan: { id: string, task: string, priority: 'high' | 'medium' | 'low', completed: boolean }[] = [];
+    static generateDailyPlan(plants: Plant[], weather: WeatherData | null, alerts: ProcessedAlert[]): { id: string, task: string, priority: 'high' | 'medium' | 'low', completed: boolean, autoCompleted?: boolean }[] {
+        const plan: { id: string, task: string, priority: 'high' | 'medium' | 'low', completed: boolean, autoCompleted?: boolean }[] = [];
 
-        // 1. Watering Tasks
-        const thirsty = plants.filter(p => {
+        // 1. Smart Rain-Check Logic
+        const isNatureWatering = (weather?.rainSum24h && weather.rainSum24h > 2) || weather?.isRaining;
+
+        plants.forEach(p => {
             const lastWatered = new Date(p.lastWateredDate);
             const nextWater = new Date(lastWatered);
             nextWater.setDate(lastWatered.getDate() + p.waterFrequencyDays);
-            return nextWater <= new Date();
-        });
 
-        thirsty.forEach(p => {
-            const isOutdoorRainy = p.type === 'outdoor' && weather?.isRaining;
-            plan.push({
-                id: `water-${p.id}`,
-                task: isOutdoorRainy ? `Check ${p.name} (Nature is watering it! 🌧️)` : `Water ${p.name}`,
-                priority: isOutdoorRainy ? 'low' : 'high',
-                completed: false
-            });
+            if (nextWater <= new Date()) {
+                const shouldAutoValue = p.type === 'outdoor' && isNatureWatering;
+                plan.push({
+                    id: `water-${p.id}`,
+                    task: shouldAutoValue ? `Nature watered ${p.name} 🌧️` : `Water ${p.name}`,
+                    priority: shouldAutoValue ? 'low' : 'high',
+                    completed: !!shouldAutoValue,
+                    autoCompleted: !!shouldAutoValue
+                });
+            }
         });
 
         // 2. Weather Alert Tasks
@@ -80,11 +73,15 @@ export class AIService {
             });
         });
 
-        // 3. General Maintenance
-        if (weather && weather.temperature > 25) {
-            plan.push({ id: 'mist', task: 'Mist indoor tropical plants (High heat)', priority: 'medium', completed: false });
+        // 3. Seasonal Maintenance (Simplified)
+        if (weather && weather.temperature < 5) {
+            plan.push({ id: 'frost-check', task: 'Check for ground frost', priority: 'high', completed: false });
         }
 
-        return plan;
+        return plan.sort((a, b) => {
+            if (a.priority === 'high' && b.priority !== 'high') return -1;
+            if (a.priority !== 'high' && b.priority === 'high') return 1;
+            return 0;
+        });
     }
 }
