@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Plant, JournalEntry } from '@/types/plant';
 import { useGarden } from '@/context/GardenContext';
 import ShareCardModal from './ShareCardModal';
+import confetti from 'canvas-confetti';
 
 interface PlantDetailViewProps {
     plant: Plant;
@@ -11,168 +12,237 @@ interface PlantDetailViewProps {
 }
 
 export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps) {
-    const { awardXP, addJournalEntry, weather } = useGarden();
-    const [note, setNote] = useState('');
+    const { awardXP, addJournalEntry, updatePlant, calculateWateringStatus } = useGarden();
     const [showShare, setShowShare] = useState(false);
+    const [isLogging, setIsLogging] = useState(false);
+    const [note, setNote] = useState('');
 
-    const handleAddEntry = (e: React.FormEvent) => {
+    const status = calculateWateringStatus(plant);
+    const isThirsty = status.status !== 'ok';
+
+    // Lifecycle Logic
+    const getGrowthStage = (level: number) => {
+        if (level >= 20) return { name: 'Ancient Spirit', icon: '✨🌳✨', color: '#805AD5' };
+        if (level >= 15) return { name: 'Mature Tree', icon: '🌳', color: '#2F855A' };
+        if (level >= 10) return { name: 'Bushy Friend', icon: '🪴', color: '#38A169' };
+        if (level >= 5) return { name: 'Sprout', icon: '🌿', color: '#48BB78' };
+        return { name: 'Seedling', icon: '🌱', color: '#68D391' };
+    };
+
+    const stage = getGrowthStage(plant.level);
+    const progressToNextStage = (plant.level % 5) * 20 + (plant.xp / (plant.level * 100) * 20);
+
+    const handleWater = () => {
+        const updated = { ...plant, lastWateredDate: new Date().toISOString() };
+        updatePlant(updated);
+        awardXP(plant.id, 20);
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.8 },
+            colors: ['#3182CE', '#63B3ED', '#BEE3F8']
+        });
+    };
+
+    const handleLog = (e: React.FormEvent) => {
         e.preventDefault();
         if (!note.trim()) return;
-
-        const entry: JournalEntry = {
+        addJournalEntry(plant.id, {
             id: crypto.randomUUID(),
             date: new Date().toISOString(),
             note: note,
             type: 'note'
-        };
-
-        addJournalEntry(plant.id, entry);
+        });
         awardXP(plant.id, 10);
         setNote('');
+        setIsLogging(false);
+        confetti({
+            particleCount: 50,
+            spread: 50,
+            origin: { y: 0.8 },
+            colors: ['#48BB78', '#F6E05E']
+        });
     };
 
     return (
         <div style={{
             position: 'fixed',
             top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: 'white',
+            backgroundColor: isThirsty ? '#FFF5F5' : '#F0FFF4',
             zIndex: 2000,
             display: 'flex',
             flexDirection: 'column',
-            overflowY: 'auto',
-            animation: 'slide-up 0.3s ease-out'
+            animation: 'slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+            fontFamily: 'system-ui, -apple-system, sans-serif'
         }}>
-            {/* Header / Hero */}
+            {/* Close Button */}
+            <button
+                onClick={onClose}
+                style={{
+                    position: 'absolute', top: '1.5rem', right: '1.5rem',
+                    background: 'rgba(0,0,0,0.05)', border: 'none', borderRadius: '50%',
+                    width: '44px', height: '44px', fontSize: '1.2rem', zIndex: 10
+                }}
+            >✕</button>
+
+            {/* Hero Section: The Plant's Soul */}
             <section style={{
-                height: '40vh',
-                background: 'linear-gradient(to bottom, #F0FFF4, #FFFFFF)',
-                position: 'relative',
+                flex: 1,
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '2rem'
+                padding: '2rem',
+                textAlign: 'center'
             }}>
-                <button
-                    onClick={onClose}
-                    style={{
-                        position: 'absolute',
-                        top: '1.5rem',
-                        left: '1.5rem',
-                        background: 'white',
-                        border: 'none',
-                        borderRadius: '50%',
-                        width: '40px',
-                        height: '40px',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                        fontSize: '1.2rem',
-                        cursor: 'pointer',
-                        zIndex: 10
-                    }}
-                >
-                    ✕
-                </button>
+                {/* Stage Badge */}
+                <div style={{
+                    backgroundColor: stage.color,
+                    color: 'white',
+                    padding: '6px 16px',
+                    borderRadius: '20px',
+                    fontSize: '0.8rem',
+                    fontWeight: 900,
+                    textTransform: 'uppercase',
+                    marginBottom: '1.5rem',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                }}>
+                    {stage.name}
+                </div>
 
-                <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '6rem', marginBottom: '1rem' }}>
-                        {plant.level >= 5 ? `👑🌱✨` : '🌱'}
+                {/* Big Avatar */}
+                <div style={{
+                    fontSize: '8rem',
+                    marginBottom: '1rem',
+                    filter: isThirsty ? 'grayscale(0.5) contrast(0.8)' : 'none',
+                    transition: 'all 0.5s ease',
+                    transform: isThirsty ? 'scale(0.9)' : 'scale(1.1)'
+                }}>
+                    {stage.icon}
+                </div>
+
+                <h1 style={{ fontSize: '2.5rem', fontWeight: 900, margin: '0 0 0.5rem 0', color: '#2D3748' }}>
+                    {plant.nickname || plant.name}
+                </h1>
+                <p style={{ fontSize: '1.1rem', fontWeight: 600, color: '#718096', margin: 0 }}>
+                    Level {plant.level} • {plant.rarity || 'Common'}
+                </p>
+
+                {/* Growth Path Visualization */}
+                <div style={{ width: '80%', maxWidth: '300px', marginTop: '2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', fontWeight: 800, color: '#A0AEC0', marginBottom: '0.5rem' }}>
+                        <span>{stage.name}</span>
+                        <span>NEXT STAGE</span>
                     </div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 900, margin: 0 }}>{plant.nickname || plant.name}</h1>
-                    <p style={{ fontSize: '1rem', color: 'var(--color-text-light)', fontWeight: 700 }}>{plant.species}</p>
+                    <div style={{ height: '12px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '6px', overflow: 'hidden' }}>
+                        <div style={{
+                            height: '100%',
+                            width: `${progressToNextStage}%`,
+                            backgroundColor: stage.color,
+                            transition: 'width 1s ease-out'
+                        }} />
+                    </div>
+                </div>
+            </section>
 
-                    {plant.rarity && (
-                        <span style={{
-                            backgroundColor: plant.rarity === 'Legendary' ? '#FFD700' : plant.rarity === 'Rare' ? '#5856D6' : '#E2E8F0',
-                            color: plant.rarity === 'Common' ? '#64748B' : 'white',
-                            padding: '4px 12px',
+            {/* Action Zone: Big Buttons */}
+            <section style={{
+                padding: '2rem',
+                backgroundColor: 'white',
+                borderTopLeftRadius: '40px',
+                borderTopRightRadius: '40px',
+                boxShadow: '0 -20px 40px rgba(0,0,0,0.05)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem'
+            }}>
+                {isLogging ? (
+                    <form onSubmit={handleLog} style={{ display: 'flex', gap: '0.5rem', animation: 'fade-in 0.3s' }}>
+                        <input
+                            autoFocus
+                            type="text"
+                            value={note}
+                            onChange={(e) => setNote(e.target.value)}
+                            placeholder="What happened today?"
+                            style={{ flex: 1, padding: '1.2rem', borderRadius: '20px', border: '2px solid #E2E8F0', fontSize: '1rem', outline: 'none' }}
+                        />
+                        <button type="submit" style={{ backgroundColor: '#48BB78', color: 'white', padding: '0 1.5rem', borderRadius: '20px', border: 'none', fontWeight: 800 }}>
+                            Save
+                        </button>
+                    </form>
+                ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <button
+                            onClick={handleWater}
+                            style={{
+                                backgroundColor: isThirsty ? '#3182CE' : '#E2E8F0',
+                                color: isThirsty ? 'white' : '#718096',
+                                padding: '1.5rem',
+                                borderRadius: '24px',
+                                border: 'none',
+                                fontWeight: 900,
+                                fontSize: '1.1rem',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                transition: 'all 0.2s ease'
+                            }}
+                        >
+                            <span style={{ fontSize: '1.5rem' }}>💧</span>
+                            {isThirsty ? 'WATER NOW' : 'HYDRATED'}
+                        </button>
+                        <button
+                            onClick={() => setIsLogging(true)}
+                            style={{
+                                backgroundColor: '#48BB78',
+                                color: 'white',
+                                padding: '1.5rem',
+                                borderRadius: '24px',
+                                border: 'none',
+                                fontWeight: 900,
+                                fontSize: '1.1rem',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                gap: '0.5rem'
+                            }}
+                        >
+                            <span style={{ fontSize: '1.5rem' }}>📝</span>
+                            LOG MEMORY
+                        </button>
+                    </div>
+                )}
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <button
+                        onClick={() => setShowShare(true)}
+                        style={{
+                            backgroundColor: '#F7FAFC',
+                            color: '#4A5568',
+                            padding: '1rem',
                             borderRadius: '20px',
-                            fontSize: '0.75rem',
-                            fontWeight: 900,
-                            textTransform: 'uppercase',
-                            marginTop: '0.5rem',
-                            display: 'inline-block'
-                        }}>
-                            {plant.rarity}
-                        </span>
-                    )}
-                </div>
-            </section>
-
-            {/* Stats Grid */}
-            <section style={{ padding: '0 1.5rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '-2rem' }}>
-                <div className="glass-panel" style={{ padding: '1rem', textAlign: 'center', borderRadius: '24px', backgroundColor: 'white', boxShadow: '0 8px 20px rgba(0,0,0,0.05)' }}>
-                    <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-light)', marginBottom: '0.25rem' }}>LEVEL</div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--color-primary)' }}>{plant.level}</div>
-                </div>
-                <div className="glass-panel" style={{ padding: '1rem', textAlign: 'center', borderRadius: '24px', backgroundColor: 'white', boxShadow: '0 8px 20px rgba(0,0,0,0.05)' }}>
-                    <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-light)', marginBottom: '0.25rem' }}>XP</div>
-                    <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#5856D6' }}>{plant.xp}</div>
-                </div>
-                <button
-                    onClick={() => setShowShare(true)}
-                    className="glass-panel"
-                    style={{ padding: '1rem', textAlign: 'center', borderRadius: '24px', backgroundColor: 'white', boxShadow: '0 8px 20px rgba(0,0,0,0.05)', border: 'none', cursor: 'pointer' }}
-                >
-                    <div style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-text-light)', marginBottom: '0.25rem' }}>SHARE</div>
-                    <div style={{ fontSize: '1.2rem' }}>🔗</div>
-                </button>
-            </section>
-
-            {/* Growth Timeline */}
-            <section style={{ padding: '2rem 1.5rem' }}>
-                <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1.5rem' }}>Growth Timeline</h2>
-
-                {/* Add Entry Form */}
-                <form onSubmit={handleAddEntry} style={{ marginBottom: '2rem', display: 'flex', gap: '0.75rem' }}>
-                    <input
-                        type="text"
-                        value={note}
-                        onChange={(e) => setNote(e.target.value)}
-                        placeholder="Log a memory... (e.g. 'New leaf today!')"
-                        style={{ flex: 1, padding: '1rem', borderRadius: '16px', border: '1px solid #E2E8F0', fontSize: '0.9rem', outline: 'none' }}
-                    />
-                    <button type="submit" style={{ backgroundColor: 'var(--color-primary)', color: 'white', padding: '0 1.5rem', borderRadius: '16px', border: 'none', fontWeight: 800 }}>
-                        Log
+                            border: '1px solid #E2E8F0',
+                            fontWeight: 700,
+                            fontSize: '0.9rem'
+                        }}
+                    >
+                        🔗 Share Passport
                     </button>
-                </form>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', position: 'relative' }}>
-                    <div style={{ position: 'absolute', left: '20px', top: 0, bottom: 0, width: '2px', backgroundColor: '#F1F5F9' }} />
-
-                    {/* Birth Entry */}
-                    <div style={{ display: 'flex', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--color-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>✨</div>
-                        <div>
-                            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--color-text-light)' }}>
-                                {new Date(plant.dateAdded).toLocaleDateString()}
-                            </div>
-                            <div style={{ fontWeight: 700 }}>Joined the Garden</div>
-                        </div>
-                    </div>
-
-                    {/* Journal Entries */}
-                    {plant.journal?.slice().reverse().map((entry, idx) => (
-                        <div key={idx} style={{ display: 'flex', gap: '1.5rem', position: 'relative', zIndex: 2 }}>
-                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#F1F5F9', color: '#64748B', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>📝</div>
-                            <div>
-                                <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--color-text-light)' }}>
-                                    {new Date(entry.date).toLocaleDateString()}
-                                </div>
-                                <div style={{ fontWeight: 600, color: '#2D3748' }}>{entry.note}</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* Irish Care Tip */}
-            <section style={{ padding: '0 1.5rem 3rem' }}>
-                <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '24px', background: 'linear-gradient(135deg, #5856D6 0%, #34C759 100%)', color: 'white' }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 800, margin: '0 0 0.5rem 0' }}>🇮🇪 Irish Care Tip</h3>
-                    <p style={{ fontSize: '0.9rem', opacity: 0.9, margin: 0, lineHeight: '1.5' }}>
-                        {weather?.temperature && weather.temperature < 10
-                            ? "It's a cold day in Ireland! Keep this friend away from drafty windows and reduce watering until it warms up."
-                            : "The Irish light is perfect today. Ensure this plant gets its daily dose of bright, indirect light."}
-                    </p>
+                    <button
+                        onClick={onClose}
+                        style={{
+                            backgroundColor: '#F7FAFC',
+                            color: '#4A5568',
+                            padding: '1rem',
+                            borderRadius: '20px',
+                            border: '1px solid #E2E8F0',
+                            fontWeight: 700,
+                            fontSize: '0.9rem'
+                        }}
+                    >
+                        👋 Say Goodbye
+                    </button>
                 </div>
             </section>
 
