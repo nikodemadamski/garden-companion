@@ -64,6 +64,11 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     const [wateringStreak, setWateringStreak] = useState(0);
     const [activeTab, setActiveTab] = useState<'dashboard' | 'plants' | 'explore' | 'profile' | 'gallery'>('dashboard');
     const [seeds, setSeeds] = useState<Seed[]>([]);
+    const [productiveData, setProductiveData] = useState<Record<string, ProductivePlantData>>(PRODUCTIVE_DATABASE);
+
+    const refreshProductiveData = () => {
+        setProductiveData({ ...PRODUCTIVE_DATABASE });
+    };
 
     // Phase 15: Seed Vault Persistence
     useEffect(() => {
@@ -523,12 +528,6 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     if (!session) {
         return <Login />;
     }
-
-    const [productiveData, setProductiveData] = useState<Record<string, ProductivePlantData>>(PRODUCTIVE_DATABASE);
-
-    const refreshProductiveData = () => {
-        setProductiveData({ ...PRODUCTIVE_DATABASE });
-    };
 
     return (
         <GardenContext.Provider
