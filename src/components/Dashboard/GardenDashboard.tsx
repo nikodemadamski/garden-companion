@@ -84,6 +84,16 @@ export default function GardenDashboard() {
         );
     }
 
+    const totalHarvest = plants.reduce((acc, p) => {
+        p.journal?.forEach(entry => {
+            if (entry.type === 'harvest' && entry.harvestAmount) {
+                const unit = entry.harvestUnit || 'units';
+                acc[unit] = (acc[unit] || 0) + entry.harvestAmount;
+            }
+        });
+        return acc;
+    }, {} as Record<string, number>);
+
     return (
         <div className="animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '2rem' }}>
 
@@ -138,6 +148,23 @@ export default function GardenDashboard() {
                     <span style={{ fontWeight: 900, fontSize: '0.9rem', textTransform: 'uppercase' }}>{rank.title}</span>
                 </div>
             </header>
+
+            {/* Bounty Dashboard (Total Harvest) */}
+            {Object.keys(totalHarvest).length > 0 && (
+                <section>
+                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem' }}>Total Bounty 🧺</h2>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '1rem' }}>
+                        {Object.entries(totalHarvest).map(([unit, amount]) => (
+                            <div key={unit} className="glass-panel" style={{ padding: '1rem', borderRadius: '20px', textAlign: 'center', backgroundColor: '#F0FFF4', border: '1px solid #C6F6D5' }}>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#2F855A' }}>{amount}</div>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#38A169', textTransform: 'uppercase' }}>{unit}</div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* Harvest Forecast Section */}
 
             {/* Harvest Forecast Section */}
             {productivePlants.length > 0 && (

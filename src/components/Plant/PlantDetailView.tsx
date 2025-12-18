@@ -16,7 +16,10 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
     const { awardXP, addJournalEntry, updatePlant, calculateWateringStatus, getCompanionStatus } = useGarden();
     const [showShare, setShowShare] = useState(false);
     const [isLogging, setIsLogging] = useState(false);
+    const [isHarvesting, setIsHarvesting] = useState(false);
     const [note, setNote] = useState('');
+    const [harvestAmount, setHarvestAmount] = useState('');
+    const [harvestUnit, setHarvestUnit] = useState('g');
 
     const status = calculateWateringStatus(plant);
     const isThirsty = status.status !== 'ok';
@@ -89,6 +92,31 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
             spread: 50,
             origin: { y: 0.8 },
             colors: ['#48BB78', '#F6E05E']
+        });
+    };
+
+    const handleHarvest = (e: React.FormEvent) => {
+        e.preventDefault();
+        const amount = parseFloat(harvestAmount);
+        if (isNaN(amount) || amount <= 0) return;
+
+        addJournalEntry(plant.id, {
+            id: Math.random().toString(36).substring(2, 11),
+            date: new Date().toISOString(),
+            note: `🧺 Harvested ${amount}${harvestUnit}!`,
+            type: 'harvest',
+            harvestAmount: amount,
+            harvestUnit: harvestUnit
+        });
+
+        awardXP(plant.id, 100);
+        setHarvestAmount('');
+        setIsHarvesting(false);
+        confetti({
+            particleCount: 200,
+            spread: 100,
+            origin: { y: 0.6 },
+            colors: ['#F6E05E', '#48BB78', '#FFF']
         });
     };
 
@@ -334,47 +362,95 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                             Save
                         </button>
                     </form>
+                ) : isHarvesting ? (
+                    <form onSubmit={handleHarvest} style={{ display: 'flex', gap: '0.5rem', animation: 'fade-in 0.3s' }}>
+                        <input
+                            autoFocus
+                            type="number"
+                            value={harvestAmount}
+                            onChange={(e) => setHarvestAmount(e.target.value)}
+                            placeholder="Amount"
+                            style={{ flex: 1, padding: '1.2rem', borderRadius: '20px', border: '2px solid #E2E8F0', fontSize: '1rem', outline: 'none' }}
+                        />
+                        <select
+                            value={harvestUnit}
+                            onChange={(e) => setHarvestUnit(e.target.value)}
+                            style={{ padding: '1rem', borderRadius: '20px', border: '2px solid #E2E8F0', fontSize: '1rem', outline: 'none', backgroundColor: 'white' }}
+                        >
+                            <option value="g">g</option>
+                            <option value="kg">kg</option>
+                            <option value="units">units</option>
+                        </select>
+                        <button type="submit" style={{ backgroundColor: '#F6E05E', color: '#744210', padding: '0 1.5rem', borderRadius: '20px', border: 'none', fontWeight: 800 }}>
+                            Harvest
+                        </button>
+                    </form>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                        <button
-                            onClick={handleWater}
-                            style={{
-                                backgroundColor: isThirsty ? '#3182CE' : '#E2E8F0',
-                                color: isThirsty ? 'white' : '#718096',
-                                padding: '1.5rem',
-                                borderRadius: '24px',
-                                border: 'none',
-                                fontWeight: 900,
-                                fontSize: '1.1rem',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                gap: '0.5rem',
-                                transition: 'all 0.2s ease'
-                            }}
-                        >
-                            <span style={{ fontSize: '1.5rem' }}>💧</span>
-                            {isThirsty ? 'WATER NOW' : 'HYDRATED'}
-                        </button>
-                        <button
-                            onClick={() => setIsLogging(true)}
-                            style={{
-                                backgroundColor: '#48BB78',
-                                color: 'white',
-                                padding: '1.5rem',
-                                borderRadius: '24px',
-                                border: 'none',
-                                fontWeight: 900,
-                                fontSize: '1.1rem',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                gap: '0.5rem'
-                            }}
-                        >
-                            <span style={{ fontSize: '1.5rem' }}>📝</span>
-                            LOG MEMORY
-                        </button>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                            <button
+                                onClick={handleWater}
+                                style={{
+                                    backgroundColor: isThirsty ? '#3182CE' : '#E2E8F0',
+                                    color: isThirsty ? 'white' : '#718096',
+                                    padding: '1.5rem',
+                                    borderRadius: '24px',
+                                    border: 'none',
+                                    fontWeight: 900,
+                                    fontSize: '1.1rem',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    transition: 'all 0.2s ease'
+                                }}
+                            >
+                                <span style={{ fontSize: '1.5rem' }}>💧</span>
+                                {isThirsty ? 'WATER NOW' : 'HYDRATED'}
+                            </button>
+                            <button
+                                onClick={() => setIsLogging(true)}
+                                style={{
+                                    backgroundColor: '#48BB78',
+                                    color: 'white',
+                                    padding: '1.5rem',
+                                    borderRadius: '24px',
+                                    border: 'none',
+                                    fontWeight: 900,
+                                    fontSize: '1.1rem',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    gap: '0.5rem'
+                                }}
+                            >
+                                <span style={{ fontSize: '1.5rem' }}>📝</span>
+                                LOG MEMORY
+                            </button>
+                        </div>
+
+                        {ProductiveService.getPlantData(plant.species) && (
+                            <button
+                                onClick={() => setIsHarvesting(true)}
+                                style={{
+                                    backgroundColor: '#F6E05E',
+                                    color: '#744210',
+                                    padding: '1.5rem',
+                                    borderRadius: '24px',
+                                    border: 'none',
+                                    fontWeight: 900,
+                                    fontSize: '1.2rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '1rem',
+                                    boxShadow: '0 4px 15px rgba(246, 224, 94, 0.3)'
+                                }}
+                            >
+                                <span style={{ fontSize: '1.8rem' }}>🧺</span>
+                                LOG HARVEST
+                            </button>
+                        )}
                     </div>
                 )}
 

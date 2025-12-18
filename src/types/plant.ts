@@ -13,7 +13,9 @@ export interface JournalEntry {
     note: string;
     imageUrl?: string; // P6: Growth Tape
     heightCm?: number;
-    type?: 'note' | 'photo' | 'milestone';
+    type?: 'note' | 'photo' | 'milestone' | 'harvest';
+    harvestAmount?: number;
+    harvestUnit?: string; // e.g., 'g', 'kg', 'units'
 }
 
 // Enhanced plant interface with new fields for comprehensive garden companion
