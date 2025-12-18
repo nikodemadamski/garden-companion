@@ -1,133 +1,54 @@
 # Supabase Setup Guide
 
-## 1. Create Project
-1. Go to [database.new](https://database.new) and create a new project.
-2. Once created, go to **Project Settings > API**.
-3. Copy the **Project URL** and **anon public** key.
-4. Create a file named `.env.local` in your project root and add them:
+This project uses Supabase for its backend database and storage. Follow these steps to set up your environment.
+
+## 1. Create a Supabase Project
+1.  Go to [Supabase](https://supabase.com/) and sign in.
+2.  Click "New Project".
+3.  Choose your organization, name your project (e.g., "Garden Companion"), and set a database password.
+4.  Select a region close to you (e.g., EU West - Ireland).
+5.  Click "Create new project".
+
+## 2. Run Database Migrations
+1.  Once your project is ready, go to the **SQL Editor** (icon on the left sidebar).
+2.  Click "New query".
+3.  Copy the contents of `supabase/migrations/001_initial_schema.sql` from this project.
+4.  Paste it into the SQL Editor.
+5.  Click **Run** (bottom right).
+    *   *Note: This will create all the necessary tables and set up security policies.*
+
+## 3. Configure Storage
+1.  Go to **Storage** (icon on the left sidebar).
+2.  Click "New Bucket".
+3.  Name the bucket `plant-photos`.
+4.  Toggle "Public bucket" to **ON**.
+5.  Click "Save".
+6.  **Important**: You need to add a policy to allow users to upload images.
+    *   Go to the `plant-photos` bucket configuration (Configuration tab).
+    *   Under "Policies", click "New Policy".
+    *   Choose "For full customization".
+    *   Name: "Allow authenticated uploads".
+    *   Allowed operations: Select `INSERT`, `SELECT`, `UPDATE`, `DELETE`.
+    *   Target roles: `authenticated`.
+    *   Click "Review" and "Save".
+
+## 4. Connect Your App
+1.  Go to **Project Settings** (cog icon) -> **API**.
+2.  Copy the **Project URL** and **anon public key**.
+3.  Create a `.env.local` file in the root of your project (if it doesn't exist).
+4.  Add the following lines:
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 ```
 
-## 2. Run SQL Query
-Go to the **SQL Editor** in Supabase and run the following script to set up your database:
+## 5. Restart Development Server
+If your development server is running, restart it to load the new environment variables.
 
-```sql
--- Create a table for plants
-create table plants (
-  id uuid default gen_random_uuid() primary key,
-  user_id uuid references auth.users not null,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
-  
-  -- Plant Data
-  name text not null,
-  species text,
-  type text check (type in ('indoor', 'outdoor')),
-  location text,
-  water_frequency_days int,
-  last_watered_date text,
-  image_url text,
-  notes text,
-  date_added text,
-  perenual_id int,
-  room text,
-  snooze_until text,
-  status text,
-  nickname text,
-  gotcha_date text,
-  pot_type text,
-  
-  -- Journal (stored as JSON for flexibility)
-  journal jsonb default '[]'::jsonb
-);
-
--- Create a table for user settings (rooms, etc.)
-create table user_settings (
-  user_id uuid references auth.users primary key,
-  rooms text[] default array['Living Room', 'Bedroom', 'Kitchen', 'Office', 'Bathroom', 'Balcony'],
-  current_garden text default 'indoor'
-);
-
--- Enable Row Level Security (RLS)
-alter table plants enable row level security;
-alter table user_settings enable row level security;
-
--- Create policies to allow users to only see their own data
-create policy "Users can view their own plants" on plants
-  for select using (auth.uid() = user_id);
-
-create policy "Users can insert their own plants" on plants
-  for insert with check (auth.uid() = user_id);
-
-create policy "Users can update their own plants" on plants
-  for update using (auth.uid() = user_id);
-
-create policy "Users can delete their own plants" on plants
-  for delete using (auth.uid() = user_id);
-
-create policy "Users can view their own settings" on user_settings
-  for select using (auth.uid() = user_id);
-
-create policy "Users can insert their own settings" on user_settings
-  for insert with check (auth.uid() = user_id);
-
-create policy "Users can update their own settings" on user_settings
-  for update using (auth.uid() = user_id);
-```
-
-## 3. Restart Server
-Restart your development server to load the environment variables:
 ```bash
 npm run dev
 ```
 
-## 4. Update Schema for Streaks (Run this if you already set up the DB)
-
-Run this SQL query to add columns for tracking login and watering streaks:
-
-```sql
-alter table user_settings 
-add column if not exists last_login_date text,
-add column if not exists login_streak int default 0,
-add column if not exists last_watered_date text,
-add column if not exists watering_streak int default 0;
-```
-
-## 5. Enhanced Garden Companion Schema (New Features)
-
-To enable the comprehensive garden companion features, run the following migrations in order:
-
-### Option A: Run All Migrations at Once
-Copy and paste the contents of each migration file in the `migrations/` directory in this order:
-1. `migrations/001_enhanced_schema.sql` - Creates new tables for seasonal tasks, weather alerts, diagnostics, enhanced plant data, and photos
-2. `migrations/002_extend_plants_table.sql` - Extends existing plants table with enhanced fields
-3. `migrations/003_initial_seasonal_tasks.sql` - Populates seasonal tasks for Irish climate
-4. `migrations/004_initial_plant_database.sql` - Adds enhanced plant database with detailed information
-
-### Option B: Individual Migration Files
-Run each migration file separately in the SQL Editor:
-
-**Migration 001 - Enhanced Schema:**
-```sql
--- Copy content from migrations/001_enhanced_schema.sql
-```
-
-**Migration 002 - Extend Plants Table:**
-```sql
--- Copy content from migrations/002_extend_plants_table.sql
-```
-
-**Migration 003 - Initial Seasonal Tasks:**
-```sql
--- Copy content from migrations/003_initial_seasonal_tasks.sql
-```
-
-**Migration 004 - Initial Plant Database:**
-```sql
--- Copy content from migrations/004_initial_plant_database.sql
-```
-
-### Migration Tracking
-The migrations include a tracking system to prevent duplicate runs. Each migration will only be applied once, even if run multiple times.
+## Verification
+You can verify the setup by logging into the app and trying to add a plant or upload a photo. The data should now persist in your Supabase dashboard.
