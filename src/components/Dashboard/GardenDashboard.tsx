@@ -65,7 +65,7 @@ export default function GardenDashboard() {
         return '( >_< )';
     };
 
-    const isFrostRisk = weather?.temperature && weather.temperature <= 2;
+    const isFrostRisk = !!(weather?.temperature && weather.temperature <= 2);
 
     if (loading) {
         return (

@@ -69,7 +69,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                     gap: '0.2rem'
                 }}>
                     <span style={{ fontSize: '1.2rem' }}>
-                        {weather?.isRaining ? '🌧️' : weather?.temperature && weather.temperature > 20 ? '☀️' : '⛅'}
+                        {weather?.isRaining ? '🌧️' : (weather?.temperature && weather.temperature > 20) ? '☀️' : '⛅'}
                     </span>
                     <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>
                         {weather ? `${Math.round(weather.temperature)}°` : '--°'}

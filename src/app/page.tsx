@@ -10,7 +10,7 @@ import ExploreView from '@/components/Explore/ExploreView';
 import WeatherAlertBanner from '@/components/Weather/WeatherAlertBanner';
 
 export default function Home() {
-  const { activeTab } = useGarden();
+  const { activeTab, session, loginStreak, wateringStreak, signOut } = useGarden();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   return (
@@ -48,22 +48,22 @@ export default function Home() {
           </div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>Your Profile</h2>
           <p style={{ color: 'var(--color-text-light)', marginBottom: '2rem' }}>
-            {useGarden().session?.user.email}
+            {session?.user?.email}
           </p>
 
           <div className="glass-panel" style={{ padding: '1rem', borderRadius: '20px', marginBottom: '2rem', textAlign: 'left' }}>
             <div style={{ padding: '0.75rem', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between' }}>
               <span>Login Streak</span>
-              <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{useGarden().loginStreak} days 🔥</span>
+              <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{loginStreak} days 🔥</span>
             </div>
             <div style={{ padding: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
               <span>Watering Streak</span>
-              <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{useGarden().wateringStreak} days 💧</span>
+              <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{wateringStreak} days 💧</span>
             </div>
           </div>
 
           <button
-            onClick={() => useGarden().signOut()}
+            onClick={() => signOut()}
             className="btn"
             style={{
               backgroundColor: '#FEE2E2',

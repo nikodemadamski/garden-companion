@@ -348,15 +348,30 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         return Math.round(totalStatus / plants.length);
     };
 
-    const gardenRank = GardenEngine.getGardenRank(calculateHarmony());
+    const gardenRank = React.useMemo(() => {
+        try {
+            return GardenEngine.getGardenRank(calculateHarmony());
+        } catch (e) {
+            console.error("Error calculating garden rank:", e);
+            return GardenEngine.getGardenRank(0);
+        }
+    }, [plants]);
 
     const getPlantsByGarden = (type: GardenType) => {
         return plants.filter((p) => p.type === type);
     };
 
     const calculateWateringStatus = (plant: Plant, history?: HistoricalWeatherData[]): WateringStatus => {
+        if (!plant?.lastWateredDate) {
+            return { status: 'overdue', label: 'Never Watered', color: '#ef4444' };
+        }
+
         const lastWatered = new Date(plant.lastWateredDate);
-        let frequency = plant.waterFrequencyDays;
+        if (isNaN(lastWatered.getTime())) {
+            return { status: 'overdue', label: 'Invalid Date', color: '#ef4444' };
+        }
+
+        let frequency = plant.waterFrequencyDays || 7;
         let reason: 'rain' | 'heat' | 'cold' | undefined;
 
         // P7: Hospital Logic
@@ -367,14 +382,14 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         // Smart Logic for Outdoor Plants
         if (plant.type === 'outdoor' && history && history.length > 0) {
             // 1. Rain Check (Last 3 days)
-            const recentRain = history.slice(0, 3).reduce((sum, day) => sum + day.rainSum, 0);
+            const recentRain = history.slice(0, 3).reduce((sum, day) => sum + (day.rainSum || 0), 0);
             if (recentRain > 10) {
                 frequency += 3;
                 reason = 'rain';
             }
 
             // 2. Heat Check (Last 7 days avg max temp)
-            const avgTemp = history.reduce((sum, day) => sum + day.maxTemp, 0) / history.length;
+            const avgTemp = history.reduce((sum, day) => sum + (day.maxTemp || 0), 0) / history.length;
             if (avgTemp > 30) {
                 frequency = Math.max(1, frequency - 2);
                 reason = 'heat';
@@ -387,9 +402,11 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         // P4: Snooze Logic
         if (plant.snoozeUntil) {
             const snoozeDate = new Date(plant.snoozeUntil);
-            const now = new Date();
-            if (snoozeDate > now) {
-                return { status: 'ok', label: 'Snoozed 😴', color: '#718096', adjustmentReason: undefined };
+            if (!isNaN(snoozeDate.getTime())) {
+                const now = new Date();
+                if (snoozeDate > now) {
+                    return { status: 'ok', label: 'Snoozed 😴', color: '#718096', adjustmentReason: undefined };
+                }
             }
         }
 
