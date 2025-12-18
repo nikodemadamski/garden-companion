@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS public.plants (
     nickname TEXT,
     gotcha_date TIMESTAMP WITH TIME ZONE,
     pot_type TEXT,
+    xp INTEGER DEFAULT 0,
+    level INTEGER DEFAULT 1,
     journal JSONB DEFAULT '[]'::jsonb
 );
 

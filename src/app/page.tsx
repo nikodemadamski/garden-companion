@@ -6,7 +6,7 @@ import PlantList from '@/components/Plant/PlantList';
 import AddPlantForm from '@/components/Plant/AddPlantForm';
 import AppShell from '@/components/Layout/AppShell';
 import GardenDashboard from '@/components/Dashboard/GardenDashboard';
-import SeasonalDashboard from '@/components/Seasonal/SeasonalDashboard';
+import ExploreView from '@/components/Explore/ExploreView';
 import WeatherAlertBanner from '@/components/Weather/WeatherAlertBanner';
 
 export default function Home() {
@@ -28,7 +28,7 @@ export default function Home() {
       )}
 
       {activeTab === 'explore' && (
-        <SeasonalDashboard />
+        <ExploreView />
       )}
 
       {activeTab === 'profile' && (

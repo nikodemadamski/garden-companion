@@ -5,17 +5,19 @@ import { useGarden } from '@/context/GardenContext';
 import { WeatherAlertService } from '@/services/weatherAlertService';
 import { seasonalTaskService } from '@/services/seasonalTaskService';
 import { AIService } from '@/services/aiService';
-import { WeatherAlert, ProcessedAlert } from '@/types/weather';
+import { ProcessedAlert } from '@/types/weather';
 import { SeasonalTask } from '@/types/seasonal';
 import GardenerAI from '@/components/AI/GardenerAI';
 
 export default function GardenDashboard() {
-    const { plants, weather, season, setActiveTab, updatePlant } = useGarden();
+    const { plants, weather, season, setActiveTab, updatePlant, awardXP, calculateHarmony } = useGarden();
     const [alerts, setAlerts] = useState<ProcessedAlert[]>([]);
     const [tasks, setTasks] = useState<SeasonalTask[]>([]);
-    const [dailyPlan, setDailyPlan] = useState<{ id: string, task: string, priority: 'high' | 'medium' | 'low', completed: boolean }[]>([]);
+    const [dailyPlan, setDailyPlan] = useState<{ id: string, task: string, priority: 'high' | 'medium' | 'low', completed: boolean, autoCompleted?: boolean }[]>([]);
     const [loading, setLoading] = useState(true);
     const [showAIChat, setShowAIChat] = useState(false);
+
+    const harmony = calculateHarmony();
 
     useEffect(() => {
         const loadDashboardData = async () => {
@@ -48,16 +50,21 @@ export default function GardenDashboard() {
 
     const toggleTask = (id: string) => {
         setDailyPlan(prev => prev.map(t => {
-            if (t.id === id) {
-                // If it's a watering task, actually update the plant's last watered date
-                if (id.startsWith('water-') && !t.completed) {
+            if (t.id === id && !t.completed) {
+                // Award XP for completing a task
+                if (id.startsWith('water-')) {
                     const plantId = id.replace('water-', '');
                     const plant = plants.find(p => p.id === plantId);
                     if (plant) {
                         updatePlant({ ...plant, lastWateredDate: new Date().toISOString() });
+                        awardXP(plantId, 25);
                     }
+                } else {
+                    // General task XP
+                    const randomPlant = plants[Math.floor(Math.random() * plants.length)];
+                    if (randomPlant) awardXP(randomPlant.id, 15);
                 }
-                return { ...t, completed: !t.completed };
+                return { ...t, completed: true };
             }
             return t;
         }));
@@ -68,7 +75,7 @@ export default function GardenDashboard() {
             <div className="animate-slide-up">
                 <button
                     onClick={() => setShowAIChat(false)}
-                    style={{ marginBottom: '1rem', color: 'var(--color-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                    style={{ marginBottom: '1rem', color: 'var(--color-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'none', border: 'none' }}
                 >
                     ← Back to Dashboard
                 </button>
@@ -79,6 +86,31 @@ export default function GardenDashboard() {
 
     return (
         <div className="animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingBottom: '2rem' }}>
+
+            {/* Garden Harmony Header */}
+            <section className="glass-panel" style={{
+                padding: '1.5rem',
+                borderRadius: '32px',
+                background: 'linear-gradient(135deg, #F0FFF4 0%, #FFFFFF 100%)',
+                textAlign: 'center',
+                border: '2px solid #E2E8F0'
+            }}>
+                <div style={{ fontSize: '3rem', marginBottom: '0.5rem' }}>
+                    {harmony > 80 ? ' (◕‿◕) ' : harmony > 50 ? ' ( o_o ) ' : ' ( >_< ) '}
+                </div>
+                <h1 style={{ fontSize: '1.5rem', fontWeight: 900, margin: 0, color: '#2D3748' }}>Garden Harmony</h1>
+                <div style={{
+                    fontSize: '2.5rem',
+                    fontWeight: 900,
+                    color: harmony > 80 ? 'var(--color-primary)' : harmony > 50 ? '#F59E0B' : '#EF4444',
+                    margin: '0.5rem 0'
+                }}>
+                    {harmony}%
+                </div>
+                <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', fontWeight: 700 }}>
+                    {harmony > 80 ? "Your plants are vibing! ✨" : harmony > 50 ? "A few friends need attention." : "Emergency! Your garden is stressed."}
+                </p>
+            </section>
 
             {/* Smart Daily Action Plan */}
             <section>
@@ -93,13 +125,13 @@ export default function GardenDashboard() {
                         dailyPlan.map((item) => (
                             <div
                                 key={item.id}
-                                onClick={() => toggleTask(item.id)}
+                                onClick={() => !item.completed && toggleTask(item.id)}
                                 style={{
                                     padding: '1rem',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '1rem',
-                                    cursor: 'pointer',
+                                    cursor: item.completed ? 'default' : 'pointer',
                                     borderBottom: '1px solid #F1F5F9',
                                     opacity: item.completed ? 0.5 : 1,
                                     transition: 'all 0.2s ease'
@@ -128,15 +160,27 @@ export default function GardenDashboard() {
                                     }}>
                                         {item.task}
                                     </p>
-                                    <span style={{
-                                        fontSize: '0.7rem',
-                                        fontWeight: 800,
-                                        color: item.priority === 'high' ? 'var(--color-danger)' : 'var(--color-text-light)',
-                                        textTransform: 'uppercase'
-                                    }}>
-                                        {item.priority} Priority
-                                    </span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <span style={{
+                                            fontSize: '0.7rem',
+                                            fontWeight: 800,
+                                            color: item.priority === 'high' ? 'var(--color-danger)' : 'var(--color-text-light)',
+                                            textTransform: 'uppercase'
+                                        }}>
+                                            {item.priority} Priority
+                                        </span>
+                                        {item.autoCompleted && (
+                                            <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--color-primary)' }}>
+                                                ✨ NATURE HELPED
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
+                                {!item.completed && (
+                                    <div style={{ fontSize: '0.7rem', fontWeight: 900, color: 'var(--color-primary)', backgroundColor: '#F0FFF4', padding: '2px 6px', borderRadius: '6px' }}>
+                                        +25 XP
+                                    </div>
+                                )}
                             </div>
                         ))
                     ) : (
@@ -259,10 +303,10 @@ export default function GardenDashboard() {
                     <h2 style={{ fontSize: '1rem', fontWeight: 800, margin: 0 }}>Smart Insight</h2>
                 </div>
                 <p style={{ fontSize: '0.9rem', lineHeight: '1.5', color: 'var(--color-text-light)', margin: 0 }}>
-                    {weather?.isRaining
-                        ? "It's raining in Dublin. I've automatically lowered the priority of outdoor watering tasks in your plan."
-                        : weather?.temperature && weather.temperature > 20
-                            ? "High temperature detected. I've added misting and extra watering checks to your daily plan."
+                    {weather?.rainSum24h && weather.rainSum24h > 2
+                        ? `It rained ${weather.rainSum24h}mm in Dublin. I've automatically completed your outdoor watering tasks for you! ✨`
+                        : weather?.isRaining
+                            ? "It's raining in Dublin. Nature is taking care of your outdoor plants right now."
                             : "The weather is stable. A great time to follow your standard care routine."}
                 </p>
             </section>

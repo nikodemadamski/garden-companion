@@ -37,6 +37,8 @@ interface GardenContextType {
     wateringStreak: number;
     activeTab: 'dashboard' | 'plants' | 'explore' | 'profile';
     setActiveTab: (tab: 'dashboard' | 'plants' | 'explore' | 'profile') => void;
+    awardXP: (plantId: string, amount: number) => void;
+    calculateHarmony: () => number;
 }
 
 const GardenContext = createContext<GardenContextType | undefined>(undefined);
@@ -105,7 +107,9 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                     status: p.status,
                     nickname: p.nickname,
                     gotchaDate: p.gotcha_date,
-                    potType: p.pot_type
+                    potType: p.pot_type,
+                    xp: p.xp || 0,
+                    level: p.level || 1
                 }));
                 setPlants(mappedPlants);
             }
@@ -206,6 +210,8 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             nickname: plant.nickname,
             gotcha_date: plant.gotchaDate,
             pot_type: plant.potType,
+            xp: plant.xp,
+            level: plant.level,
             journal: plant.journal || []
         });
 
@@ -257,6 +263,8 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             nickname: updatedPlant.nickname,
             gotcha_date: updatedPlant.gotchaDate,
             pot_type: updatedPlant.potType,
+            xp: updatedPlant.xp,
+            level: updatedPlant.level,
             journal: updatedPlant.journal
         }).eq('id', updatedPlant.id);
 
@@ -303,6 +311,42 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             };
             updatePlant(updatedPlant);
         }
+    };
+
+    const awardXP = (plantId: string, amount: number) => {
+        setPlants(prev => prev.map(p => {
+            if (p.id === plantId) {
+                const newXP = p.xp + amount;
+                const nextLevelXP = p.level * 100;
+                if (newXP >= nextLevelXP) {
+                    return { ...p, xp: newXP - nextLevelXP, level: p.level + 1 };
+                }
+                return { ...p, xp: newXP };
+            }
+            return p;
+        }));
+
+        // Persist to DB
+        const plant = plants.find(p => p.id === plantId);
+        if (plant) {
+            const updated = { ...plant, xp: plant.xp + amount };
+            if (updated.xp >= updated.level * 100) {
+                updated.xp -= updated.level * 100;
+                updated.level += 1;
+            }
+            updatePlant(updated);
+        }
+    };
+
+    const calculateHarmony = () => {
+        if (plants.length === 0) return 100;
+        const totalStatus = plants.reduce((sum, p) => {
+            const status = calculateWateringStatus(p);
+            if (status.status === 'ok') return sum + 100;
+            if (status.status === 'due') return sum + 50;
+            return sum + 0;
+        }, 0);
+        return Math.round(totalStatus / plants.length);
     };
 
     const getPlantsByGarden = (type: GardenType) => {
@@ -427,7 +471,9 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 loginStreak,
                 wateringStreak,
                 activeTab,
-                setActiveTab
+                setActiveTab,
+                awardXP,
+                calculateHarmony
             }}
         >
             {children}

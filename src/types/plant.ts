@@ -25,6 +25,8 @@ export interface Plant {
     waterFrequencyDays: number;
     lastWateredDate: string; // ISO date string
     imageUrl?: string;
+    xp: number; // New: Experience points
+    level: number; // New: Plant level
     notes?: string;
     dateAdded: string;
     journal?: JournalEntry[];

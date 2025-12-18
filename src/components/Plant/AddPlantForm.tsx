@@ -58,6 +58,8 @@ export default function AddPlantForm({ onClose }: { onClose: () => void }) {
             type: currentGarden,
             lastWateredDate: new Date().toISOString(),
             dateAdded: new Date().toISOString(),
+            xp: 0,
+            level: 1
         };
         addPlant(newPlant);
         onClose();

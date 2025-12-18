@@ -85,32 +85,61 @@ export default function PlantCard({ plant, history, onClick }: PlantCardProps) {
 
             {/* Info Section - Simplified */}
             <div style={{ flex: 1, minWidth: 0 }}>
-                <h3 style={{
-                    fontSize: '1.1rem',
-                    fontWeight: 800,
-                    margin: '0 0 0.2rem 0',
-                    color: '#2D3748',
-                    letterSpacing: '-0.01em'
-                }}>
-                    {plant.nickname || plant.name}
-                </h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
+                    <h3 style={{
+                        fontSize: '1.1rem',
+                        fontWeight: 800,
+                        margin: 0,
+                        color: '#2D3748',
+                        letterSpacing: '-0.01em'
+                    }}>
+                        {plant.nickname || plant.name}
+                    </h3>
+                    <span style={{
+                        fontSize: '0.7rem',
+                        fontWeight: 900,
+                        backgroundColor: 'var(--color-primary)',
+                        color: 'white',
+                        padding: '2px 6px',
+                        borderRadius: '6px'
+                    }}>
+                        LVL {plant.level}
+                    </span>
+                </div>
                 <p style={{
                     fontSize: '0.8rem',
                     color: 'var(--color-text-light)',
-                    margin: '0 0 0.75rem 0',
+                    margin: '0 0 0.5rem 0',
                     fontWeight: 600
                 }}>
                     {plant.room || 'Outdoor'} • {status.label.split('in')[1] || 'Healthy'}
                 </p>
 
-                {/* Minimalist Progress Bar */}
+                {/* XP Progress Bar */}
                 <div style={{
                     width: '100%',
-                    height: '8px',
+                    height: '6px',
                     backgroundColor: '#EDF2F7',
                     borderRadius: '10px',
                     overflow: 'hidden',
-                    border: '1px solid rgba(0,0,0,0.02)'
+                    marginBottom: '0.5rem'
+                }}>
+                    <div style={{
+                        height: '100%',
+                        width: `${(plant.xp / (plant.level * 100)) * 100}%`,
+                        backgroundColor: '#5856D6',
+                        borderRadius: '10px',
+                        transition: 'width 0.5s ease'
+                    }} />
+                </div>
+
+                {/* Watering Progress Bar */}
+                <div style={{
+                    width: '100%',
+                    height: '4px',
+                    backgroundColor: '#EDF2F7',
+                    borderRadius: '10px',
+                    overflow: 'hidden'
                 }}>
                     <div style={{
                         height: '100%',
