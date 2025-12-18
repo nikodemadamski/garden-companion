@@ -200,14 +200,14 @@ button:active {
 }
 
 .ai-container.compact {
-  height: 350px;
+  height: 280px;
   border-radius: 0;
   border: none;
 }
 
 @media (max-width: 480px) {
   .ai-container.compact {
-    height: 300px;
+    height: 240px;
   }
 }
 

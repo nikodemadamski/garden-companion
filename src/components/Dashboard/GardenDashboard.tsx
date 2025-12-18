@@ -10,7 +10,7 @@ import GardenerAI from '@/components/AI/GardenerAI';
 import { ProductiveService } from '@/services/productiveService';
 
 export default function GardenDashboard() {
-    const { plants, weather, calculateWateringStatus, setActiveTab, gardenRank: rank, seeds, awardXP, calculateHarmony, season } = useGarden();
+    const { plants, weather, calculateWateringStatus, setActiveTab, gardenRank: rank, seeds, awardXP, calculateHarmony, season, addPlant } = useGarden();
     const harmony = calculateHarmony();
 
     const [alerts, setAlerts] = useState<ProcessedAlert[]>([]);
@@ -132,16 +132,48 @@ export default function GardenDashboard() {
                         <div>
                             <div style={{ fontSize: '0.8rem', fontWeight: 800, opacity: 0.9, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Garden Health</div>
                             <div style={{ fontSize: '3rem', fontWeight: 900, margin: '0.5rem 0' }}>{productivityScore}%</div>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <span style={{ fontSize: '1.2rem' }}>{rank.icon}</span>
-                                <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{rank.title}</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <span style={{ fontSize: '1.2rem' }}>{rank.icon}</span>
+                                    <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{rank.title}</span>
+                                </div>
+                                {plants.length === 0 && (
+                                    <button
+                                        onClick={() => {
+                                            const samples = [
+                                                { id: 'sample-1', name: 'Big Red', species: 'Tomato', type: 'outdoor' as const, location: 'Sunny Spot', waterFrequencyDays: 3, lastWateredDate: new Date().toISOString(), dateAdded: new Date().toISOString(), status: 'ok' as const, level: 1, xp: 0, room: 'Balcony' },
+                                                { id: 'sample-2', name: 'Sweet Basil', species: 'Basil', type: 'indoor' as const, location: 'Kitchen Window', waterFrequencyDays: 2, lastWateredDate: new Date().toISOString(), dateAdded: new Date().toISOString(), status: 'ok' as const, level: 1, xp: 0, room: 'Kitchen' },
+                                                { id: 'sample-3', name: 'Summer Berries', species: 'Strawberry', type: 'outdoor' as const, location: 'Patio', waterFrequencyDays: 4, lastWateredDate: new Date().toISOString(), dateAdded: new Date().toISOString(), status: 'ok' as const, level: 1, xp: 0, room: 'Balcony' }
+                                            ];
+                                            samples.forEach(s => {
+                                                const { id: _, ...rest } = s;
+                                                // @ts-ignore
+                                                const newPlant = { ...rest, id: Math.random().toString(36).substring(2, 11) };
+                                                // @ts-ignore
+                                                addPlant(newPlant);
+                                            });
+                                        }}
+                                        style={{
+                                            backgroundColor: 'rgba(255,255,255,0.2)',
+                                            color: 'white',
+                                            border: '1px solid rgba(255,255,255,0.3)',
+                                            padding: '4px 12px',
+                                            borderRadius: '12px',
+                                            fontSize: '0.75rem',
+                                            fontWeight: 800,
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        🌱 SEED GARDEN
+                                    </button>
+                                )}
                             </div>
                         </div>
                         <div style={{ textAlign: 'right' }}>
                             <div style={{ fontSize: '3rem' }}>{getMoodFace()}</div>
                             {weather && (
                                 <div style={{ marginTop: '0.5rem', fontWeight: 700 }}>
-                                    {weather.temperature}°C • {weather.isRaining ? '🌧️' : '☀️'}
+                                    {Math.round(weather.temperature)}°C • {weather.isRaining ? '🌧️' : '☀️'}
                                 </div>
                             )}
                         </div>
@@ -150,27 +182,25 @@ export default function GardenDashboard() {
                     <div style={{ position: 'absolute', right: '-20px', bottom: '-20px', fontSize: '8rem', opacity: 0.1, pointerEvents: 'none' }}>🌿</div>
                 </div>
 
-                {/* 2. Frost Alert (If active, otherwise Weather Pulse) */}
-                <div className={`bento-card ${isFrostRisk ? 'animate-pulse' : ''}`} style={{
-                    background: isFrostRisk ? '#EBF8FF' : 'var(--color-surface)',
-                    border: isFrostRisk ? '2px solid #4299E1' : 'none',
+                {/* 2. Weather Wisdom: Actionable Insights */}
+                <div className="bento-card" style={{
+                    background: isFrostRisk ? '#FFF5F5' : 'white',
+                    border: isFrostRisk ? '2px solid #F56565' : 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
                     justifyContent: 'center',
-                    alignItems: 'center',
-                    textAlign: 'center'
+                    gap: '0.5rem'
                 }}>
-                    {isFrostRisk ? (
-                        <>
-                            <span style={{ fontSize: '2.5rem' }}>❄️</span>
-                            <div style={{ fontWeight: 900, color: '#2B6CB0', fontSize: '0.8rem', marginTop: '0.5rem' }}>FROST ALERT</div>
-                            <div style={{ fontSize: '0.7rem', color: '#2C5282', fontWeight: 600 }}>Protect seedlings!</div>
-                        </>
-                    ) : (
-                        <>
-                            <span style={{ fontSize: '2.5rem' }}>🌤️</span>
-                            <div style={{ fontWeight: 900, color: 'var(--color-text)', fontSize: '0.8rem', marginTop: '0.5rem' }}>LOCAL PULSE</div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--color-text-light)', fontWeight: 600 }}>Dublin, IE</div>
-                        </>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span style={{ fontSize: '1.5rem' }}>{isFrostRisk ? '❄️' : weather?.isRaining ? '🌧️' : '☀️'}</span>
+                        <div style={{ fontWeight: 900, fontSize: '0.7rem', color: 'var(--color-text-light)' }}>WEATHER WISDOM</div>
+                    </div>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--color-text)' }}>
+                        {isFrostRisk ? 'Frost tonight! Cover your sensitive outdoor crops.' :
+                            weather?.isRaining ? 'Nature is watering. Skip the outdoor watering today.' :
+                                (weather?.temperature && weather.temperature > 22) ? 'Heatwave alert! Check soil moisture more frequently.' :
+                                    'Perfect growing conditions. A great day for some light pruning.'}
+                    </div>
                 </div>
 
                 {/* 3. Harvest Forecast (Row Span 2) */}
