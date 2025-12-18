@@ -121,6 +121,42 @@ button:active {
   display: none;
 }
 
+/* Bento Grid Utilities */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+
+@media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.bento-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bento-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-float);
+}
+
+.span-2 {
+  grid-column: span 2;
+}
+
+.row-2 {
+  grid-row: span 2;
+}
+
 /* Safe Area Insets for iPhone */
 .safe-bottom {
   padding-bottom: env(safe-area-inset-bottom);

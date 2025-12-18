@@ -116,280 +116,184 @@ export default function GardenDashboard() {
     }, [] as { species: string, name: string, daysOverdue: number, interval: number }[]);
 
     return (
-        <div className="animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '2rem' }}>
+        <div className="animate-slide-up" style={{ paddingBottom: '5rem' }}>
 
-            {/* Frost Alert (Critical for Productive Plants) */}
-            {isFrostRisk && (
-                <div style={{
-                    backgroundColor: '#EBF8FF',
-                    padding: '1rem',
-                    borderRadius: '20px',
-                    border: '2px solid #4299E1',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    animation: 'pulse 2s infinite'
-                }}>
-                    <span style={{ fontSize: '2rem' }}>❄️</span>
-                    <div>
-                        <div style={{ fontWeight: 900, color: '#2B6CB0' }}>CRITICAL: FROST ALERT</div>
-                        <div style={{ fontSize: '0.85rem', color: '#2C5282', fontWeight: 600 }}>Dublin is at {weather.temperature}°C. Protect your seedlings!</div>
-                    </div>
-                </div>
-            )}
+            {/* Bento Grid Container */}
+            <div className="bento-grid">
 
-            {/* Productivity Score & Rank Header */}
-            <header style={{ textAlign: 'center', padding: '1rem 0' }}>
-                <div style={{
-                    fontSize: '4rem',
-                    marginBottom: '0.5rem',
-                    filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.1))'
-                }}>
-                    {getMoodFace()}
-                </div>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: 900, margin: 0, letterSpacing: '-0.02em' }}>
-                    {productivityScore}%
-                </h1>
-                <p style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--color-text-light)', margin: '0.25rem 0 1rem' }}>
-                    Productivity Score
-                </p>
-
-                {/* Garden Rank Badge */}
-                <div style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    backgroundColor: rank.color,
+                {/* 1. The Pulse: Score & Weather (Span 2) */}
+                <div className="bento-card span-2" style={{
+                    background: 'linear-gradient(135deg, #34C759 0%, #248A3D 100%)',
                     color: 'white',
-                    padding: '6px 16px',
-                    borderRadius: '20px',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    position: 'relative',
+                    overflow: 'hidden'
                 }}>
-                    <span style={{ fontSize: '1.2rem' }}>{rank.icon}</span>
-                    <span style={{ fontWeight: 900, fontSize: '0.9rem', textTransform: 'uppercase' }}>{rank.title}</span>
-                </div>
-            </header>
-
-            {/* Succession Scheduler */}
-            {successionAlerts.length > 0 && (
-                <section>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                        <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Succession Scheduler 🗓️</h2>
-                        <span style={{ fontSize: '0.7rem', fontWeight: 900, color: '#805AD5', backgroundColor: '#FAF5FF', padding: '4px 10px', borderRadius: '12px' }}>CONTINUOUS HARVEST</span>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                        {successionAlerts.map((alert, idx) => (
-                            <div key={idx} className="glass-panel" style={{
-                                padding: '1rem',
-                                borderRadius: '20px',
-                                backgroundColor: '#FAF5FF',
-                                border: '1px solid #E9D8FD',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '1rem'
-                            }}>
-                                <div style={{ fontSize: '1.5rem' }}>✨</div>
-                                <div style={{ flex: 1 }}>
-                                    <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#553C9A' }}>Time to sow more {alert.species}!</div>
-                                    <div style={{ fontSize: '0.75rem', color: '#6B46C1', fontWeight: 600 }}>
-                                        It's been {alert.interval} days since your last {alert.species} was added.
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => setActiveTab('explore')}
-                                    style={{
-                                        backgroundColor: '#805AD5',
-                                        color: 'white',
-                                        border: 'none',
-                                        padding: '0.5rem 1rem',
-                                        borderRadius: '12px',
-                                        fontSize: '0.75rem',
-                                        fontWeight: 800,
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    GET SEEDS
-                                </button>
+                    <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                            <div style={{ fontSize: '0.8rem', fontWeight: 800, opacity: 0.9, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Garden Health</div>
+                            <div style={{ fontSize: '3rem', fontWeight: 900, margin: '0.5rem 0' }}>{productivityScore}%</div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <span style={{ fontSize: '1.2rem' }}>{rank.icon}</span>
+                                <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{rank.title}</span>
                             </div>
-                        ))}
-                    </div>
-                </section>
-            )}
-
-            {/* Seed Vault Summary */}
-            <section>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Seed Vault 🔒</h2>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 900, color: '#3182CE', backgroundColor: '#EBF8FF', padding: '4px 10px', borderRadius: '12px' }}>{seeds.length} VARIETIES</span>
-                </div>
-                <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '24px', display: 'flex', alignItems: 'center', gap: '1.5rem', backgroundColor: '#EBF8FF', border: '1px solid #BEE3F8' }}>
-                    <div style={{ fontSize: '2.5rem' }}>📦</div>
-                    <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 800, fontSize: '1rem', color: '#2C5282' }}>Your Genetic Reserve</div>
-                        <div style={{ fontSize: '0.85rem', color: '#2B6CB0', fontWeight: 600 }}>
-                            {seeds.length > 0 ? `You have ${seeds.reduce((acc: number, s: any) => acc + s.quantity, 0)} seeds stored.` : "Your vault is empty. Start saving seeds!"}
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: '3rem' }}>{getMoodFace()}</div>
+                            {weather && (
+                                <div style={{ marginTop: '0.5rem', fontWeight: 700 }}>
+                                    {weather.temperature}°C • {weather.isRaining ? '🌧️' : '☀️'}
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <button
-                        onClick={() => setActiveTab('explore')} // For now, maybe explore is where we manage seeds or a new tab
-                        style={{ backgroundColor: '#3182CE', color: 'white', border: 'none', padding: '0.75rem 1.2rem', borderRadius: '15px', fontWeight: 800, cursor: 'pointer' }}
-                    >
-                        OPEN VAULT
-                    </button>
-                </div>
-            </section>
-
-            {/* Bounty Dashboard (Total Harvest) */}
-            {Object.keys(totalHarvest).length > 0 && (
-                <section>
-                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem' }}>Total Bounty 🧺</h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '1rem' }}>
-                        {Object.entries(totalHarvest).map(([unit, amount]) => (
-                            <div key={unit} className="glass-panel" style={{ padding: '1rem', borderRadius: '20px', textAlign: 'center', backgroundColor: '#F0FFF4', border: '1px solid #C6F6D5' }}>
-                                <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#2F855A' }}>{amount}</div>
-                                <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#38A169', textTransform: 'uppercase' }}>{unit}</div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            )}
-
-            {/* Harvest Forecast Section */}
-
-            {/* Harvest Forecast Section */}
-            {productivePlants.length > 0 && (
-                <section>
-                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem' }}>Harvest Forecast</h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '1rem' }}>
-                        {productivePlants.slice(0, 3).map(p => {
-                            const data = ProductiveService.getPlantData(p.species);
-                            const daysLeft = Math.max(0, (data?.harvestDays || 30) - (p.level * 2)); // Mock logic for harvest countdown
-                            return (
-                                <div key={p.id} className="glass-panel" style={{ padding: '1rem', borderRadius: '20px', textAlign: 'center', backgroundColor: 'white' }}>
-                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{data?.category === 'fruit' ? '🍎' : data?.category === 'vegetable' ? '🥕' : '🌿'}</div>
-                                    <div style={{ fontWeight: 800, fontSize: '0.8rem' }}>{p.nickname || p.name}</div>
-                                    <div style={{ fontSize: '0.7rem', color: 'var(--color-primary)', fontWeight: 900, marginTop: '0.25rem' }}>
-                                        {daysLeft} DAYS LEFT
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </section>
-            )}
-
-            {/* Smart Daily Action Plan */}
-            <section>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Daily Action Plan</h2>
-                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-primary)', backgroundColor: '#F0FFF4', padding: '4px 10px', borderRadius: '12px' }}>AI GENERATED</span>
+                    {/* Background Decoration */}
+                    <div style={{ position: 'absolute', right: '-20px', bottom: '-20px', fontSize: '8rem', opacity: 0.1, pointerEvents: 'none' }}>🌿</div>
                 </div>
 
-                <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '24px', backgroundColor: 'white', border: '1px solid #F1F5F9' }}>
-                    {dailyPlan.length > 0 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {dailyPlan.map((item) => (
-                                <div
-                                    key={item.id}
-                                    onClick={() => toggleTask(item.id)}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '1rem',
-                                        cursor: 'pointer',
-                                        opacity: item.completed ? 0.5 : 1,
-                                        transition: 'all 0.2s ease'
-                                    }}
-                                >
-                                    <div style={{
-                                        width: '24px',
-                                        height: '24px',
-                                        borderRadius: '6px',
-                                        border: `2px solid ${item.completed ? 'var(--color-primary)' : '#E2E8F0'}`,
-                                        backgroundColor: item.completed ? 'var(--color-primary)' : 'transparent',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: 'white',
-                                        fontSize: '0.8rem'
-                                    }}>
-                                        {item.completed && '✓'}
-                                    </div>
-                                    <div style={{ flex: 1 }}>
-                                        <div style={{
-                                            fontWeight: 700,
-                                            fontSize: '0.95rem',
-                                            textDecoration: item.completed ? 'line-through' : 'none'
-                                        }}>
-                                            {item.task}
-                                        </div>
-                                        {item.autoCompleted && (
-                                            <div style={{ fontSize: '0.7rem', color: 'var(--color-primary)', fontWeight: 700 }}>
-                                                ✨ AUTO-COMPLETED (RAIN-CHECK)
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div style={{
-                                        fontSize: '0.65rem',
-                                        fontWeight: 900,
-                                        padding: '2px 8px',
-                                        borderRadius: '8px',
-                                        backgroundColor: item.priority === 'high' ? '#FFF5F5' : '#F7FAFC',
-                                        color: item.priority === 'high' ? '#E53E3E' : '#718096'
-                                    }}>
-                                        {item.priority.toUpperCase()}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                {/* 2. Frost Alert (If active, otherwise Weather Pulse) */}
+                <div className={`bento-card ${isFrostRisk ? 'animate-pulse' : ''}`} style={{
+                    background: isFrostRisk ? '#EBF8FF' : 'var(--color-surface)',
+                    border: isFrostRisk ? '2px solid #4299E1' : 'none',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    textAlign: 'center'
+                }}>
+                    {isFrostRisk ? (
+                        <>
+                            <span style={{ fontSize: '2.5rem' }}>❄️</span>
+                            <div style={{ fontWeight: 900, color: '#2B6CB0', fontSize: '0.8rem', marginTop: '0.5rem' }}>FROST ALERT</div>
+                            <div style={{ fontSize: '0.7rem', color: '#2C5282', fontWeight: 600 }}>Protect seedlings!</div>
+                        </>
                     ) : (
-                        <p style={{ textAlign: 'center', color: 'var(--color-text-light)', fontWeight: 600 }}>No tasks for today! Enjoy your garden. 🌿</p>
+                        <>
+                            <span style={{ fontSize: '2.5rem' }}>🌤️</span>
+                            <div style={{ fontWeight: 900, color: 'var(--color-text)', fontSize: '0.8rem', marginTop: '0.5rem' }}>LOCAL PULSE</div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--color-text-light)', fontWeight: 600 }}>Dublin, IE</div>
+                        </>
                     )}
                 </div>
-            </section>
 
-            {/* Weather Alerts & Seasonal Tasks */}
-            <section style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
-                {alerts.length > 0 && (
-                    <div>
-                        <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1rem' }}>Weather Alerts</h2>
-                        <WeatherAlertBanner />
-                    </div>
-                )}
-
-                <div>
-                    <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '1rem' }}>{season} Tasks</h2>
-                    <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '24px', backgroundColor: 'white', border: '1px solid #F1F5F9' }}>
-                        {tasks.map((task, idx) => {
-                            const categoryIcons = {
-                                planting: '🌱',
-                                maintenance: '✂️',
-                                harvesting: '🧺',
-                                preparation: '🧹'
-                            };
-                            const icon = categoryIcons[task.category] || '🌿';
-
+                {/* 3. Harvest Forecast (Row Span 2) */}
+                <div className="bento-card row-2" style={{ backgroundColor: '#FFF5F5' }}>
+                    <h3 style={{ fontSize: '0.9rem', fontWeight: 900, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span>⏳</span> FORECAST
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {productivePlants.length > 0 ? productivePlants.slice(0, 4).map(p => {
+                            const data = ProductiveService.getPlantData(p.species);
+                            const daysLeft = Math.max(0, (data?.harvestDays || 30) - (p.level * 2));
                             return (
-                                <div key={idx} style={{ marginBottom: idx === tasks.length - 1 ? 0 : '1rem', display: 'flex', gap: '1rem' }}>
-                                    <div style={{ fontSize: '1.5rem' }}>{icon}</div>
-                                    <div>
-                                        <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{task.title}</div>
-                                        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-light)', margin: '0.2rem 0 0' }}>{task.description}</p>
+                                <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                    <div style={{ fontSize: '1.5rem' }}>{data?.category === 'fruit' ? '🍎' : data?.category === 'vegetable' ? '🥕' : '🌿'}</div>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ fontWeight: 800, fontSize: '0.75rem' }}>{p.nickname || p.name}</div>
+                                        <div style={{ fontSize: '0.65rem', color: '#E53E3E', fontWeight: 900 }}>{daysLeft} DAYS</div>
                                     </div>
                                 </div>
                             );
-                        })}
+                        }) : (
+                            <div style={{ fontSize: '0.75rem', color: '#718096', textAlign: 'center', padding: '1rem 0' }}>No productive plants yet.</div>
+                        )}
                     </div>
                 </div>
-            </section>
 
-            {/* AI Chat Section */}
-            <section>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Chat with AI Gardener</h2>
+                {/* 4. Total Bounty */}
+                <div className="bento-card" style={{ backgroundColor: '#F0FFF4' }}>
+                    <h3 style={{ fontSize: '0.8rem', fontWeight: 900, marginBottom: '0.5rem', color: '#2F855A' }}>BOUNTY</h3>
+                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#276749' }}>
+                                {Object.values(totalHarvest).reduce((a, b) => a + b, 0)}
+                            </div>
+                            <div style={{ fontSize: '0.6rem', fontWeight: 800, color: '#38A169' }}>TOTAL UNITS</div>
+                        </div>
+                    </div>
                 </div>
-                <GardenerAI />
-            </section>
+
+                {/* 5. Seed Vault */}
+                <div className="bento-card" style={{ backgroundColor: '#EBF8FF' }}>
+                    <h3 style={{ fontSize: '0.8rem', fontWeight: 900, marginBottom: '0.5rem', color: '#2B6CB0' }}>VAULT</h3>
+                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '1.8rem', fontWeight: 900, color: '#2C5282' }}>{seeds.length}</div>
+                            <div style={{ fontSize: '0.6rem', fontWeight: 800, color: '#3182CE' }}>VARIETIES</div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 6. Succession Scheduler (Span 2) */}
+                <div className="bento-card span-2" style={{ backgroundColor: '#FAF5FF' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <h3 style={{ fontSize: '0.9rem', fontWeight: 900, color: '#553C9A' }}>SUCCESSION</h3>
+                        <span style={{ fontSize: '0.6rem', fontWeight: 900, color: '#805AD5', backgroundColor: 'white', padding: '2px 8px', borderRadius: '8px' }}>SOWING TIME</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                        {successionAlerts.length > 0 ? successionAlerts.map((alert, idx) => (
+                            <div key={idx} style={{
+                                minWidth: '140px',
+                                padding: '0.75rem',
+                                backgroundColor: 'white',
+                                borderRadius: '16px',
+                                border: '1px solid #E9D8FD'
+                            }}>
+                                <div style={{ fontWeight: 800, fontSize: '0.75rem', color: '#553C9A' }}>{alert.species}</div>
+                                <div style={{ fontSize: '0.6rem', color: '#6B46C1', margin: '0.25rem 0' }}>Every {alert.interval} days</div>
+                                <button
+                                    onClick={() => setActiveTab('explore')}
+                                    style={{ width: '100%', marginTop: '0.5rem', backgroundColor: '#805AD5', color: 'white', fontSize: '0.65rem', fontWeight: 800, padding: '4px', borderRadius: '8px' }}
+                                >
+                                    SOW
+                                </button>
+                            </div>
+                        )) : (
+                            <div style={{ fontSize: '0.75rem', color: '#6B46C1', opacity: 0.7 }}>Your garden is perfectly synced.</div>
+                        )}
+                    </div>
+                </div>
+
+                {/* 7. Daily Action Plan (Row Span 2) */}
+                <div className="bento-card row-2" style={{ border: '1px solid #F1F5F9' }}>
+                    <h3 style={{ fontSize: '0.9rem', fontWeight: 900, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <span>📋</span> DAILY PLAN
+                    </h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                        {dailyPlan.slice(0, 6).map((item) => (
+                            <div key={item.id} onClick={() => toggleTask(item.id)} style={{ display: 'flex', gap: '0.5rem', cursor: 'pointer', opacity: item.completed ? 0.5 : 1 }}>
+                                <div style={{
+                                    width: '18px', height: '18px', borderRadius: '4px', border: '2px solid #E2E8F0',
+                                    backgroundColor: item.completed ? 'var(--color-primary)' : 'transparent',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.6rem'
+                                }}>
+                                    {item.completed && '✓'}
+                                </div>
+                                <div style={{ fontSize: '0.75rem', fontWeight: 700, textDecoration: item.completed ? 'line-through' : 'none' }}>{item.task}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 8. AI Gardener Chat (Span 2) */}
+                <div className="bento-card span-2" style={{ padding: 0, overflow: 'hidden' }}>
+                    <GardenerAI compact={true} />
+                </div>
+
+                {/* 9. Seasonal Tasks (Span 3) */}
+                <div className="bento-card span-2" style={{ backgroundColor: '#F7FAFC' }}>
+                    <h3 style={{ fontSize: '0.9rem', fontWeight: 900, marginBottom: '1rem' }}>{season} Tasks</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        {tasks.slice(0, 4).map((task, idx) => (
+                            <div key={idx} style={{ display: 'flex', gap: '0.5rem' }}>
+                                <div style={{ fontSize: '1.2rem' }}>🌿</div>
+                                <div>
+                                    <div style={{ fontWeight: 800, fontSize: '0.75rem' }}>{task.title}</div>
+                                    <div style={{ fontSize: '0.65rem', color: 'var(--color-text-light)' }}>{task.category}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+            </div>
         </div>
     );
 }

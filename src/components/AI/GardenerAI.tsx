@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useGarden } from '@/context/GardenContext';
 import { AIService, AIChatMessage } from '@/services/aiService';
 
-export default function GardenerAI() {
+export default function GardenerAI({ compact = false }: { compact?: boolean }) {
     const { plants, weather } = useGarden();
     const [messages, setMessages] = useState<AIChatMessage[]>([
         { role: 'assistant', content: "Hi! I'm your Garden AI. I'm watching your plants for you! (◕‿◕) ", timestamp: Date.now() }
@@ -39,13 +39,13 @@ export default function GardenerAI() {
 
     return (
         <div className="glass-panel animate-slide-up" style={{
-            height: '500px',
+            height: compact ? '350px' : '500px',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
-            borderRadius: '32px',
+            borderRadius: compact ? '0' : '32px',
             backgroundColor: 'white',
-            border: '2px solid #F1F5F9'
+            border: compact ? 'none' : '2px solid #F1F5F9'
         }}>
             {/* Kawaii Header */}
             <div style={{
