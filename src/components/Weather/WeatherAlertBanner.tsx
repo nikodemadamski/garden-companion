@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { WeatherAlertService } from '@/services/weatherAlertService';
 import { ProcessedAlert } from '@/types/weather';
+import { useGarden } from '@/context/GardenContext';
 
 interface WeatherAlertBannerProps {
   onAlertClick?: (alert: ProcessedAlert) => void;
 }
 
 export default function WeatherAlertBanner({ onAlertClick }: WeatherAlertBannerProps) {
+  const { setActiveTab } = useGarden();
   const [activeAlerts, setActiveAlerts] = useState<ProcessedAlert[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -56,6 +58,11 @@ export default function WeatherAlertBanner({ onAlertClick }: WeatherAlertBannerP
       severityOrder[prev.alert.severity as keyof typeof severityOrder] ? current : prev;
   });
 
+  const handleClick = () => {
+    setActiveTab('dashboard');
+    if (onAlertClick) onAlertClick(primaryAlert);
+  };
+
   return (
     <div
       className="animate-slide-up"
@@ -65,12 +72,12 @@ export default function WeatherAlertBanner({ onAlertClick }: WeatherAlertBannerP
         backgroundColor: `${getSeverityColor(primaryAlert.alert.severity)}10`,
         borderRadius: '20px',
         border: `1px solid ${getSeverityColor(primaryAlert.alert.severity)}40`,
-        cursor: onAlertClick ? 'pointer' : 'default',
+        cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
         gap: '1rem'
       }}
-      onClick={() => onAlertClick?.(primaryAlert)}
+      onClick={handleClick}
     >
       <div style={{
         width: '44px',

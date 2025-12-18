@@ -4,14 +4,18 @@ import React, { useEffect, useState } from 'react';
 import { useGarden } from '@/context/GardenContext';
 import { WeatherAlertService } from '@/services/weatherAlertService';
 import { seasonalTaskService } from '@/services/seasonalTaskService';
+import { AIService } from '@/services/aiService';
 import { WeatherAlert, ProcessedAlert } from '@/types/weather';
 import { SeasonalTask } from '@/types/seasonal';
+import GardenerAI from '@/components/AI/GardenerAI';
 
 export default function GardenDashboard() {
-    const { plants, weather, season } = useGarden();
+    const { plants, weather, season, setActiveTab, updatePlant } = useGarden();
     const [alerts, setAlerts] = useState<ProcessedAlert[]>([]);
     const [tasks, setTasks] = useState<SeasonalTask[]>([]);
+    const [dailyPlan, setDailyPlan] = useState<{ id: string, task: string, priority: 'high' | 'medium' | 'low', completed: boolean }[]>([]);
     const [loading, setLoading] = useState(true);
+    const [showAIChat, setShowAIChat] = useState(false);
 
     useEffect(() => {
         const loadDashboardData = async () => {
@@ -28,6 +32,10 @@ export default function GardenDashboard() {
                     climate_zone: 'ireland'
                 });
                 setTasks(seasonalTasks);
+
+                // Generate Smart Daily Plan
+                const plan = AIService.generateDailyPlan(plants, weather, activeAlerts);
+                setDailyPlan(plan);
             } catch (error) {
                 console.error("Error loading dashboard data:", error);
             } finally {
@@ -36,21 +44,148 @@ export default function GardenDashboard() {
         };
 
         loadDashboardData();
-    }, [plants]);
+    }, [plants, weather]);
 
-    const plantsNeedingWater = plants.filter(p => {
-        const lastWatered = new Date(p.lastWateredDate);
-        const nextWater = new Date(lastWatered);
-        nextWater.setDate(lastWatered.getDate() + p.waterFrequencyDays);
-        return nextWater <= new Date();
-    });
+    const toggleTask = (id: string) => {
+        setDailyPlan(prev => prev.map(t => {
+            if (t.id === id) {
+                // If it's a watering task, actually update the plant's last watered date
+                if (id.startsWith('water-') && !t.completed) {
+                    const plantId = id.replace('water-', '');
+                    const plant = plants.find(p => p.id === plantId);
+                    if (plant) {
+                        updatePlant({ ...plant, lastWateredDate: new Date().toISOString() });
+                    }
+                }
+                return { ...t, completed: !t.completed };
+            }
+            return t;
+        }));
+    };
+
+    if (showAIChat) {
+        return (
+            <div className="animate-slide-up">
+                <button
+                    onClick={() => setShowAIChat(false)}
+                    style={{ marginBottom: '1rem', color: 'var(--color-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                    ← Back to Dashboard
+                </button>
+                <GardenerAI />
+            </div>
+        );
+    }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingBottom: '2rem' }}>
+        <div className="animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', paddingBottom: '2rem' }}>
+
+            {/* Smart Daily Action Plan */}
+            <section>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>Daily Action Plan</h2>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--color-text-light)' }}>
+                        {dailyPlan.filter(t => t.completed).length}/{dailyPlan.length} DONE
+                    </span>
+                </div>
+                <div className="glass-panel" style={{ padding: '0.5rem', borderRadius: '24px', backgroundColor: 'white' }}>
+                    {dailyPlan.length > 0 ? (
+                        dailyPlan.map((item) => (
+                            <div
+                                key={item.id}
+                                onClick={() => toggleTask(item.id)}
+                                style={{
+                                    padding: '1rem',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '1rem',
+                                    cursor: 'pointer',
+                                    borderBottom: '1px solid #F1F5F9',
+                                    opacity: item.completed ? 0.5 : 1,
+                                    transition: 'all 0.2s ease'
+                                }}
+                            >
+                                <div style={{
+                                    width: '24px',
+                                    height: '24px',
+                                    borderRadius: '6px',
+                                    border: `2px solid ${item.completed ? 'var(--color-primary)' : '#CBD5E0'}`,
+                                    backgroundColor: item.completed ? 'var(--color-primary)' : 'transparent',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    fontSize: '0.8rem'
+                                }}>
+                                    {item.completed && '✓'}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <p style={{
+                                        fontSize: '0.95rem',
+                                        fontWeight: 600,
+                                        margin: 0,
+                                        textDecoration: item.completed ? 'line-through' : 'none'
+                                    }}>
+                                        {item.task}
+                                    </p>
+                                    <span style={{
+                                        fontSize: '0.7rem',
+                                        fontWeight: 800,
+                                        color: item.priority === 'high' ? 'var(--color-danger)' : 'var(--color-text-light)',
+                                        textTransform: 'uppercase'
+                                    }}>
+                                        {item.priority} Priority
+                                    </span>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-text-light)' }}>
+                            <p style={{ margin: 0, fontSize: '0.9rem' }}>✨ Your garden is all set for today!</p>
+                        </div>
+                    )}
+                </div>
+            </section>
+
+            {/* AI Assistant Teaser */}
+            <section
+                onClick={() => setShowAIChat(true)}
+                style={{
+                    background: 'linear-gradient(135deg, #5856D6 0%, #34C759 100%)',
+                    borderRadius: '24px',
+                    padding: '1.5rem',
+                    color: 'white',
+                    cursor: 'pointer',
+                    boxShadow: '0 8px 24px rgba(88, 86, 214, 0.2)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}
+            >
+                <div style={{ position: 'relative', zIndex: 2 }}>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.5rem' }}>Ask Garden AI</h2>
+                    <p style={{ fontSize: '0.9rem', opacity: 0.9, marginBottom: '1rem', maxWidth: '80%' }}>
+                        "Should I prune my roses today?" or "Why are my leaves turning yellow?"
+                    </p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.85rem' }}>
+                        Start Chatting <span style={{ fontSize: '1.2rem' }}>→</span>
+                    </div>
+                </div>
+                <div style={{
+                    position: 'absolute',
+                    right: '-10px',
+                    bottom: '-10px',
+                    fontSize: '5rem',
+                    opacity: 0.2,
+                    transform: 'rotate(-15deg)'
+                }}>
+                    🤖
+                </div>
+            </section>
+
             {/* Weather Alerts Section */}
             {alerts.length > 0 && (
                 <section>
-                    <h2 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         ⚠️ Weather Alerts
                     </h2>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -68,105 +203,68 @@ export default function GardenDashboard() {
                                 <p style={{ fontSize: '0.9rem', color: '#4A5568', marginBottom: '0.75rem' }}>
                                     {processed.alert.description}
                                 </p>
-                                {processed.protectionActions.length > 0 && (
-                                    <div style={{ backgroundColor: 'rgba(255,255,255,0.5)', padding: '0.75rem', borderRadius: '8px' }}>
-                                        <p style={{ fontSize: '0.85rem', fontWeight: 700, marginBottom: '0.4rem' }}>Recommended Actions:</p>
-                                        <ul style={{ paddingLeft: '1.2rem', margin: 0 }}>
-                                            {processed.protectionActions.slice(0, 3).map((action, i) => (
-                                                <li key={i} style={{ fontSize: '0.85rem', color: '#4A5568', marginBottom: '0.2rem' }}>
-                                                    {action.action}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
                             </div>
                         ))}
                     </div>
                 </section>
             )}
 
-            {/* Quick Stats Grid */}
-            <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '20px', textAlign: 'center' }}>
-                    <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '0.5rem' }}>💧</span>
-                    <span style={{ fontSize: '1.25rem', fontWeight: 800, display: 'block' }}>{plantsNeedingWater.length}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-light)', fontWeight: 600 }}>NEED WATER</span>
-                </div>
-                <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '20px', textAlign: 'center' }}>
-                    <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: '0.5rem' }}>🌱</span>
-                    <span style={{ fontSize: '1.25rem', fontWeight: 800, display: 'block' }}>{plants.length}</span>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-text-light)', fontWeight: 600 }}>TOTAL PLANTS</span>
-                </div>
-            </section>
-
             {/* Seasonal Guidance Section */}
             <section>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <h2 style={{ fontSize: '1.2rem', fontWeight: 700, margin: 0 }}>
-                        {season} Guidance
-                    </h2>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-primary)', backgroundColor: '#EBF8F2', padding: '0.25rem 0.75rem', borderRadius: '20px' }}>
-                        {new Date().toLocaleString('default', { month: 'long' })}
-                    </span>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>{season} Guide</h2>
+                    <button
+                        onClick={() => setActiveTab('explore')}
+                        style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary)' }}
+                    >
+                        View All
+                    </button>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    {tasks.slice(0, 3).map((task, idx) => (
-                        <div key={idx} className="glass-panel" style={{ padding: '1rem', borderRadius: '16px', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    {tasks.slice(0, 2).map((task, idx) => (
+                        <div key={idx} className="glass-panel" style={{ padding: '1rem', borderRadius: '20px', display: 'flex', gap: '1rem', alignItems: 'center', backgroundColor: 'white' }}>
                             <div style={{
-                                width: '40px',
-                                height: '40px',
+                                width: '44px',
+                                height: '44px',
                                 borderRadius: '12px',
                                 backgroundColor: task.priority === 'high' ? '#FFF5F5' : '#F0FFF4',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '1.2rem'
+                                fontSize: '1.2rem',
+                                flexShrink: 0
                             }}>
                                 {task.category === 'planting' ? '🪴' : task.category === 'harvesting' ? '🧺' : '✂️'}
                             </div>
-                            <div style={{ flex: 1 }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
                                 <h3 style={{ fontSize: '0.95rem', fontWeight: 700, margin: 0 }}>{task.title}</h3>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-light)', margin: '0.2rem 0 0' }}>{task.description?.substring(0, 60)}...</p>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--color-text-light)', margin: '0.1rem 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {task.description}
+                                </p>
                             </div>
                         </div>
                     ))}
-                    {tasks.length === 0 && !loading && (
-                        <p style={{ textAlign: 'center', color: 'var(--color-text-light)', fontSize: '0.9rem', padding: '1rem' }}>
-                            No specific tasks for this month. Enjoy your garden!
-                        </p>
-                    )}
                 </div>
             </section>
 
-            {/* Next Steps / Insights */}
+            {/* Weather Insight */}
             <section className="glass-panel" style={{
                 padding: '1.5rem',
                 borderRadius: '24px',
-                background: 'linear-gradient(135deg, #48BB78 0%, #38A169 100%)',
-                color: 'white'
+                backgroundColor: 'white',
+                border: '1px solid rgba(0,0,0,0.05)'
             }}>
-                <h2 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.5rem' }}>Gardener's Insight</h2>
-                <p style={{ fontSize: '0.9rem', lineHeight: '1.5', opacity: 0.9 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                    <span style={{ fontSize: '1.5rem' }}>💡</span>
+                    <h2 style={{ fontSize: '1rem', fontWeight: 800, margin: 0 }}>Smart Insight</h2>
+                </div>
+                <p style={{ fontSize: '0.9rem', lineHeight: '1.5', color: 'var(--color-text-light)', margin: 0 }}>
                     {weather?.isRaining
-                        ? "It's raining today, so you can skip watering your outdoor plants. Check your indoor plants' humidity levels instead!"
+                        ? "It's raining in Dublin. I've automatically lowered the priority of outdoor watering tasks in your plan."
                         : weather?.temperature && weather.temperature > 20
-                            ? "It's quite warm! Make sure to check your pots in the evening as they might dry out faster than usual."
-                            : "The weather is mild. A perfect time for some light pruning or preparing your soil for the next season."}
+                            ? "High temperature detected. I've added misting and extra watering checks to your daily plan."
+                            : "The weather is stable. A great time to follow your standard care routine."}
                 </p>
-                <button style={{
-                    marginTop: '1rem',
-                    backgroundColor: 'rgba(255,255,255,0.2)',
-                    border: 'none',
-                    borderRadius: '12px',
-                    padding: '0.6rem 1rem',
-                    color: 'white',
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                }}>
-                    View Full Guide →
-                </button>
             </section>
         </div>
     );

@@ -32,10 +32,48 @@ export default function Home() {
       )}
 
       {activeTab === 'profile' && (
-        <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>👤</div>
-          <h2>Your Profile</h2>
-          <p>Profile settings and history will appear here.</p>
+        <div className="animate-slide-up" style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+          <div style={{
+            width: '100px',
+            height: '100px',
+            borderRadius: '50%',
+            backgroundColor: '#E2E8F0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '3rem',
+            margin: '0 auto 1.5rem'
+          }}>
+            👤
+          </div>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.5rem' }}>Your Profile</h2>
+          <p style={{ color: 'var(--color-text-light)', marginBottom: '2rem' }}>
+            {useGarden().session?.user.email}
+          </p>
+
+          <div className="glass-panel" style={{ padding: '1rem', borderRadius: '20px', marginBottom: '2rem', textAlign: 'left' }}>
+            <div style={{ padding: '0.75rem', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between' }}>
+              <span>Login Streak</span>
+              <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{useGarden().loginStreak} days 🔥</span>
+            </div>
+            <div style={{ padding: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
+              <span>Watering Streak</span>
+              <span style={{ fontWeight: 700, color: 'var(--color-primary)' }}>{useGarden().wateringStreak} days 💧</span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => useGarden().signOut()}
+            className="btn"
+            style={{
+              backgroundColor: '#FEE2E2',
+              color: '#EF4444',
+              width: '100%',
+              fontWeight: 700
+            }}
+          >
+            Sign Out
+          </button>
         </div>
       )}
 
