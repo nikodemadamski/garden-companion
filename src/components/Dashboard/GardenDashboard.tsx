@@ -7,9 +7,10 @@ import { SeasonalTask, fetchSeasonalTasks } from '@/services/seasonalTaskService
 import { AIService } from '@/services/aiService';
 import WeatherAlertBanner from '@/components/Weather/WeatherAlertBanner';
 import GardenerAI from '@/components/AI/GardenerAI';
+import { ProductiveService } from '@/services/productiveService';
 
 export default function GardenDashboard() {
-    const { plants, weather, season, setActiveTab, updatePlant, awardXP, calculateHarmony, gardenRank } = useGarden();
+    const { plants, weather, season, setActiveTab, updatePlant, awardXP, calculateHarmony, gardenRank, calculateWateringStatus } = useGarden();
     const harmony = calculateHarmony();
     const rank = gardenRank;
 
@@ -59,10 +60,15 @@ export default function GardenDashboard() {
         }));
     };
 
+    const productivePlants = plants.filter(p => ProductiveService.getPlantData(p.species));
+    const productivityScore = productivePlants.length > 0
+        ? Math.round((productivePlants.filter(p => calculateWateringStatus(p).status === 'ok').length / productivePlants.length) * 100)
+        : 100;
+
     const getMoodFace = () => {
-        if (harmony >= 90) return '(◕‿◕)';
-        if (harmony >= 70) return '( o_o )';
-        return '( >_< )';
+        if (productivityScore >= 90) return '🧺'; // Bountiful harvest
+        if (productivityScore >= 70) return '🌱'; // Growing well
+        return '🥀'; // Needs attention
     };
 
     const isFrostRisk = !!(weather?.temperature && weather.temperature <= 2);
@@ -71,8 +77,8 @@ export default function GardenDashboard() {
         return (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
                 <div className="animate-pulse" style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🌱</div>
-                    <p style={{ fontWeight: 700, color: 'var(--color-text-light)' }}>Consulting the Garden Engine...</p>
+                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🧺</div>
+                    <p style={{ fontWeight: 700, color: 'var(--color-text-light)' }}>Calculating your harvest...</p>
                 </div>
             </div>
         );
@@ -81,7 +87,7 @@ export default function GardenDashboard() {
     return (
         <div className="animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '2rem' }}>
 
-            {/* Frost Alert (Critical) */}
+            {/* Frost Alert (Critical for Productive Plants) */}
             {isFrostRisk && (
                 <div style={{
                     backgroundColor: '#EBF8FF',
@@ -96,12 +102,12 @@ export default function GardenDashboard() {
                     <span style={{ fontSize: '2rem' }}>❄️</span>
                     <div>
                         <div style={{ fontWeight: 900, color: '#2B6CB0' }}>CRITICAL: FROST ALERT</div>
-                        <div style={{ fontSize: '0.85rem', color: '#2C5282', fontWeight: 600 }}>Dublin is at {weather.temperature}°C. Move outdoor plants inside!</div>
+                        <div style={{ fontSize: '0.85rem', color: '#2C5282', fontWeight: 600 }}>Dublin is at {weather.temperature}°C. Protect your seedlings!</div>
                     </div>
                 </div>
             )}
 
-            {/* Garden Harmony & Rank Header */}
+            {/* Productivity Score & Rank Header */}
             <header style={{ textAlign: 'center', padding: '1rem 0' }}>
                 <div style={{
                     fontSize: '4rem',
@@ -111,10 +117,10 @@ export default function GardenDashboard() {
                     {getMoodFace()}
                 </div>
                 <h1 style={{ fontSize: '2.5rem', fontWeight: 900, margin: 0, letterSpacing: '-0.02em' }}>
-                    {harmony}%
+                    {productivityScore}%
                 </h1>
                 <p style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--color-text-light)', margin: '0.25rem 0 1rem' }}>
-                    Garden Harmony
+                    Productivity Score
                 </p>
 
                 {/* Garden Rank Badge */}
@@ -132,6 +138,28 @@ export default function GardenDashboard() {
                     <span style={{ fontWeight: 900, fontSize: '0.9rem', textTransform: 'uppercase' }}>{rank.title}</span>
                 </div>
             </header>
+
+            {/* Harvest Forecast Section */}
+            {productivePlants.length > 0 && (
+                <section>
+                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem' }}>Harvest Forecast</h2>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '1rem' }}>
+                        {productivePlants.slice(0, 3).map(p => {
+                            const data = ProductiveService.getPlantData(p.species);
+                            const daysLeft = Math.max(0, (data?.harvestDays || 30) - (p.level * 2)); // Mock logic for harvest countdown
+                            return (
+                                <div key={p.id} className="glass-panel" style={{ padding: '1rem', borderRadius: '20px', textAlign: 'center', backgroundColor: 'white' }}>
+                                    <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{data?.category === 'fruit' ? '🍎' : data?.category === 'vegetable' ? '🥕' : '🌿'}</div>
+                                    <div style={{ fontWeight: 800, fontSize: '0.8rem' }}>{p.nickname || p.name}</div>
+                                    <div style={{ fontSize: '0.7rem', color: 'var(--color-primary)', fontWeight: 900, marginTop: '0.25rem' }}>
+                                        {daysLeft} DAYS LEFT
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </section>
+            )}
 
             {/* Smart Daily Action Plan */}
             <section>

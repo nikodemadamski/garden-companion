@@ -52,6 +52,12 @@ export interface Plant {
     harvestInfo?: HarvestInfo;
     commonIssues?: PlantIssue[];
     soilRequirements?: SoilRequirements;
+
+    // Phase 9: Productive Patch
+    isPerennial?: boolean;
+    difficulty?: 'Easy' | 'Medium' | 'Hard';
+    harvestDays?: number;
+    companionIds?: string[]; // IDs of other plants in the garden that help this one
 }
 
 // New interfaces for enhanced functionality

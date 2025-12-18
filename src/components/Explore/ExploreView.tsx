@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useGarden } from '@/context/GardenContext';
 import { PLANT_CATEGORIES } from '@/data/plantCategories';
 import { Plant } from '@/types/plant';
+import { ProductiveService } from '@/services/productiveService';
 
 export default function ExploreView() {
     const { addPlant, currentGarden } = useGarden();
@@ -11,12 +12,12 @@ export default function ExploreView() {
     const [discoveredPlant, setDiscoveredPlant] = useState<any>(null);
 
     const rarePlants = [
-        { name: 'Pink Princess Philodendron', rarity: 'Legendary', icon: '💖', species: 'Philodendron Erubescens' },
-        { name: 'Thai Constellation Monstera', rarity: 'Legendary', icon: '✨', species: 'Monstera Deliciosa' },
-        { name: 'Blue Oil Fern', rarity: 'Rare', icon: '🌀', species: 'Microsorum Thailandicum' },
-        { name: 'Raven ZZ Plant', rarity: 'Rare', icon: '🐦', species: 'Zamioculcas Zamiifolia' },
-        { name: 'Watermelon Peperomia', rarity: 'Common', icon: '🍉', species: 'Peperomia Argyreia' },
-        { name: 'String of Hearts', rarity: 'Common', icon: '💕', species: 'Ceropegia Woodii' }
+        { name: 'Heirloom Tomato', rarity: 'Legendary', icon: '🍅', species: 'Tomato' },
+        { name: 'Thai Basil', rarity: 'Rare', icon: '🌿', species: 'Basil' },
+        { name: 'Alpine Strawberry', rarity: 'Legendary', icon: '🍓', species: 'Strawberry' },
+        { name: 'Rainbow Carrot', rarity: 'Rare', icon: '🥕', species: 'Carrot' },
+        { name: 'Chocolate Mint', rarity: 'Common', icon: '🌱', species: 'Mint' },
+        { name: 'Giant Potato', rarity: 'Common', icon: '🥔', species: 'Potato' }
     ];
     const [pullsToday, setPullsToday] = useState(() => {
         if (typeof window !== 'undefined') {
@@ -66,6 +67,8 @@ export default function ExploreView() {
     const handleAdopt = () => {
         if (!discoveredPlant) return;
 
+        const productiveData = ProductiveService.getPlantData(discoveredPlant.species);
+
         const newPlant: Plant = {
             id: Math.random().toString(36).substring(2, 11),
             name: discoveredPlant.name,
@@ -78,12 +81,16 @@ export default function ExploreView() {
             dateAdded: new Date().toISOString(),
             xp: 0,
             level: 1,
-            rarity: discoveredPlant.rarity
+            rarity: discoveredPlant.rarity,
+            // Phase 9: Productive Data
+            isPerennial: productiveData?.isPerennial,
+            difficulty: productiveData?.difficulty,
+            harvestDays: productiveData?.harvestDays
         };
 
         addPlant(newPlant);
         setDiscoveredPlant(null);
-        alert(`(◕‿◕) ${discoveredPlant.name} has joined your garden!`);
+        alert(`(◕‿◕) ${discoveredPlant.name} has joined your productive garden!`);
     };
 
     return (

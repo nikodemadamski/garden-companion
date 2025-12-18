@@ -5,6 +5,7 @@ import { Plant } from '@/types/plant';
 import { useGarden } from '@/context/GardenContext';
 import ShareCardModal from './ShareCardModal';
 import confetti from 'canvas-confetti';
+import { ProductiveService } from '@/services/productiveService';
 
 interface PlantDetailViewProps {
     plant: Plant;
@@ -123,7 +124,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                 textAlign: 'center'
             }}>
                 {/* Stage & Personality Badges */}
-                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                     <div style={{
                         backgroundColor: stage.color,
                         color: 'white',
@@ -148,6 +149,32 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                     }}>
                         {personality}
                     </div>
+                    {plant.difficulty && (
+                        <div style={{
+                            backgroundColor: plant.difficulty === 'Easy' ? '#C6F6D5' : plant.difficulty === 'Medium' ? '#FEEBC8' : '#FED7D7',
+                            color: plant.difficulty === 'Easy' ? '#22543D' : plant.difficulty === 'Medium' ? '#744210' : '#822727',
+                            padding: '6px 16px',
+                            borderRadius: '20px',
+                            fontSize: '0.8rem',
+                            fontWeight: 800,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                        }}>
+                            {plant.difficulty}
+                        </div>
+                    )}
+                    {plant.isPerennial !== undefined && (
+                        <div style={{
+                            backgroundColor: '#EBF8FF',
+                            color: '#2A4365',
+                            padding: '6px 16px',
+                            borderRadius: '20px',
+                            fontSize: '0.8rem',
+                            fontWeight: 800,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+                        }}>
+                            {plant.isPerennial ? 'Perennial ♾️' : 'Annual 🗓️'}
+                        </div>
+                    )}
                 </div>
 
                 {/* Big Avatar */}
@@ -168,6 +195,35 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                 <p style={{ fontSize: '1.1rem', fontWeight: 600, color: '#718096', margin: 0 }}>
                     Level {plant.level} • {plant.rarity || 'Common'}
                 </p>
+
+                {/* Productive Wisdom Section */}
+                {ProductiveService.getPlantData(plant.species) && (
+                    <div style={{
+                        marginTop: '2rem',
+                        padding: '1.5rem',
+                        backgroundColor: 'rgba(255,255,255,0.5)',
+                        borderRadius: '24px',
+                        textAlign: 'left',
+                        width: '90%',
+                        maxWidth: '400px',
+                        border: '1px solid rgba(0,0,0,0.05)'
+                    }}>
+                        <h3 style={{ fontSize: '0.9rem', fontWeight: 900, color: '#2D3748', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span>💡</span> PRODUCTIVE WISDOM
+                        </h3>
+                        <p style={{ fontSize: '0.85rem', color: '#4A5568', margin: '0 0 1rem 0', fontStyle: 'italic' }}>
+                            "{ProductiveService.getPlantData(plant.species)?.funFact}"
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                            <div style={{ fontSize: '0.8rem', color: '#2F855A', fontWeight: 700 }}>
+                                👯 Best Friends: {ProductiveService.getPlantData(plant.species)?.companions.join(', ')}
+                            </div>
+                            <div style={{ fontSize: '0.8rem', color: '#C53030', fontWeight: 700 }}>
+                                🚫 Avoid: {ProductiveService.getPlantData(plant.species)?.foes.join(', ')}
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {isHospital && (
                     <div style={{
