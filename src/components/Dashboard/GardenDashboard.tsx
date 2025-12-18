@@ -94,6 +94,28 @@ export default function GardenDashboard() {
         return acc;
     }, {} as Record<string, number>);
 
+    const successionAlerts = plants.reduce((acc, p) => {
+        const data = ProductiveService.getPlantData(p.species);
+        if (data?.successionDays) {
+            const addedDate = new Date(p.dateAdded);
+            const today = new Date();
+            const diffDays = Math.floor((today.getTime() - addedDate.getTime()) / (1000 * 60 * 60 * 24));
+
+            if (diffDays >= data.successionDays) {
+                // Check if we already have an alert for this species
+                if (!acc.find(a => a.species === p.species)) {
+                    acc.push({
+                        species: p.species,
+                        name: p.name,
+                        daysOverdue: diffDays - data.successionDays,
+                        interval: data.successionDays
+                    });
+                }
+            }
+        }
+        return acc;
+    }, [] as { species: string, name: string, daysOverdue: number, interval: number }[]);
+
     return (
         <div className="animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '2rem' }}>
 
@@ -148,6 +170,52 @@ export default function GardenDashboard() {
                     <span style={{ fontWeight: 900, fontSize: '0.9rem', textTransform: 'uppercase' }}>{rank.title}</span>
                 </div>
             </header>
+
+            {/* Succession Scheduler */}
+            {successionAlerts.length > 0 && (
+                <section>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Succession Scheduler 🗓️</h2>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 900, color: '#805AD5', backgroundColor: '#FAF5FF', padding: '4px 10px', borderRadius: '12px' }}>CONTINUOUS HARVEST</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {successionAlerts.map((alert, idx) => (
+                            <div key={idx} className="glass-panel" style={{
+                                padding: '1rem',
+                                borderRadius: '20px',
+                                backgroundColor: '#FAF5FF',
+                                border: '1px solid #E9D8FD',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '1rem'
+                            }}>
+                                <div style={{ fontSize: '1.5rem' }}>✨</div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontWeight: 800, fontSize: '0.9rem', color: '#553C9A' }}>Time to sow more {alert.species}!</div>
+                                    <div style={{ fontSize: '0.75rem', color: '#6B46C1', fontWeight: 600 }}>
+                                        It's been {alert.interval} days since your last {alert.species} was added.
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setActiveTab('explore')}
+                                    style={{
+                                        backgroundColor: '#805AD5',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.5rem 1rem',
+                                        borderRadius: '12px',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 800,
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    GET SEEDS
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
 
             {/* Bounty Dashboard (Total Harvest) */}
             {Object.keys(totalHarvest).length > 0 && (

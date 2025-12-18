@@ -6,6 +6,7 @@ export interface ProductivePlantData {
     companions: string[]; // Species names that help this plant
     foes: string[]; // Species names that hinder this plant
     harvestDays: number;
+    successionDays?: number; // How often to sow again (in days)
     funFact: string;
     whyGrow: string;
     careTips: string[];
@@ -20,6 +21,7 @@ export const PRODUCTIVE_DATABASE: Record<string, ProductivePlantData> = {
         companions: ['Basil', 'Marigold', 'Garlic', 'Chives'],
         foes: ['Potato', 'Fennel', 'Cabbage'],
         harvestDays: 80,
+        successionDays: 60,
         funFact: 'Tomatoes are technically berries!',
         whyGrow: 'Homegrown tomatoes have 10x the flavor of store-bought ones.',
         careTips: ['Requires 6-8 hours of sun', 'Water at the base to avoid blight', 'Needs support/staking']
@@ -32,6 +34,7 @@ export const PRODUCTIVE_DATABASE: Record<string, ProductivePlantData> = {
         companions: ['Tomato', 'Pepper', 'Oregano'],
         foes: ['Rue', 'Sage'],
         harvestDays: 30,
+        successionDays: 14,
         funFact: 'Basil is a member of the mint family.',
         whyGrow: 'Essential for pesto and improves tomato flavor when planted nearby.',
         careTips: ['Pinch off flowers to keep it producing leaves', 'Loves warmth and sun']
@@ -56,6 +59,7 @@ export const PRODUCTIVE_DATABASE: Record<string, ProductivePlantData> = {
         companions: ['Onion', 'Leek', 'Rosemary', 'Sage'],
         foes: ['Dill', 'Parsnip'],
         harvestDays: 75,
+        successionDays: 21,
         funFact: 'Carrots were originally purple or white, not orange!',
         whyGrow: 'Fresh carrots are incredibly crunchy and sweet.',
         careTips: ['Needs loose, stone-free soil', 'Thin seedlings to 3 inches apart']
@@ -95,6 +99,32 @@ export const PRODUCTIVE_DATABASE: Record<string, ProductivePlantData> = {
         funFact: 'Mint can spread so fast it becomes invasive!',
         whyGrow: 'Great for teas and cocktails; virtually unkillable.',
         careTips: ['Grow in a pot to contain its roots', 'Loves moisture']
+    },
+    'Lettuce': {
+        species: 'Lactuca sativa',
+        category: 'vegetable',
+        isPerennial: false,
+        difficulty: 'Easy',
+        companions: ['Carrot', 'Radish', 'Strawberry', 'Cucumber'],
+        foes: ['Parsley', 'Celery'],
+        harvestDays: 45,
+        successionDays: 14,
+        funFact: 'Lettuce is the second most popular vegetable in the US (after potatoes).',
+        whyGrow: 'Crisp, fresh leaves that regrow after cutting.',
+        careTips: ['Loves cooler weather', 'Keep soil consistently moist']
+    },
+    'Radish': {
+        species: 'Raphanus sativus',
+        category: 'vegetable',
+        isPerennial: false,
+        difficulty: 'Easy',
+        companions: ['Lettuce', 'Carrot', 'Spinach', 'Pea'],
+        foes: ['Hyssop'],
+        harvestDays: 25,
+        successionDays: 10,
+        funFact: 'Radishes can be ready to eat in just 3 weeks!',
+        whyGrow: 'Fastest crop in the garden; great for beginners.',
+        careTips: ['Sow small amounts frequently', 'Harvest as soon as they reach size']
     }
 };
 
