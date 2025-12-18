@@ -94,216 +94,168 @@ export default function ExploreView() {
     };
 
     return (
-        <div className="animate-slide-up" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '2rem' }}>
+        <div className="animate-slide-up" style={{ paddingBottom: '5rem' }}>
 
-            {/* Gacha-style Hero */}
-            <section style={{
-                background: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)',
-                borderRadius: '32px',
-                padding: '2rem',
-                color: 'white',
-                textAlign: 'center',
-                boxShadow: '0 10px 25px rgba(255, 215, 0, 0.3)',
-                position: 'relative',
-                overflow: 'hidden'
-            }}>
-                <div style={{ position: 'relative', zIndex: 2 }}>
-                    <h2 style={{ fontSize: '1.8rem', fontWeight: 900, marginBottom: '0.5rem' }}>Daily Discovery</h2>
-                    <p style={{ fontSize: '1rem', fontWeight: 700, opacity: 0.9, marginBottom: '1.5rem' }}>
-                        {pullsToday >= PULL_LIMIT ? 'Limit reached! Come back tomorrow or share.' : `Pull a random rare plant! (${PULL_LIMIT - pullsToday} left)`}
-                    </p>
-                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                        <button
-                            onClick={handlePull}
-                            disabled={isPulling || pullsToday >= PULL_LIMIT}
-                            style={{
-                                backgroundColor: pullsToday >= PULL_LIMIT ? '#E2E8F0' : 'white',
-                                color: pullsToday >= PULL_LIMIT ? '#A0AEC0' : '#FF8C00',
-                                padding: '1rem 2rem',
-                                borderRadius: '20px',
-                                border: 'none',
-                                fontWeight: 900,
-                                fontSize: '1.1rem',
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                                cursor: (isPulling || pullsToday >= PULL_LIMIT) ? 'default' : 'pointer',
-                                transform: isPulling ? 'scale(0.95)' : 'none',
-                                transition: 'all 0.2s ease'
-                            }}>
-                            {isPulling ? 'SPINNING...' : pullsToday >= PULL_LIMIT ? 'LIMIT REACHED' : 'PULL NOW (Free)'}
-                        </button>
-                        {pullsToday >= PULL_LIMIT && (
-                            <button
-                                onClick={handleShareForPull}
-                                style={{
-                                    backgroundColor: 'rgba(255,255,255,0.2)',
-                                    color: 'white',
-                                    padding: '1rem 1.5rem',
-                                    borderRadius: '20px',
-                                    border: '2px solid white',
-                                    fontWeight: 900,
-                                    fontSize: '1rem',
-                                    cursor: 'pointer'
-                                }}>
-                                🔗 SHARE FOR +1
-                            </button>
-                        )}
-                    </div>
-                </div>
-                <div style={{
-                    position: 'absolute',
-                    right: '-20px',
-                    bottom: '-20px',
-                    fontSize: '8rem',
-                    opacity: 0.2,
-                    animation: isPulling ? 'spin 1s linear infinite' : 'none'
-                }}>🎁</div>
-            </section>
-
-            {/* Discovery Modal */}
-            {discoveredPlant && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0, left: 0, right: 0, bottom: 0,
-                    backgroundColor: 'rgba(0,0,0,0.8)',
-                    zIndex: 1000,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
+            {/* 1. Gacha Hero: The Genetic Lottery (Span 2) */}
+            <div className="bento-grid">
+                <div className="bento-card span-2" style={{
+                    background: 'linear-gradient(135deg, #FFD700 0%, #FF8C00 100%)',
+                    color: 'white',
+                    position: 'relative',
+                    overflow: 'hidden',
                     padding: '2rem'
                 }}>
-                    <div className="glass-panel animate-pop-in" style={{
-                        backgroundColor: 'white',
-                        padding: '2rem',
-                        borderRadius: '32px',
-                        textAlign: 'center',
-                        maxWidth: '400px',
-                        width: '100%'
-                    }}>
-                        <div style={{
-                            fontSize: '0.8rem',
-                            fontWeight: 900,
-                            color: discoveredPlant.rarity === 'Legendary' ? '#FFD700' : discoveredPlant.rarity === 'Rare' ? '#5856D6' : '#64748B',
-                            marginBottom: '0.5rem'
-                        }}>
-                            {discoveredPlant.rarity.toUpperCase()} DISCOVERY!
-                        </div>
-                        <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>{discoveredPlant.icon}</div>
-                        <h3 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem' }}>{discoveredPlant.name}</h3>
-                        <p style={{ fontSize: '0.9rem', color: 'var(--color-text-light)', marginBottom: '1.5rem' }}>
-                            A beautiful {discoveredPlant.species} for your collection.
+                    <div style={{ position: 'relative', zIndex: 2 }}>
+                        <h2 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem' }}>Daily Genetic Pull</h2>
+                        <p style={{ fontSize: '0.85rem', fontWeight: 700, opacity: 0.9, marginBottom: '1.5rem' }}>
+                            {pullsToday >= PULL_LIMIT ? 'Limit reached! Come back tomorrow.' : `Discover a rare productive variety. (${PULL_LIMIT - pullsToday} left)`}
                         </p>
                         <div style={{ display: 'flex', gap: '1rem' }}>
                             <button
-                                onClick={() => setDiscoveredPlant(null)}
-                                style={{ flex: 1, padding: '1rem', borderRadius: '16px', border: '1px solid #E2E8F0', fontWeight: 700, background: 'none' }}
-                            >
-                                Skip
+                                onClick={handlePull}
+                                disabled={isPulling || pullsToday >= PULL_LIMIT}
+                                style={{
+                                    backgroundColor: pullsToday >= PULL_LIMIT ? 'rgba(255,255,255,0.3)' : 'white',
+                                    color: pullsToday >= PULL_LIMIT ? 'white' : '#FF8C00',
+                                    padding: '0.75rem 1.5rem',
+                                    borderRadius: '16px',
+                                    fontWeight: 900,
+                                    fontSize: '0.9rem'
+                                }}>
+                                {isPulling ? 'SPINNING...' : 'PULL NOW'}
                             </button>
-                            <button
-                                onClick={handleAdopt}
-                                style={{ flex: 2, padding: '1rem', borderRadius: '16px', backgroundColor: 'var(--color-primary)', color: 'white', border: 'none', fontWeight: 800 }}
-                            >
-                                Adopt Friend!
-                            </button>
+                            {pullsToday >= PULL_LIMIT && (
+                                <button
+                                    onClick={handleShareForPull}
+                                    style={{ backgroundColor: 'rgba(255,255,255,0.2)', color: 'white', padding: '0.75rem 1rem', borderRadius: '16px', border: '2px solid white', fontWeight: 900, fontSize: '0.8rem' }}
+                                >
+                                    SHARE +1
+                                </button>
+                            )}
                         </div>
                     </div>
+                    <div style={{ position: 'absolute', right: '-10px', bottom: '-10px', fontSize: '6rem', opacity: 0.2, animation: isPulling ? 'spin 1s linear infinite' : 'none' }}>🎁</div>
                 </div>
-            )}
 
-            {/* Categories Grid */}
-            <section>
-                <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem' }}>Categories</h2>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-                    {PLANT_CATEGORIES.slice(0, 4).map(cat => (
-                        <div key={cat.id} className="glass-panel" style={{
-                            padding: '1.5rem',
-                            borderRadius: '24px',
+                {/* 2. Fast Wins: Radish/Lettuce (Row Span 2) */}
+                <div className="bento-card row-2" style={{ backgroundColor: '#F0FFF4', border: '1px solid #C6F6D5' }}>
+                    <h3 style={{ fontSize: '0.85rem', fontWeight: 900, color: '#2F855A', marginBottom: '1rem' }}>⚡ FAST CROPS</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                        {['Radish', 'Lettuce'].map(species => {
+                            const data = ProductiveService.getPlantData(species);
+                            return (
+                                <div key={species} style={{ textAlign: 'center', padding: '0.75rem', backgroundColor: 'white', borderRadius: '16px', border: '1px solid #C6F6D5' }}>
+                                    <div style={{ fontSize: '2rem' }}>{species === 'Radish' ? '🥕' : '🥬'}</div>
+                                    <div style={{ fontWeight: 800, fontSize: '0.75rem', marginTop: '0.25rem' }}>{species}</div>
+                                    <div style={{ fontSize: '0.6rem', color: '#38A169', fontWeight: 900 }}>{data?.harvestDays} DAYS</div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* 3. Category: Fruit */}
+                <div className="bento-card" style={{ backgroundColor: '#FFF5F5', cursor: 'pointer' }}>
+                    <div style={{ fontSize: '2rem' }}>🍎</div>
+                    <div style={{ fontWeight: 900, fontSize: '0.8rem', marginTop: '0.5rem', color: '#C53030' }}>FRUIT</div>
+                    <div style={{ fontSize: '0.6rem', color: '#E53E3E', fontWeight: 700 }}>Orchards & Berries</div>
+                </div>
+
+                {/* 4. Category: Herbs */}
+                <div className="bento-card" style={{ backgroundColor: '#F0FFF4', cursor: 'pointer' }}>
+                    <div style={{ fontSize: '2rem' }}>🌿</div>
+                    <div style={{ fontWeight: 900, fontSize: '0.8rem', marginTop: '0.5rem', color: '#2F855A' }}>HERBS</div>
+                    <div style={{ fontSize: '0.6rem', color: '#38A169', fontWeight: 700 }}>Kitchen Garden</div>
+                </div>
+
+                {/* 5. Trending Edibles (Span 2) */}
+                <div className="bento-card span-2">
+                    <h3 style={{ fontSize: '0.9rem', fontWeight: 900, marginBottom: '1rem' }}>🔥 Trending Edibles</h3>
+                    <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                        {['Tomato', 'Strawberry', 'Basil', 'Potato'].map(species => (
+                            <div key={species} style={{ minWidth: '100px', textAlign: 'center' }}>
+                                <div style={{ width: '60px', height: '60px', margin: '0 auto', backgroundColor: '#F7FAFC', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>
+                                    {species === 'Tomato' ? '🍅' : species === 'Strawberry' ? '🍓' : species === 'Basil' ? '🌿' : '🥔'}
+                                </div>
+                                <div style={{ fontWeight: 800, fontSize: '0.7rem', marginTop: '0.5rem' }}>{species}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 6. Community Leaderboard (Span 3) */}
+                <div className="bento-card span-2" style={{ backgroundColor: '#F7FAFC' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                        <h3 style={{ fontSize: '0.9rem', fontWeight: 900 }}>🏆 Top Producers</h3>
+                        <span style={{ fontSize: '0.6rem', fontWeight: 800, color: 'var(--color-primary)' }}>DUBLIN, IE</span>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        {[
+                            { name: 'Aoife C.', score: '12.4kg', avatar: '👩‍🌾' },
+                            { name: 'Liam D.', score: '8.2kg', avatar: '👨‍🌾' },
+                            { name: 'You', score: '2.1kg', avatar: '👤', isUser: true }
+                        ].map((user, idx) => (
+                            <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem', backgroundColor: user.isUser ? 'white' : 'transparent', borderRadius: '12px' }}>
+                                <div style={{ fontSize: '0.8rem', fontWeight: 900, width: '15px' }}>{idx + 1}</div>
+                                <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>{user.avatar}</div>
+                                <div style={{ flex: 1, fontWeight: 800, fontSize: '0.75rem' }}>{user.name}</div>
+                                <div style={{ fontWeight: 900, color: 'var(--color-primary)', fontSize: '0.75rem' }}>{user.score}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* 7. Discovery Modal (Discovery Logic) */}
+                {discoveredPlant && (
+                    <div style={{
+                        position: 'fixed',
+                        top: 0, left: 0, right: 0, bottom: 0,
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        zIndex: 1000,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '2rem'
+                    }}>
+                        <div className="glass-panel animate-pop-in" style={{
+                            backgroundColor: 'white',
+                            padding: '2rem',
+                            borderRadius: '32px',
                             textAlign: 'center',
-                            backgroundColor: 'white',
-                            border: '1px solid #F1F5F9',
-                            cursor: 'pointer'
-                        }}>
-                            <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{cat.icon}</div>
-                            <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>{cat.label.split('/')[0]}</div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* Curated Collections */}
-            <section>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>🔥 Trending in Dublin</h2>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary)' }}>View All</span>
-                </div>
-                <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '1rem' }}>
-                    {['Monstera', 'Snake Plant', 'Spider Plant'].map((p, idx) => (
-                        <div key={idx} className="glass-panel" style={{
-                            minWidth: '160px',
-                            padding: '1rem',
-                            borderRadius: '24px',
-                            backgroundColor: 'white',
-                            border: '1px solid #F1F5F9'
+                            maxWidth: '400px',
+                            width: '100%'
                         }}>
                             <div style={{
-                                width: '100%',
-                                height: '120px',
-                                backgroundColor: '#F8FAFC',
-                                borderRadius: '16px',
-                                marginBottom: '0.75rem',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '3rem'
+                                fontSize: '0.8rem',
+                                fontWeight: 900,
+                                color: discoveredPlant.rarity === 'Legendary' ? '#FFD700' : discoveredPlant.rarity === 'Rare' ? '#5856D6' : '#64748B',
+                                marginBottom: '0.5rem'
                             }}>
-                                🌱
+                                {discoveredPlant.rarity.toUpperCase()} DISCOVERY!
                             </div>
-                            <div style={{ fontWeight: 800, fontSize: '0.95rem' }}>{p}</div>
-                            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-light)', fontWeight: 600 }}>Common in Ireland</div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-            {/* Community Leaderboard */}
-            <section>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>🏆 Top Gardeners (Ireland)</h2>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--color-primary)' }}>View All</span>
-                </div>
-                <div className="glass-panel" style={{ padding: '1rem', borderRadius: '24px', backgroundColor: 'white', border: '1px solid #F1F5F9' }}>
-                    {[
-                        { name: 'Aoife from Cork', score: 98, rank: 'Forest Guardian', avatar: '👩‍🌾' },
-                        { name: 'Liam in Dublin', score: 92, rank: 'Master Gardener', avatar: '👨‍🌾' },
-                        { name: 'You', score: 85, rank: 'Master Gardener', avatar: '👤', isUser: true },
-                        { name: 'Siobhan (Galway)', score: 78, rank: 'Green Thumb', avatar: '👩‍🌾' }
-                    ].map((user, idx) => (
-                        <div key={idx} style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '1rem',
-                            padding: '0.75rem',
-                            borderRadius: '16px',
-                            backgroundColor: user.isUser ? '#F0FFF4' : 'transparent',
-                            marginBottom: idx < 3 ? '0.5rem' : 0
-                        }}>
-                            <div style={{ fontSize: '1.2rem', fontWeight: 900, width: '24px', color: idx === 0 ? '#FFD700' : idx === 1 ? '#C0C0C0' : '#CD7F32' }}>
-                                {idx + 1}
-                            </div>
-                            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#E2E8F0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>
-                                {user.avatar}
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                <div style={{ fontWeight: 800, fontSize: '0.9rem' }}>{user.name}</div>
-                                <div style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--color-text-light)' }}>{user.rank}</div>
-                            </div>
-                            <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontWeight: 900, color: 'var(--color-primary)' }}>{user.score}%</div>
-                                <div style={{ fontSize: '0.6rem', fontWeight: 800, color: 'var(--color-text-light)' }}>HARMONY</div>
+                            <div style={{ fontSize: '5rem', marginBottom: '1rem' }}>{discoveredPlant.icon}</div>
+                            <h3 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem' }}>{discoveredPlant.name}</h3>
+                            <p style={{ fontSize: '0.9rem', color: 'var(--color-text-light)', marginBottom: '1.5rem' }}>
+                                A beautiful {discoveredPlant.species} for your collection.
+                            </p>
+                            <div style={{ display: 'flex', gap: '1rem' }}>
+                                <button
+                                    onClick={() => setDiscoveredPlant(null)}
+                                    style={{ flex: 1, padding: '1rem', borderRadius: '16px', border: '1px solid #E2E8F0', fontWeight: 700, background: 'none' }}
+                                >
+                                    Skip
+                                </button>
+                                <button
+                                    onClick={handleAdopt}
+                                    style={{ flex: 2, padding: '1rem', borderRadius: '16px', backgroundColor: 'var(--color-primary)', color: 'white', border: 'none', fontWeight: 800 }}
+                                >
+                                    Adopt Friend!
+                                </button>
                             </div>
                         </div>
-                    ))}
-                </div>
-            </section>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
