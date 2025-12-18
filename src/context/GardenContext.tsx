@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
-import { Plant, GardenType, JournalEntry } from '@/types/plant';
+import { Plant, GardenType, JournalEntry, Seed } from '@/types/plant';
 import { HistoricalWeatherData, WeatherData, fetchLocalWeather } from '@/services/weatherService';
 import { supabase } from '@/lib/supabaseClient';
 import Login from '@/components/Auth/Login';
@@ -43,6 +43,10 @@ interface GardenContextType {
     calculateHarmony: () => number;
     gardenRank: { title: string; icon: string; color: string };
     getCompanionStatus: (plant: Plant) => { friends: string[], foes: string[] };
+    seeds: Seed[];
+    addSeed: (seed: Seed) => Promise<void>;
+    updateSeed: (seed: Seed) => Promise<void>;
+    removeSeed: (seedId: string) => Promise<void>;
 }
 
 const GardenContext = createContext<GardenContextType | undefined>(undefined);
@@ -57,6 +61,35 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     const [loginStreak, setLoginStreak] = useState(0);
     const [wateringStreak, setWateringStreak] = useState(0);
     const [activeTab, setActiveTab] = useState<'dashboard' | 'plants' | 'explore' | 'profile'>('dashboard');
+    const [seeds, setSeeds] = useState<Seed[]>([]);
+
+    // Phase 15: Seed Vault Persistence
+    useEffect(() => {
+        const savedSeeds = localStorage.getItem('garden_seeds');
+        if (savedSeeds) {
+            try {
+                setSeeds(JSON.parse(savedSeeds));
+            } catch (e) {
+                console.error("Failed to parse seeds", e);
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('garden_seeds', JSON.stringify(seeds));
+    }, [seeds]);
+
+    const addSeed = async (seed: Seed) => {
+        setSeeds(prev => [...prev, seed]);
+    };
+
+    const updateSeed = async (seed: Seed) => {
+        setSeeds(prev => prev.map(s => s.id === seed.id ? seed : s));
+    };
+
+    const removeSeed = async (seedId: string) => {
+        setSeeds(prev => prev.filter(s => s.id !== seedId));
+    };
 
     // Auth & Data Fetching
     useEffect(() => {
@@ -338,7 +371,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         updatePlant(updatedPlant);
 
         if (result.didLevelUp) {
-            alert(`(๑>ᴗ<๑) ${plant.nickname || plant.name} reached Level ${result.newLevel}!`);
+            alert(`(๑> ᴗ <๑) ${plant.nickname || plant.name} reached Level ${result.newLevel} !`);
         }
     };
 
@@ -431,7 +464,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         const diffTime = nextWater.getTime() - today.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-        if (reason === 'rain') return { status: 'ok', label: `Nature Watered (Rain)`, color: '#3b82f6', adjustmentReason: 'rain' };
+        if (reason === 'rain') return { status: 'ok', label: `Nature Watered(Rain)`, color: '#3b82f6', adjustmentReason: 'rain' };
         if (diffDays < 0) return { status: 'overdue', label: `Overdue by ${Math.abs(diffDays)} days`, color: '#ef4444', adjustmentReason: reason };
         if (diffDays === 0) return { status: 'due', label: 'Water Today!', color: '#f59e0b', adjustmentReason: reason };
 
@@ -498,7 +531,11 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 awardXP,
                 calculateHarmony,
                 gardenRank,
-                getCompanionStatus
+                getCompanionStatus,
+                seeds,
+                addSeed,
+                updateSeed,
+                removeSeed
             }}
         >
             {children}

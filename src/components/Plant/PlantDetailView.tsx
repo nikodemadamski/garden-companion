@@ -121,6 +121,35 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
         });
     };
 
+    const { addSeed } = useGarden();
+
+    const handleSaveSeeds = () => {
+        const newSeed = {
+            id: Math.random().toString(36).substring(2, 11),
+            species: plant.species,
+            quantity: 10,
+            unit: 'seeds' as const,
+            dateAdded: new Date().toISOString(),
+            viability: 95,
+            notes: `Saved from ${plant.nickname || plant.name} (Level ${plant.level})`
+        };
+        addSeed(newSeed);
+        awardXP(plant.id, 150);
+        addJournalEntry(plant.id, {
+            id: Math.random().toString(36).substring(2, 11),
+            date: new Date().toISOString(),
+            note: "🧬 Saved seeds for the vault! The legacy continues.",
+            type: 'milestone'
+        });
+        confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.8 },
+            colors: ['#3182CE', '#F6E05E', '#FFF']
+        });
+        alert(`(◕‿◕) 10 seeds of ${plant.species} added to your Seed Vault!`);
+    };
+
     return (
         <div style={{
             position: 'fixed',
@@ -476,26 +505,51 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                         </div>
 
                         {ProductiveService.getPlantData(plant.species) && (
-                            <button
-                                onClick={() => setIsHarvesting(true)}
-                                style={{
-                                    backgroundColor: '#F6E05E',
-                                    color: '#744210',
-                                    padding: '1.5rem',
-                                    borderRadius: '24px',
-                                    border: 'none',
-                                    fontWeight: 900,
-                                    fontSize: '1.2rem',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '1rem',
-                                    boxShadow: '0 4px 15px rgba(246, 224, 94, 0.3)'
-                                }}
-                            >
-                                <span style={{ fontSize: '1.8rem' }}>🧺</span>
-                                LOG HARVEST
-                            </button>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                <button
+                                    onClick={() => setIsHarvesting(true)}
+                                    style={{
+                                        backgroundColor: '#F6E05E',
+                                        color: '#744210',
+                                        padding: '1.5rem',
+                                        borderRadius: '24px',
+                                        border: 'none',
+                                        fontWeight: 900,
+                                        fontSize: '1.2rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '1rem',
+                                        boxShadow: '0 4px 15px rgba(246, 224, 94, 0.3)'
+                                    }}
+                                >
+                                    <span style={{ fontSize: '1.8rem' }}>🧺</span>
+                                    LOG HARVEST
+                                </button>
+
+                                {plant.level >= 10 && (
+                                    <button
+                                        onClick={handleSaveSeeds}
+                                        style={{
+                                            backgroundColor: '#EBF8FF',
+                                            color: '#2B6CB0',
+                                            padding: '1.2rem',
+                                            borderRadius: '24px',
+                                            border: '2px dashed #3182CE',
+                                            fontWeight: 900,
+                                            fontSize: '1rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '0.75rem',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                    >
+                                        <span style={{ fontSize: '1.5rem' }}>🧬</span>
+                                        SAVE SEEDS (LVL 10+)
+                                    </button>
+                                )}
+                            </div>
                         )}
                     </div>
                 )}

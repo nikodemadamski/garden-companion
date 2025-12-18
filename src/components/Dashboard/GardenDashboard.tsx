@@ -10,9 +10,8 @@ import GardenerAI from '@/components/AI/GardenerAI';
 import { ProductiveService } from '@/services/productiveService';
 
 export default function GardenDashboard() {
-    const { plants, weather, season, setActiveTab, updatePlant, awardXP, calculateHarmony, gardenRank, calculateWateringStatus } = useGarden();
+    const { plants, weather, calculateWateringStatus, setActiveTab, gardenRank: rank, seeds, awardXP, calculateHarmony, season } = useGarden();
     const harmony = calculateHarmony();
-    const rank = gardenRank;
 
     const [alerts, setAlerts] = useState<ProcessedAlert[]>([]);
     const [tasks, setTasks] = useState<SeasonalTask[]>([]);
@@ -216,6 +215,29 @@ export default function GardenDashboard() {
                     </div>
                 </section>
             )}
+
+            {/* Seed Vault Summary */}
+            <section>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <h2 style={{ fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>Seed Vault 🔒</h2>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 900, color: '#3182CE', backgroundColor: '#EBF8FF', padding: '4px 10px', borderRadius: '12px' }}>{seeds.length} VARIETIES</span>
+                </div>
+                <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '24px', display: 'flex', alignItems: 'center', gap: '1.5rem', backgroundColor: '#EBF8FF', border: '1px solid #BEE3F8' }}>
+                    <div style={{ fontSize: '2.5rem' }}>📦</div>
+                    <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 800, fontSize: '1rem', color: '#2C5282' }}>Your Genetic Reserve</div>
+                        <div style={{ fontSize: '0.85rem', color: '#2B6CB0', fontWeight: 600 }}>
+                            {seeds.length > 0 ? `You have ${seeds.reduce((acc: number, s: any) => acc + s.quantity, 0)} seeds stored.` : "Your vault is empty. Start saving seeds!"}
+                        </div>
+                    </div>
+                    <button
+                        onClick={() => setActiveTab('explore')} // For now, maybe explore is where we manage seeds or a new tab
+                        style={{ backgroundColor: '#3182CE', color: 'white', border: 'none', padding: '0.75rem 1.2rem', borderRadius: '15px', fontWeight: 800, cursor: 'pointer' }}
+                    >
+                        OPEN VAULT
+                    </button>
+                </div>
+            </section>
 
             {/* Bounty Dashboard (Total Harvest) */}
             {Object.keys(totalHarvest).length > 0 && (

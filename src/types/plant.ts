@@ -62,6 +62,17 @@ export interface Plant {
     companionIds?: string[]; // IDs of other plants in the garden that help this one
 }
 
+export interface Seed {
+    id: string;
+    species: string;
+    quantity: number;
+    unit: 'packets' | 'seeds' | 'grams';
+    expiryDate?: string; // ISO date
+    viability?: number; // 0-100 percentage
+    notes?: string;
+    dateAdded: string;
+}
+
 // New interfaces for enhanced functionality
 export interface SeasonalTask {
     id: string;
