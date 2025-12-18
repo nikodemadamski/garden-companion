@@ -150,7 +150,7 @@ export class WeatherAlertService {
    */
   static async getUserAlertHistory(userId: string, limit: number = 10): Promise<WeatherAlert[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('weather_alerts')
         .select('*')
         .eq('user_id', userId)
@@ -163,7 +163,7 @@ export class WeatherAlertService {
       }
 
       const alerts: Database['public']['Tables']['weather_alerts']['Row'][] = data || [];
-      
+
       return alerts.map(row => ({
         id: row.id,
         userId: row.user_id,
@@ -237,11 +237,11 @@ export class WeatherAlertService {
   static async hasActiveAlerts(): Promise<boolean> {
     const alerts = await this.fetchCurrentAlerts();
     const now = new Date();
-    
+
     return alerts.some(alert => {
       const startTime = new Date(alert.startTime);
       const endTime = alert.endTime ? new Date(alert.endTime) : null;
-      
+
       return startTime <= now && (!endTime || endTime > now);
     });
   }
@@ -252,11 +252,11 @@ export class WeatherAlertService {
   static async getActiveAlerts(userPlants?: Plant[], plantCount: number = 0): Promise<ProcessedAlert[]> {
     const alerts = await this.fetchCurrentAlerts();
     const now = new Date();
-    
+
     const activeAlerts = alerts.filter(alert => {
       const startTime = new Date(alert.startTime);
       const endTime = alert.endTime ? new Date(alert.endTime) : null;
-      
+
       return startTime <= now && (!endTime || endTime > now);
     });
 

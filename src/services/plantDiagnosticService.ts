@@ -77,7 +77,7 @@ const SYMPTOM_DATABASE: PlantSymptom[] = [
     category: 'leaves',
     description: 'Small or large holes appearing in leaf tissue'
   },
-  
+
   // Stem symptoms
   {
     id: 'soft-mushy-stem',
@@ -103,7 +103,7 @@ const SYMPTOM_DATABASE: PlantSymptom[] = [
     category: 'stems',
     description: 'Dark spots or lesions on stem surface'
   },
-  
+
   // Root symptoms
   {
     id: 'root-rot',
@@ -123,7 +123,7 @@ const SYMPTOM_DATABASE: PlantSymptom[] = [
     category: 'roots',
     description: 'Roots appear dry and break easily when touched'
   },
-  
+
   // Growth symptoms
   {
     id: 'stunted-growth',
@@ -349,11 +349,11 @@ export class PlantDiagnosticService {
 
     // Score each issue based on symptom matches
     const scoredIssues = PLANT_ISSUES.map(issue => {
-      const matchingSymptoms = issue.symptoms.filter(symptom => 
+      const matchingSymptoms = issue.symptoms.filter(symptom =>
         selectedSymptoms.includes(symptom)
       );
       const score = (matchingSymptoms.length / issue.symptoms.length) * issue.commonness;
-      
+
       return {
         issue,
         score,
@@ -408,7 +408,7 @@ export class PlantDiagnosticService {
 
     // Generate pot recommendations if root issues detected
     let potRecommendations: PotRecommendation[] | undefined;
-    const hasRootIssues = selectedSymptoms.some(symptom => 
+    const hasRootIssues = selectedSymptoms.some(symptom =>
       ['root-rot', 'root-bound', 'dry-brittle-roots'].includes(symptom)
     );
 
@@ -471,7 +471,7 @@ export class PlantDiagnosticService {
   // Save diagnostic to database
   static async saveDiagnostic(plantId: string, symptoms: string[], diagnosis?: string, treatmentPlan?: TreatmentPlan): Promise<PlantDiagnostic | null> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('plant_diagnostics')
         .insert({
           plant_id: plantId,
@@ -494,7 +494,7 @@ export class PlantDiagnosticService {
   // Get diagnostic history for a plant
   static async getDiagnosticHistory(plantId: string): Promise<PlantDiagnostic[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('plant_diagnostics')
         .select('*')
         .eq('plant_id', plantId)
@@ -511,7 +511,7 @@ export class PlantDiagnosticService {
   // Update diagnostic resolution status
   static async updateDiagnosticStatus(diagnosticId: string, resolved: boolean): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('plant_diagnostics')
         .update({ resolved })
         .eq('id', diagnosticId);
@@ -527,7 +527,7 @@ export class PlantDiagnosticService {
   // Get all diagnostics for user (via plants)
   static async getUserDiagnostics(userId: string): Promise<PlantDiagnostic[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('plant_diagnostics')
         .select(`
           *,

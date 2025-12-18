@@ -51,7 +51,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
 
     // Auth & Data Fetching
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
             console.log("Session init:", session ? "Logged In" : "No Session");
             setSession(session);
             if (session) fetchData(session.user.id);
@@ -60,7 +60,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
 
         const {
             data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
+        } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
             console.log("Auth change:", _event, session ? "Logged In" : "No Session");
             setSession(session);
             if (session) fetchData(session.user.id);
@@ -77,8 +77,8 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         setLoading(true);
         try {
             // Fetch Plants
-            const { data: plantsData, error: plantsError } = await supabase
-                .from('plants')
+            const { data: plantsData, error: plantsError } = await (supabase
+                .from('plants') as any)
                 .select('*');
 
             if (plantsError) throw plantsError;
@@ -108,8 +108,8 @@ export function GardenProvider({ children }: { children: ReactNode }) {
             }
 
             // Fetch Settings (Rooms & Streaks)
-            const { data: settingsData, error: settingsError } = await supabase
-                .from('user_settings')
+            const { data: settingsData, error: settingsError } = await (supabase
+                .from('user_settings') as any)
                 .select('*')
                 .eq('user_id', userId)
                 .maybeSingle();

@@ -3,6 +3,7 @@
 
 import { supabase } from '@/lib/supabaseClient';
 import { SeasonalTask } from '@/types/seasonal';
+import { User } from '@supabase/supabase-js';
 
 export interface TaskProgress {
   id: string;
@@ -42,7 +43,7 @@ class TaskProgressService {
    */
   async completeTask(taskId: string, notes?: string): Promise<TaskProgress | null> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser() as { data: { user: User | null } };
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -71,7 +72,7 @@ class TaskProgressService {
           .single();
 
         if (error) throw error;
-        
+
         this.clearUserCache(user.id);
         return data;
       } else {
@@ -83,7 +84,7 @@ class TaskProgressService {
           .single();
 
         if (error) throw error;
-        
+
         this.clearUserCache(user.id);
         return data;
       }
@@ -98,7 +99,7 @@ class TaskProgressService {
    */
   async uncompleteTask(taskId: string): Promise<void> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser() as { data: { user: User | null } };
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -117,7 +118,7 @@ class TaskProgressService {
         .eq('id', existing.id);
 
       if (error) throw error;
-      
+
       this.clearUserCache(user.id);
     } catch (error) {
       console.error('Error uncompleting task:', error);
@@ -130,7 +131,7 @@ class TaskProgressService {
    */
   async getTaskProgress(taskId: string): Promise<TaskProgress | null> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser() as { data: { user: User | null } };
       if (!user) {
         return null;
       }
@@ -155,7 +156,7 @@ class TaskProgressService {
    */
   async getUserTaskProgress(): Promise<TaskProgress[]> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser() as { data: { user: User | null } };
       if (!user) {
         return [];
       }
@@ -175,7 +176,7 @@ class TaskProgressService {
       if (error) throw error;
 
       const progress = data || [];
-      
+
       // Cache the results
       this.progressCache.set(cacheKey, progress);
       this.cacheExpiry.set(cacheKey, Date.now() + this.CACHE_DURATION);
@@ -209,15 +210,15 @@ class TaskProgressService {
     try {
       const progress = await this.getUserTaskProgress();
       const completed = progress.filter(p => p.completed);
-      
+
       const currentMonth = new Date().getMonth();
       const currentYear = new Date().getFullYear();
-      
+
       const thisMonth = progress.filter(p => {
         const date = new Date(p.created_at);
         return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
       });
-      
+
       const completedThisMonth = thisMonth.filter(p => p.completed);
 
       // Calculate streaks
@@ -256,16 +257,16 @@ class TaskProgressService {
 
       // Daily breakdown (last 30 days)
       const daily = this.generateDailyBreakdown(progress, taskMap, 30);
-      
+
       // Weekly breakdown (last 12 weeks)
       const weekly = this.generateWeeklyBreakdown(progress, taskMap, 12);
-      
+
       // Monthly breakdown (last 12 months)
       const monthly = this.generateMonthlyBreakdown(progress, taskMap, 12);
 
       // Category breakdown
       const byCategory = this.generateCategoryBreakdown(progress, taskMap);
-      
+
       // Priority breakdown
       const byPriority = this.generatePriorityBreakdown(progress, taskMap);
 
@@ -293,7 +294,7 @@ class TaskProgressService {
    */
   async addTaskNotes(taskId: string, notes: string): Promise<void> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser() as { data: { user: User | null } };
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -309,7 +310,7 @@ class TaskProgressService {
         .eq('id', existing.id);
 
       if (error) throw error;
-      
+
       this.clearUserCache(user.id);
     } catch (error) {
       console.error('Error adding task notes:', error);
@@ -322,7 +323,7 @@ class TaskProgressService {
    */
   async deleteTaskProgress(taskId: string): Promise<void> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser() as { data: { user: User | null } };
       if (!user) {
         throw new Error('User not authenticated');
       }
@@ -334,7 +335,7 @@ class TaskProgressService {
         .eq('task_id', taskId);
 
       if (error) throw error;
-      
+
       this.clearUserCache(user.id);
     } catch (error) {
       console.error('Error deleting task progress:', error);
@@ -393,8 +394,8 @@ class TaskProgressService {
   }
 
   private generateDailyBreakdown(
-    progress: TaskProgress[], 
-    taskMap: Map<string, SeasonalTask>, 
+    progress: TaskProgress[],
+    taskMap: Map<string, SeasonalTask>,
     days: number
   ): { date: string; completed: number; total: number }[] {
     const result = [];
@@ -421,8 +422,8 @@ class TaskProgressService {
   }
 
   private generateWeeklyBreakdown(
-    progress: TaskProgress[], 
-    taskMap: Map<string, SeasonalTask>, 
+    progress: TaskProgress[],
+    taskMap: Map<string, SeasonalTask>,
     weeks: number
   ): { week: string; completed: number; total: number }[] {
     const result = [];
@@ -450,8 +451,8 @@ class TaskProgressService {
   }
 
   private generateMonthlyBreakdown(
-    progress: TaskProgress[], 
-    taskMap: Map<string, SeasonalTask>, 
+    progress: TaskProgress[],
+    taskMap: Map<string, SeasonalTask>,
     months: number
   ): { month: string; completed: number; total: number }[] {
     const result = [];
@@ -477,7 +478,7 @@ class TaskProgressService {
   }
 
   private generateCategoryBreakdown(
-    progress: TaskProgress[], 
+    progress: TaskProgress[],
     taskMap: Map<string, SeasonalTask>
   ): Record<string, { completed: number; total: number }> {
     const breakdown: Record<string, { completed: number; total: number }> = {};
@@ -500,7 +501,7 @@ class TaskProgressService {
   }
 
   private generatePriorityBreakdown(
-    progress: TaskProgress[], 
+    progress: TaskProgress[],
     taskMap: Map<string, SeasonalTask>
   ): Record<string, { completed: number; total: number }> {
     const breakdown: Record<string, { completed: number; total: number }> = {};

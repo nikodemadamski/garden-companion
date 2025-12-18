@@ -2,10 +2,10 @@
 // Handles database operations, caching, and recommendation logic for seasonal gardening tasks
 
 import { supabase } from '@/lib/supabaseClient';
-import { 
-  SeasonalTask, 
-  SeasonalTaskFilter, 
-  SeasonalGuide, 
+import {
+  SeasonalTask,
+  SeasonalTaskFilter,
+  SeasonalGuide,
   TaskRecommendation,
   SeasonalRecommendationContext,
   MonthlyTaskSummary,
@@ -23,14 +23,14 @@ class SeasonalTaskService {
    */
   async getSeasonalTasks(filter?: SeasonalTaskFilter): Promise<SeasonalTask[]> {
     const cacheKey = this.generateCacheKey(filter);
-    
+
     // Check cache first
     if (this.isCacheValid(cacheKey)) {
       return this.taskCache.get(cacheKey) || [];
     }
 
     try {
-      let query = supabase
+      let query = (supabase as any)
         .from('seasonal_tasks')
         .select('*')
         .order('month', { ascending: true })
@@ -40,15 +40,15 @@ class SeasonalTaskService {
       if (filter?.month) {
         query = query.eq('month', filter.month);
       }
-      
+
       if (filter?.priority) {
         query = query.eq('priority', filter.priority);
       }
-      
+
       if (filter?.category) {
         query = query.eq('category', filter.category);
       }
-      
+
       if (filter?.climate_zone) {
         query = query.eq('climate_zone', filter.climate_zone);
       }
@@ -70,7 +70,7 @@ class SeasonalTaskService {
       }
 
       const tasks = data || [];
-      
+
       // Cache the results
       this.taskCache.set(cacheKey, tasks);
       this.cacheExpiry.set(cacheKey, Date.now() + this.CACHE_DURATION);
@@ -126,7 +126,7 @@ class SeasonalTaskService {
   async getTaskRecommendations(context: SeasonalRecommendationContext): Promise<TaskRecommendation[]> {
     try {
       const currentMonth = context.currentMonth;
-      
+
       // Get tasks for current and next month
       const tasks = await this.getSeasonalTasks({
         climate_zone: context.climateZone
@@ -148,7 +148,7 @@ class SeasonalTaskService {
           const urgencyOrder = { immediate: 3, this_week: 2, this_month: 1 };
           const urgencyDiff = urgencyOrder[b.urgency] - urgencyOrder[a.urgency];
           if (urgencyDiff !== 0) return urgencyDiff;
-          
+
           // Then by relevance score
           return b.relevanceScore - a.relevanceScore;
         })
@@ -200,9 +200,9 @@ class SeasonalTaskService {
   async searchTasks(query: string, filter?: SeasonalTaskFilter): Promise<SeasonalTask[]> {
     try {
       const allTasks = await this.getSeasonalTasks(filter);
-      
+
       const searchTerm = query.toLowerCase();
-      return allTasks.filter(task => 
+      return allTasks.filter(task =>
         task.title.toLowerCase().includes(searchTerm) ||
         (task.description && task.description.toLowerCase().includes(searchTerm))
       );
@@ -238,7 +238,7 @@ class SeasonalTaskService {
 
   private generateCacheKey(filter?: SeasonalTaskFilter): string {
     if (!filter) return 'all_tasks';
-    
+
     return `tasks_${JSON.stringify(filter)}`;
   }
 
@@ -254,20 +254,20 @@ class SeasonalTaskService {
       if (!task.plant_types || task.plant_types.includes('all')) {
         return true;
       }
-      
-      return task.plant_types.some(plantType => 
+
+      return task.plant_types.some(plantType =>
         userPlants.includes(plantType) || plantType === 'all'
       );
     });
   }
 
   private evaluateTaskRecommendation(
-    task: SeasonalTask, 
+    task: SeasonalTask,
     context: SeasonalRecommendationContext
   ): TaskRecommendation | null {
     const currentMonth = context.currentMonth;
     const monthDiff = this.getMonthDifference(currentMonth, task.month);
-    
+
     // Skip tasks that are too far in the future or past
     if (monthDiff > 2 || monthDiff < -1) {
       return null;
@@ -317,26 +317,26 @@ class SeasonalTaskService {
     if (!task.plant_types || task.plant_types.includes('all')) {
       return true;
     }
-    
+
     return task.plant_types.some(plantType => userPlants.includes(plantType));
   }
 
   private getMonthDifference(currentMonth: number, taskMonth: number): number {
     let diff = taskMonth - currentMonth;
-    
+
     // Handle year boundary
     if (diff > 6) {
       diff -= 12;
     } else if (diff < -6) {
       diff += 12;
     }
-    
+
     return diff;
   }
 
   private generateSeasonalTips(month: number, context: SeasonalRecommendationContext): string[] {
     const tips: string[] = [];
-    
+
     // Season-specific tips
     const season = this.getSeason(month);
     const seasonalTips = {
@@ -368,7 +368,7 @@ class SeasonalTaskService {
     if (context.userPlants.includes('herb')) {
       tips.push("Herbs can be harvested year-round from a sunny windowsill");
     }
-    
+
     if (context.userPlants.includes('vegetable')) {
       tips.push("Succession plant lettuce and radishes every 2 weeks for continuous harvest");
     }
