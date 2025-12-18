@@ -1,40 +1,33 @@
 :root {
-  /* Lush Color Palette */
-  --color-primary: #2d6a4f;
-  /* Deep Green */
-  --color-primary-light: #40916c;
-  --color-primary-dark: #1b4332;
-  --color-accent: #d8f3dc;
-  /* Pale Green */
-  --color-accent-pop: #95d5b2;
-  --color-background: #f0f7f4;
-  /* Off-white/Mint tint */
-  --color-surface: #ffffff;
-  --color-text: #1d3557;
-  /* Dark Blue/Grey */
-  --color-text-light: #6c757d;
-  --color-warning: #e9c46a;
-  --color-danger: #e76f51;
-
-  /* Typography */
-  --font-heading: var(--font-outfit), sans-serif;
-  --font-body: var(--font-inter), sans-serif;
+  /* Premium Apple-inspired Palette */
+  --color-primary: #34C759;
+  /* iOS Green */
+  --color-primary-light: #EBF8F2;
+  --color-primary-dark: #1E1E1E;
+  --color-accent: #5856D6;
+  /* iOS Indigo */
+  --color-background: #F2F2F7;
+  /* iOS System Background */
+  --color-surface: #FFFFFF;
+  --color-text: #000000;
+  --color-text-light: #8E8E93;
+  /* iOS Secondary Label */
+  --color-warning: #FF9500;
+  /* iOS Orange */
+  --color-danger: #FF3B30;
+  /* iOS Red */
 
   /* Spacing */
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;
   --spacing-md: 1.5rem;
   --spacing-lg: 2rem;
-  --spacing-xl: 3rem;
 
   /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 8px 32px rgba(0, 0, 0, 0.12);
 
   /* Radius */
-  --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 24px;
   --radius-full: 9999px;
@@ -44,14 +37,16 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  font-family: var(--font-body);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
   background-color: var(--color-background);
   color: var(--color-text);
-  line-height: 1.6;
+  line-height: 1.5;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 h1,
@@ -60,15 +55,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-primary-dark);
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
+  letter-spacing: -0.02em;
 }
 
 button {
@@ -76,51 +63,47 @@ button {
   cursor: pointer;
   border: none;
   background: none;
+  transition: opacity 0.2s ease, transform 0.1s ease;
 }
 
-/* Utilities */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
+button:active {
+  transform: scale(0.98);
+  opacity: 0.8;
 }
 
 /* Glassmorphism Panel */
 .glass-panel {
   background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: var(--radius-md);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Buttons */
 .btn {
-  border: none;
-  border-radius: 50px;
-  /* Pill shape */
+  border-radius: 14px;
   padding: 0.8rem 1.5rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.2s;
-}
-
-.btn:active {
-  transform: scale(0.95);
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .btn-primary {
   background-color: var(--color-primary);
   color: white;
-  box-shadow: 0 4px 10px rgba(72, 187, 120, 0.3);
+  box-shadow: 0 4px 12px rgba(52, 199, 89, 0.3);
 }
 
 /* Animations */
-@keyframes fadeIn {
+@keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
 
   to {
@@ -129,6 +112,20 @@ button {
   }
 }
 
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+.animate-slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom Scrollbar (Hidden for clean look) */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe Area Insets for iPhone */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top);
 }

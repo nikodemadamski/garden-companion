@@ -5,24 +5,39 @@ import { useGarden } from '@/context/GardenContext';
 import PlantList from '@/components/Plant/PlantList';
 import AddPlantForm from '@/components/Plant/AddPlantForm';
 import AppShell from '@/components/Layout/AppShell';
-import GardenAnalysis from '@/components/Analysis/GardenAnalysis';
-import WeatherWidget from '@/components/Weather/WeatherWidget';
+import GardenDashboard from '@/components/Dashboard/GardenDashboard';
+import SeasonalDashboard from '@/components/Seasonal/SeasonalDashboard';
+import WeatherAlertBanner from '@/components/Weather/WeatherAlertBanner';
 
 export default function Home() {
-  const { currentGarden, plants } = useGarden();
+  const { activeTab } = useGarden();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-
-  const gardenPlants = plants.filter(p => p.type === currentGarden);
-  const plantsNeedingWater = gardenPlants.filter(p => {
-    const lastWatered = new Date(p.lastWateredDate);
-    const nextWater = new Date(lastWatered);
-    nextWater.setDate(lastWatered.getDate() + p.waterFrequencyDays);
-    return nextWater <= new Date();
-  }).length;
 
   return (
     <AppShell>
-      <PlantList />
+      {/* Conditional Rendering based on activeTab */}
+      {activeTab === 'dashboard' && (
+        <>
+          <WeatherAlertBanner />
+          <GardenDashboard />
+        </>
+      )}
+
+      {activeTab === 'plants' && (
+        <PlantList />
+      )}
+
+      {activeTab === 'explore' && (
+        <SeasonalDashboard />
+      )}
+
+      {activeTab === 'profile' && (
+        <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+          <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>👤</div>
+          <h2>Your Profile</h2>
+          <p>Profile settings and history will appear here.</p>
+        </div>
+      )}
 
       {/* Hidden trigger for the Add Plant modal (connected to AppShell button) */}
       <button
@@ -37,3 +52,4 @@ export default function Home() {
     </AppShell>
   );
 }
+

@@ -35,6 +35,8 @@ interface GardenContextType {
     signOut: () => void;
     loginStreak: number;
     wateringStreak: number;
+    activeTab: 'dashboard' | 'plants' | 'explore' | 'profile';
+    setActiveTab: (tab: 'dashboard' | 'plants' | 'explore' | 'profile') => void;
 }
 
 const GardenContext = createContext<GardenContextType | undefined>(undefined);
@@ -48,6 +50,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
     const [loading, setLoading] = useState(true);
     const [loginStreak, setLoginStreak] = useState(0);
     const [wateringStreak, setWateringStreak] = useState(0);
+    const [activeTab, setActiveTab] = useState<'dashboard' | 'plants' | 'explore' | 'profile'>('dashboard');
 
     // Auth & Data Fetching
     useEffect(() => {
@@ -422,7 +425,9 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 session,
                 signOut,
                 loginStreak,
-                wateringStreak
+                wateringStreak,
+                activeTab,
+                setActiveTab
             }}
         >
             {children}
