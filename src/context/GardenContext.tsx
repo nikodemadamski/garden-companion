@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabaseClient';
 import Login from '@/components/Auth/Login';
 import { Session } from '@supabase/supabase-js';
 import { GardenEngine } from '@/services/gardenEngine';
+import { ProductiveService } from '@/services/productiveService';
 
 interface WateringStatus {
     status: 'ok' | 'due' | 'overdue';
@@ -41,6 +42,7 @@ interface GardenContextType {
     awardXP: (plantId: string, amount: number) => void;
     calculateHarmony: () => number;
     gardenRank: { title: string; icon: string; color: string };
+    getCompanionStatus: (plant: Plant) => { friends: string[], foes: string[] };
 }
 
 const GardenContext = createContext<GardenContextType | undefined>(undefined);
@@ -364,6 +366,20 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         return plants.filter((p) => p.type === type);
     };
 
+    const getCompanionStatus = (plant: Plant) => {
+        const roomPlants = plants.filter(p => p.room === plant.room && p.id !== plant.id);
+        const friends: string[] = [];
+        const foes: string[] = [];
+
+        roomPlants.forEach(other => {
+            const compatibility = ProductiveService.checkCompatibility(plant.species || '', other.species || '');
+            if (compatibility === 'friend') friends.push(other.nickname || other.name);
+            if (compatibility === 'foe') foes.push(other.nickname || other.name);
+        });
+
+        return { friends, foes };
+    };
+
     const calculateWateringStatus = (plant: Plant, history?: HistoricalWeatherData[]): WateringStatus => {
         if (!plant?.lastWateredDate) {
             return { status: 'overdue', label: 'Never Watered', color: '#ef4444' };
@@ -481,7 +497,8 @@ export function GardenProvider({ children }: { children: ReactNode }) {
                 setActiveTab,
                 awardXP,
                 calculateHarmony,
-                gardenRank
+                gardenRank,
+                getCompanionStatus
             }}
         >
             {children}

@@ -13,7 +13,7 @@ interface PlantDetailViewProps {
 }
 
 export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps) {
-    const { awardXP, addJournalEntry, updatePlant, calculateWateringStatus } = useGarden();
+    const { awardXP, addJournalEntry, updatePlant, calculateWateringStatus, getCompanionStatus } = useGarden();
     const [showShare, setShowShare] = useState(false);
     const [isLogging, setIsLogging] = useState(false);
     const [note, setNote] = useState('');
@@ -209,8 +209,37 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                         border: '1px solid rgba(0,0,0,0.05)'
                     }}>
                         <h3 style={{ fontSize: '0.9rem', fontWeight: 900, color: '#2D3748', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span>💡</span> PRODUCTIVE WISDOM
+                            <span>💡</span> COMPANION ANALYSIS
                         </h3>
+
+                        {/* Real-time Companion Status */}
+                        <div style={{ marginBottom: '1rem' }}>
+                            {getCompanionStatus(plant).friends.length > 0 ? (
+                                <div style={{ backgroundColor: '#F0FFF4', padding: '0.5rem', borderRadius: '12px', border: '1px solid #C6F6D5', marginBottom: '0.5rem' }}>
+                                    <div style={{ fontSize: '0.75rem', fontWeight: 900, color: '#2F855A' }}>👯 ACTIVE BOOSTS</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#276749' }}>
+                                        Benefiting from: {getCompanionStatus(plant).friends.join(', ')}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div style={{ fontSize: '0.75rem', color: '#718096', marginBottom: '0.5rem' }}>
+                                    No active companion boosts in this room.
+                                </div>
+                            )}
+
+                            {getCompanionStatus(plant).foes.length > 0 && (
+                                <div style={{ backgroundColor: '#FFF5F5', padding: '0.5rem', borderRadius: '12px', border: '1px solid #FED7D7' }}>
+                                    <div style={{ fontSize: '0.75rem', fontWeight: 900, color: '#C53030' }}>⚠️ ACTIVE CONFLICTS</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#9B2C2C' }}>
+                                        Stressed by: {getCompanionStatus(plant).foes.join(', ')}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div style={{ height: '1px', backgroundColor: 'rgba(0,0,0,0.05)', margin: '1rem 0' }} />
+
+                        <h4 style={{ fontSize: '0.75rem', fontWeight: 900, color: '#718096', marginBottom: '0.5rem' }}>GENERAL WISDOM</h4>
                         <p style={{ fontSize: '0.85rem', color: '#4A5568', margin: '0 0 1rem 0', fontStyle: 'italic' }}>
                             "{ProductiveService.getPlantData(plant.species)?.funFact}"
                         </p>

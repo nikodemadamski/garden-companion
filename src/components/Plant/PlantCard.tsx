@@ -12,8 +12,9 @@ interface PlantCardProps {
 }
 
 export default function PlantCard({ plant, history, onClick }: PlantCardProps) {
-    const { calculateWateringStatus, weather } = useGarden();
+    const { calculateWateringStatus, weather, getCompanionStatus } = useGarden();
     const status = calculateWateringStatus(plant, history);
+    const companions = getCompanionStatus(plant);
 
     // Kawaii Chibi Faces + Evolution Accessories
     const getChibiFace = () => {
@@ -78,6 +79,44 @@ export default function PlantCard({ plant, history, onClick }: PlantCardProps) {
                     zIndex: 2
                 }}>
                     HOSPITAL ❤️‍🩹
+                </div>
+            )}
+
+            {/* Companion Boost Badge */}
+            {companions.friends.length > 0 && (
+                <div style={{
+                    position: 'absolute',
+                    top: '0.5rem',
+                    left: '0.5rem',
+                    backgroundColor: '#48BB78',
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '10px',
+                    fontSize: '0.6rem',
+                    fontWeight: 900,
+                    zIndex: 2,
+                    boxShadow: '0 2px 5px rgba(72, 187, 120, 0.3)'
+                }}>
+                    👯 BOOSTED
+                </div>
+            )}
+
+            {/* Conflict Alert Badge */}
+            {companions.foes.length > 0 && (
+                <div style={{
+                    position: 'absolute',
+                    top: '2rem',
+                    left: '0.5rem',
+                    backgroundColor: '#F6AD55',
+                    color: 'white',
+                    padding: '2px 8px',
+                    borderRadius: '10px',
+                    fontSize: '0.6rem',
+                    fontWeight: 900,
+                    zIndex: 2,
+                    boxShadow: '0 2px 5px rgba(246, 173, 85, 0.3)'
+                }}>
+                    ⚠️ CONFLICT
                 </div>
             )}
 
