@@ -20,27 +20,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     const weather = gardenWeather;
 
     return (
-        <div style={{
-            minHeight: '100vh',
-            paddingBottom: '120px', // More space for floating nav
-            maxWidth: '500px', // More compact, mobile-focused
-            margin: '0 auto',
-            position: 'relative',
-            backgroundColor: '#F8F9FA',
-            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
-        }}>
+        <div className="app-container">
             {/* Premium Header */}
-            <header style={{
-                padding: '3rem 1.5rem 1.5rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                background: 'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(248,249,250,0) 100%)',
-                position: 'sticky',
-                top: 0,
-                zIndex: 50,
-                backdropFilter: 'blur(5px)'
-            }}>
+            <header className="app-header">
                 <div>
                     <p style={{
                         color: 'var(--color-text-light)',
@@ -78,30 +60,12 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </header>
 
             {/* Main Content */}
-            <main style={{ padding: '0 1.5rem' }}>
+            <main className="app-main">
                 {children}
             </main>
 
             {/* iPhone-style Floating Bottom Nav */}
-            <nav style={{
-                position: 'fixed',
-                bottom: '2rem',
-                left: '1.5rem',
-                right: '1.5rem',
-                maxWidth: 'calc(500px - 3rem)',
-                margin: '0 auto',
-                backgroundColor: 'rgba(255, 255, 255, 0.85)',
-                backdropFilter: 'blur(20px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-                padding: '0.75rem 1rem',
-                borderRadius: '24px',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-                display: 'flex',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                zIndex: 100,
-                border: '1px solid rgba(255, 255, 255, 0.3)'
-            }}>
+            <nav className="floating-nav">
                 <NavButton
                     active={activeTab === 'dashboard'}
                     onClick={() => setActiveTab('dashboard')}

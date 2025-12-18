@@ -38,15 +38,7 @@ export default function GardenerAI({ compact = false }: { compact?: boolean }) {
     };
 
     return (
-        <div className="glass-panel animate-slide-up" style={{
-            height: compact ? '350px' : '500px',
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-            borderRadius: compact ? '0' : '32px',
-            backgroundColor: 'white',
-            border: compact ? 'none' : '2px solid #F1F5F9'
-        }}>
+        <div className={`glass-panel animate-slide-up ai-container ${compact ? 'compact' : ''}`}>
             {/* Kawaii Header */}
             <div style={{
                 padding: '1.25rem',

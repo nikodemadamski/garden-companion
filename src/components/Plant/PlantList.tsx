@@ -124,11 +124,7 @@ export default function PlantList() {
                                 {roomPlants.length}
                             </span>
                         </h2>
-                        <div style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr',
-                            gap: '1.25rem',
-                        }}>
+                        <div className="plant-grid">
                             {roomPlants.map((plant) => (
                                 <PlantCard
                                     key={plant.id}
