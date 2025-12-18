@@ -24,8 +24,11 @@ export class IngestionService {
 
             const bestMatch = searchResults[0];
 
-            // 3. Fetch full details
-            const details = await fetchPlantDetails(bestMatch.id);
+            // 3. Fetch full details if ID exists
+            let details = null;
+            if (bestMatch.id) {
+                details = await fetchPlantDetails(bestMatch.id);
+            }
 
             // 4. Enrich with AI
             return await this.enrichWithAI(speciesName, details);

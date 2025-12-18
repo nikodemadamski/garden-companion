@@ -231,7 +231,7 @@ export function GardenProvider({ children }: { children: ReactNode }) {
         if (plants.length > 0) {
             import('@/services/ingestionService').then(({ IngestionService }) => {
                 plants.forEach(p => {
-                    if (p.species && !ProductiveService.getPlantData(p.species)) {
+                    if (p.species && !productiveData[p.species]) {
                         IngestionService.ingestPlant(p.species).then(() => {
                             refreshProductiveData();
                         });
