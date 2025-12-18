@@ -8,13 +8,32 @@ interface DashboardModalProps {
     onClose: () => void;
 }
 
+import BottomSheet from '../UI/BottomSheet';
+import { ProductiveService } from '@/services/productiveService';
+
+interface DashboardModalProps {
+    onClose: () => void;
+}
+
 export default function DashboardModal({ onClose }: DashboardModalProps) {
-    const { plants, rooms, currentGarden } = useGarden();
+    const { plants, rooms, currentGarden, calculateHarmony, gardenRank: rank, awardXP } = useGarden();
+    const harmony = calculateHarmony();
 
     const totalPlants = plants.length;
-    const indoorPlants = plants.filter(p => p.type === 'indoor').length;
-    const outdoorPlants = plants.filter(p => p.type === 'outdoor').length;
     const hospitalPatients = plants.filter(p => p.status === 'hospital').length;
+
+    // Total Harvest Calculation
+    const totalHarvest = plants.reduce((acc, p) => {
+        p.journal?.forEach(entry => {
+            if (entry.type === 'harvest' && entry.harvestAmount) {
+                const unit = entry.harvestUnit || 'units';
+                acc[unit] = (acc[unit] || 0) + entry.harvestAmount;
+            }
+        });
+        return acc;
+    }, {} as Record<string, number>);
+
+    const totalUnits = Object.values(totalHarvest).reduce((a, b) => a + b, 0);
 
     // Plants by Room
     const plantsByRoom = rooms.reduce((acc, room) => {
@@ -32,80 +51,113 @@ export default function DashboardModal({ onClose }: DashboardModalProps) {
 
     const upcomingWatering = [...plants]
         .sort((a, b) => getWateringDue(a).getTime() - getWateringDue(b).getTime())
-        .slice(0, 5);
+        .slice(0, 3);
+
+    // AI Recommendations (Simplified logic from GardenAnalysis)
+    const getRecommendations = () => {
+        const recs = [];
+        if (hospitalPatients > 0) recs.push({ icon: '🩹', text: `${hospitalPatients} plants need urgent care!` });
+        if (totalPlants < 5) recs.push({ icon: '🌱', text: "Your garden is growing! Add more varieties to boost harmony." });
+
+        const hasHerbs = plants.some(p => ProductiveService.getPlantData(p.species)?.category === 'herb');
+        if (!hasHerbs) recs.push({ icon: '🌿', text: "Consider adding herbs for a kitchen-ready garden." });
+
+        return recs.length > 0 ? recs : [{ icon: '✨', text: "Your garden is perfectly balanced today!" }];
+    };
+
+    const recommendations = getRecommendations();
 
     return (
-        <div style={{
-            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 2000,
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-        }} onClick={onClose}>
-            <div className="glass-panel animate-fade-in" style={{
-                width: '90%', maxWidth: '600px',
-                padding: '2rem', backgroundColor: '#FDFBF7',
-                position: 'relative', maxHeight: '90vh', overflowY: 'auto'
-            }} onClick={e => e.stopPropagation()}>
-                <button
-                    onClick={onClose}
-                    style={{ position: 'absolute', top: '1rem', right: '1rem', fontSize: '1.5rem' }}
-                >✕</button>
+        <BottomSheet isOpen={true} onClose={onClose} title="Garden Insights 📊">
+            <div className="bento-grid">
 
-                <h2 style={{ marginBottom: '1.5rem', fontSize: '1.8rem', textAlign: 'center' }}>📊 Garden Dashboard</h2>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2rem' }}>
-                    <div className="stat-card" style={{ backgroundColor: '#E6FFFA', padding: '1.5rem', borderRadius: '12px', textAlign: 'center' }}>
-                        <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#2C7A7B' }}>{totalPlants}</div>
-                        <div style={{ color: '#285E61', fontWeight: 600 }}>Total Plants</div>
-                    </div>
-                    <div className="stat-card" style={{ backgroundColor: '#FFF5F5', padding: '1.5rem', borderRadius: '12px', textAlign: 'center' }}>
-                        <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#C53030' }}>{hospitalPatients}</div>
-                        <div style={{ color: '#9B2C2C', fontWeight: 600 }}>In Hospital</div>
-                    </div>
-                    <div className="stat-card" style={{ backgroundColor: '#EBF8FF', padding: '1.5rem', borderRadius: '12px', textAlign: 'center' }}>
-                        <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#2B6CB0' }}>{indoorPlants}</div>
-                        <div style={{ color: '#2A4365', fontWeight: 600 }}>Indoor</div>
-                    </div>
-                    <div className="stat-card" style={{ backgroundColor: '#F0FFF4', padding: '1.5rem', borderRadius: '12px', textAlign: 'center' }}>
-                        <div style={{ fontSize: '2.5rem', fontWeight: 800, color: '#2F855A' }}>{outdoorPlants}</div>
-                        <div style={{ color: '#22543D', fontWeight: 600 }}>Outdoor</div>
+                {/* 1. Harmony Score (Span 2) */}
+                <div className="bento-card span-2" style={{
+                    background: 'linear-gradient(135deg, #5856D6 0%, #343391 100%)',
+                    color: 'white',
+                    padding: '1.5rem'
+                }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div>
+                            <div style={{ fontSize: '0.7rem', fontWeight: 800, opacity: 0.8, textTransform: 'uppercase' }}>Harmony Score</div>
+                            <div style={{ fontSize: '2.5rem', fontWeight: 900 }}>{harmony}%</div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                            <div style={{ fontSize: '2rem' }}>{rank.icon}</div>
+                            <div style={{ fontSize: '0.7rem', fontWeight: 700 }}>{rank.title}</div>
+                        </div>
                     </div>
                 </div>
 
-                <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem', fontWeight: 700 }}>🏠 Plants per Room</h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '0.8rem', marginBottom: '2rem' }}>
-                    {Object.entries(plantsByRoom).map(([room, count]) => (
-                        count > 0 && (
-                            <div key={room} style={{ padding: '0.8rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #E2E8F0', textAlign: 'center' }}>
-                                <div style={{ fontWeight: 700, fontSize: '1.2rem' }}>{count}</div>
-                                <div style={{ fontSize: '0.8rem', color: '#718096' }}>{room}</div>
-                            </div>
-                        )
-                    ))}
+                {/* 2. Total Plants */}
+                <div className="bento-card" style={{ backgroundColor: '#F0FFF4' }}>
+                    <div style={{ fontSize: '1.5rem' }}>🪴</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#2F855A' }}>{totalPlants}</div>
+                    <div style={{ fontSize: '0.6rem', fontWeight: 800, color: '#38A169' }}>PLANTS</div>
                 </div>
 
-                <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem', fontWeight: 700 }}>💧 Next to Water</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                    {upcomingWatering.map(plant => {
-                        const due = getWateringDue(plant);
-                        const diffDays = Math.ceil((due.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                {/* 3. Total Bounty */}
+                <div className="bento-card" style={{ backgroundColor: '#FFF5F5' }}>
+                    <div style={{ fontSize: '1.5rem' }}>🧺</div>
+                    <div style={{ fontSize: '1.5rem', fontWeight: 900, color: '#C53030' }}>{totalUnits}</div>
+                    <div style={{ fontSize: '0.6rem', fontWeight: 800, color: '#E53E3E' }}>UNITS</div>
+                </div>
 
-                        return (
-                            <div key={plant.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundImage: `url(${plant.imageUrl})`, backgroundSize: 'cover' }} />
-                                    <div>
-                                        <div style={{ fontWeight: 600 }}>{plant.nickname || plant.name}</div>
-                                        <div style={{ fontSize: '0.8rem', color: '#718096' }}>{plant.room || plant.location}</div>
+                {/* 4. Plants per Room (Span 2) */}
+                <div className="bento-card span-2">
+                    <h3 style={{ fontSize: '0.8rem', fontWeight: 900, marginBottom: '1rem' }}>🏠 ROOM DISTRIBUTION</h3>
+                    <div style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                        {Object.entries(plantsByRoom).map(([room, count]) => (
+                            count > 0 && (
+                                <div key={room} style={{
+                                    minWidth: '100px', padding: '0.75rem',
+                                    backgroundColor: '#F8FAFC', borderRadius: '16px',
+                                    border: '1px solid #F1F5F9', textAlign: 'center'
+                                }}>
+                                    <div style={{ fontWeight: 900, fontSize: '1rem' }}>{count}</div>
+                                    <div style={{ fontSize: '0.6rem', color: '#718096', fontWeight: 700 }}>{room.toUpperCase()}</div>
+                                </div>
+                            )
+                        ))}
+                    </div>
+                </div>
+
+                {/* 5. Next to Water (Span 2) */}
+                <div className="bento-card span-2">
+                    <h3 style={{ fontSize: '0.8rem', fontWeight: 900, marginBottom: '1rem' }}>💧 WATERING QUEUE</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {upcomingWatering.map(plant => {
+                            const due = getWateringDue(plant);
+                            const diffDays = Math.ceil((due.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+                            return (
+                                <div key={plant.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.5rem', backgroundColor: '#F8FAFC', borderRadius: '12px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                        <div style={{ fontSize: '1.2rem' }}>🌿</div>
+                                        <div style={{ fontWeight: 800, fontSize: '0.75rem' }}>{plant.nickname || plant.name}</div>
+                                    </div>
+                                    <div style={{ fontSize: '0.7rem', fontWeight: 900, color: diffDays <= 0 ? '#E53E3E' : '#3182CE' }}>
+                                        {diffDays <= 0 ? 'DUE NOW' : `IN ${diffDays}D`}
                                     </div>
                                 </div>
-                                <div style={{ fontWeight: 700, color: diffDays <= 0 ? '#E53E3E' : '#3182CE' }}>
-                                    {diffDays <= 0 ? 'Today!' : `In ${diffDays}d`}
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
                 </div>
+
+                {/* 6. AI Recommendations (Span 2) */}
+                <div className="bento-card span-2" style={{ backgroundColor: '#FFFFF0', border: '1px solid #FEFCBF' }}>
+                    <h3 style={{ fontSize: '0.8rem', fontWeight: 900, color: '#B7791F', marginBottom: '1rem' }}>✨ AI INSIGHTS</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                        {recommendations.map((rec, idx) => (
+                            <div key={idx} style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                                <span style={{ fontSize: '1.2rem' }}>{rec.icon}</span>
+                                <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#744210' }}>{rec.text}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
             </div>
-        </div>
+        </BottomSheet>
     );
 }

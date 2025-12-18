@@ -196,9 +196,72 @@ button:active {
 .bottom-sheet-handle {
   width: 40px;
   height: 5px;
-  background: #E2E8F0;
-  border-radius: var(--radius-full);
-  margin: 0 auto var(--spacing-md);
+  background-color: #E2E8F0;
+  border-radius: 3px;
+  margin: 0 auto 1.5rem;
+}
+
+/* Juice & Micro-animations */
+@keyframes hapticShake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-2px);
+  }
+
+  75% {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-haptic {
+  animation: hapticShake 0.1s ease-in-out;
+}
+
+.animate-pop-in {
+  animation: popIn 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.btn:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
 }
 
 /* Safe Area Insets for iPhone */

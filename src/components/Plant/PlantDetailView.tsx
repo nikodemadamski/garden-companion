@@ -44,7 +44,15 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
     const personalities = ['Drama Queen 💅', 'Sun Seeker ☀️', 'Quiet Observer 😶', 'Social Butterfly 🦋', 'Night Owl 🦉'];
     const personality = personalities[plant.id.charCodeAt(0) % personalities.length];
 
+    const [isHaptic, setIsHaptic] = useState<string | null>(null);
+
+    const triggerHaptic = (id: string) => {
+        setIsHaptic(id);
+        setTimeout(() => setIsHaptic(null), 100);
+    };
+
     const handleWater = () => {
+        triggerHaptic('water');
         const updated = { ...plant, lastWateredDate: new Date().toISOString() };
         updatePlant(updated);
         awardXP(plant.id, 20);
@@ -57,6 +65,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
     };
 
     const handleFirstAid = () => {
+        triggerHaptic('firstaid');
         const updated = {
             ...plant,
             status: 'healthy' as const,
@@ -81,6 +90,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
     const handleLog = (e: React.FormEvent) => {
         e.preventDefault();
         if (!note.trim()) return;
+        triggerHaptic('log');
         addJournalEntry(plant.id, {
             id: Math.random().toString(36).substring(2, 11),
             date: new Date().toISOString(),
@@ -102,6 +112,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
         e.preventDefault();
         const amount = parseFloat(harvestAmount);
         if (isNaN(amount) || amount <= 0) return;
+        triggerHaptic('harvest');
 
         addJournalEntry(plant.id, {
             id: Math.random().toString(36).substring(2, 11),
@@ -308,6 +319,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                 {isHospital ? (
                     <button
                         onClick={handleFirstAid}
+                        className={isHaptic === 'firstaid' ? 'animate-haptic' : ''}
                         style={{
                             backgroundColor: '#E53E3E', color: 'white', padding: '1.5rem', borderRadius: '24px', border: 'none',
                             fontWeight: 900, fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem',
@@ -321,6 +333,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                             <button
                                 onClick={handleWater}
+                                className={isHaptic === 'water' ? 'animate-haptic' : ''}
                                 style={{
                                     backgroundColor: isThirsty ? '#3182CE' : '#E2E8F0',
                                     color: isThirsty ? 'white' : '#718096',
@@ -332,6 +345,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                             </button>
                             <button
                                 onClick={() => setIsLogging(true)}
+                                className={isHaptic === 'log' ? 'animate-haptic' : ''}
                                 style={{
                                     backgroundColor: '#48BB78', color: 'white',
                                     padding: '1.2rem', borderRadius: '24px', border: 'none',
@@ -345,6 +359,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                         {ProductiveService.getPlantData(plant.species) && (
                             <button
                                 onClick={() => setIsHarvesting(true)}
+                                className={isHaptic === 'harvest' ? 'animate-haptic' : ''}
                                 style={{
                                     backgroundColor: '#F6E05E', color: '#744210',
                                     padding: '1.5rem', borderRadius: '24px', border: 'none',

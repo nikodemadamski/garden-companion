@@ -3,11 +3,6 @@
 import React, { useState } from 'react';
 import { useGarden } from '@/context/GardenContext';
 import DashboardModal from '@/components/Analysis/DashboardModal';
-
-interface ProfileModalProps {
-    onClose: () => void;
-}
-
 import BottomSheet from '../UI/BottomSheet';
 
 interface ProfileModalProps {
