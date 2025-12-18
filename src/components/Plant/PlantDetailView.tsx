@@ -7,6 +7,8 @@ import ShareCardModal from './ShareCardModal';
 import confetti from 'canvas-confetti';
 import { ProductiveService } from '@/services/productiveService';
 
+import BottomSheet from '../UI/BottomSheet';
+
 interface PlantDetailViewProps {
     plant: Plant;
     onClose: () => void;
@@ -159,7 +161,8 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
             display: 'flex',
             flexDirection: 'column',
             animation: 'slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-            fontFamily: 'system-ui, -apple-system, sans-serif'
+            fontFamily: 'system-ui, -apple-system, sans-serif',
+            overflowY: 'auto'
         }}>
             {/* Close Button */}
             <button
@@ -173,12 +176,12 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
 
             {/* Hero Section: The Plant's Soul */}
             <section style={{
-                flex: 1,
+                flexShrink: 0,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: '2rem',
+                padding: '4rem 2rem 2rem',
                 textAlign: 'center'
             }}>
                 {/* Stage & Personality Badges */}
@@ -207,32 +210,6 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                     }}>
                         {personality}
                     </div>
-                    {plant.difficulty && (
-                        <div style={{
-                            backgroundColor: plant.difficulty === 'Easy' ? '#C6F6D5' : plant.difficulty === 'Medium' ? '#FEEBC8' : '#FED7D7',
-                            color: plant.difficulty === 'Easy' ? '#22543D' : plant.difficulty === 'Medium' ? '#744210' : '#822727',
-                            padding: '6px 16px',
-                            borderRadius: '20px',
-                            fontSize: '0.8rem',
-                            fontWeight: 800,
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-                        }}>
-                            {plant.difficulty}
-                        </div>
-                    )}
-                    {plant.isPerennial !== undefined && (
-                        <div style={{
-                            backgroundColor: '#EBF8FF',
-                            color: '#2A4365',
-                            padding: '6px 16px',
-                            borderRadius: '20px',
-                            fontSize: '0.8rem',
-                            fontWeight: 800,
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-                        }}>
-                            {plant.isPerennial ? 'Perennial ♾️' : 'Annual 🗓️'}
-                        </div>
-                    )}
                 </div>
 
                 {/* Big Avatar */}
@@ -254,123 +231,6 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                     Level {plant.level} • {plant.rarity || 'Common'}
                 </p>
 
-                {/* Productive Wisdom Section */}
-                {ProductiveService.getPlantData(plant.species) && (
-                    <div style={{
-                        marginTop: '2rem',
-                        padding: '1.5rem',
-                        backgroundColor: 'rgba(255,255,255,0.5)',
-                        borderRadius: '24px',
-                        textAlign: 'left',
-                        width: '90%',
-                        maxWidth: '400px',
-                        border: '1px solid rgba(0,0,0,0.05)'
-                    }}>
-                        <h3 style={{ fontSize: '0.9rem', fontWeight: 900, color: '#2D3748', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span>💡</span> COMPANION ANALYSIS
-                        </h3>
-
-                        {/* Real-time Companion Status */}
-                        <div style={{ marginBottom: '1rem' }}>
-                            {getCompanionStatus(plant).friends.length > 0 ? (
-                                <div style={{ backgroundColor: '#F0FFF4', padding: '0.5rem', borderRadius: '12px', border: '1px solid #C6F6D5', marginBottom: '0.5rem' }}>
-                                    <div style={{ fontSize: '0.75rem', fontWeight: 900, color: '#2F855A' }}>👯 ACTIVE BOOSTS</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#276749' }}>
-                                        Benefiting from: {getCompanionStatus(plant).friends.join(', ')}
-                                    </div>
-                                </div>
-                            ) : (
-                                <div style={{ fontSize: '0.75rem', color: '#718096', marginBottom: '0.5rem' }}>
-                                    No active companion boosts in this room.
-                                </div>
-                            )}
-
-                            {getCompanionStatus(plant).foes.length > 0 && (
-                                <div style={{ backgroundColor: '#FFF5F5', padding: '0.5rem', borderRadius: '12px', border: '1px solid #FED7D7' }}>
-                                    <div style={{ fontSize: '0.75rem', fontWeight: 900, color: '#C53030' }}>⚠️ ACTIVE CONFLICTS</div>
-                                    <div style={{ fontSize: '0.8rem', color: '#9B2C2C' }}>
-                                        Stressed by: {getCompanionStatus(plant).foes.join(', ')}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                        <div style={{ height: '1px', backgroundColor: 'rgba(0,0,0,0.05)', margin: '1rem 0' }} />
-
-                        <h4 style={{ fontSize: '0.75rem', fontWeight: 900, color: '#718096', marginBottom: '0.5rem' }}>GENERAL WISDOM</h4>
-                        <p style={{ fontSize: '0.85rem', color: '#4A5568', margin: '0 0 1rem 0', fontStyle: 'italic' }}>
-                            "{ProductiveService.getPlantData(plant.species)?.funFact}"
-                        </p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                            <div style={{ fontSize: '0.8rem', color: '#2F855A', fontWeight: 700 }}>
-                                👯 Best Friends: {ProductiveService.getPlantData(plant.species)?.companions.join(', ')}
-                            </div>
-                            <div style={{ fontSize: '0.8rem', color: '#C53030', fontWeight: 700 }}>
-                                🚫 Avoid: {ProductiveService.getPlantData(plant.species)?.foes.join(', ')}
-                            </div>
-                        </div>
-
-                        <div style={{ height: '1px', backgroundColor: 'rgba(0,0,0,0.05)', margin: '1rem 0' }} />
-
-                        {/* Pest Patrol Section */}
-                        <h3 style={{ fontSize: '0.9rem', fontWeight: 900, color: '#2D3748', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <span>🐛</span> PEST PATROL
-                        </h3>
-                        {isDiagnosing ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', animation: 'fade-in 0.3s' }}>
-                                {ProductiveService.getPlantData(plant.species)?.commonPests?.map((pest, idx) => (
-                                    <div key={idx} style={{ padding: '0.75rem', backgroundColor: '#FFF5F5', borderRadius: '12px', border: '1px solid #FED7D7' }}>
-                                        <div style={{ fontWeight: 900, fontSize: '0.85rem', color: '#C53030' }}>{pest.name}</div>
-                                        <div style={{ fontSize: '0.75rem', color: '#9B2C2C', margin: '0.25rem 0' }}><strong>Symptoms:</strong> {pest.symptoms}</div>
-                                        <div style={{ fontSize: '0.75rem', color: '#2F855A', fontWeight: 700 }}><strong>Organic Treatment:</strong> {pest.treatment}</div>
-                                    </div>
-                                ))}
-                                <button
-                                    onClick={() => setIsDiagnosing(false)}
-                                    style={{ padding: '0.5rem', borderRadius: '10px', border: '1px solid #E2E8F0', backgroundColor: 'white', fontSize: '0.75rem', fontWeight: 800 }}
-                                >
-                                    Close Diagnostic
-                                </button>
-                            </div>
-                        ) : (
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontSize: '0.8rem', color: '#718096', fontWeight: 600 }}>
-                                    {ProductiveService.getPlantData(plant.species)?.commonPests?.length || 0} known threats
-                                </span>
-                                <button
-                                    onClick={() => setIsDiagnosing(true)}
-                                    style={{
-                                        backgroundColor: '#FED7D7',
-                                        color: '#C53030',
-                                        border: 'none',
-                                        padding: '4px 12px',
-                                        borderRadius: '10px',
-                                        fontSize: '0.75rem',
-                                        fontWeight: 900,
-                                        cursor: 'pointer'
-                                    }}
-                                >
-                                    REPORT ISSUE
-                                </button>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {isHospital && (
-                    <div style={{
-                        marginTop: '1.5rem',
-                        padding: '0.75rem 1.5rem',
-                        backgroundColor: '#FED7D7',
-                        color: '#C53030',
-                        borderRadius: '15px',
-                        fontWeight: 800,
-                        fontSize: '0.9rem'
-                    }}>
-                        ❤️‍🩹 Currently in the Hospital Wing
-                    </div>
-                )}
-
                 {/* Growth Path Visualization */}
                 {!isHospital && (
                     <div style={{ width: '80%', maxWidth: '300px', marginTop: '2rem' }}>
@@ -390,8 +250,52 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                 )}
             </section>
 
-            {/* Action Zone: Big Buttons */}
+            {/* Wisdom Bento Zone */}
+            <section style={{ padding: '0 2rem 2rem' }}>
+                <div className="bento-grid">
+                    {/* Companion Analysis */}
+                    <div className="bento-card span-2" style={{ backgroundColor: 'rgba(255,255,255,0.5)' }}>
+                        <h3 style={{ fontSize: '0.8rem', fontWeight: 900, color: '#2D3748', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span>💡</span> COMPANIONS
+                        </h3>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            {getCompanionStatus(plant).friends.length > 0 && (
+                                <div style={{ fontSize: '0.75rem', color: '#2F855A', fontWeight: 700 }}>
+                                    👯 BOOSTS: {getCompanionStatus(plant).friends.join(', ')}
+                                </div>
+                            )}
+                            {getCompanionStatus(plant).foes.length > 0 && (
+                                <div style={{ fontSize: '0.75rem', color: '#C53030', fontWeight: 700 }}>
+                                    ⚠️ CONFLICTS: {getCompanionStatus(plant).foes.join(', ')}
+                                </div>
+                            )}
+                            <div style={{ fontSize: '0.7rem', color: '#718096', fontStyle: 'italic' }}>
+                                "{ProductiveService.getPlantData(plant.species)?.funFact}"
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Pest Patrol Trigger */}
+                    <div className="bento-card"
+                        onClick={() => setIsDiagnosing(true)}
+                        style={{ backgroundColor: '#FED7D7', cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}>
+                        <span style={{ fontSize: '2rem' }}>🐛</span>
+                        <div style={{ fontWeight: 900, fontSize: '0.7rem', color: '#C53030', marginTop: '0.5rem' }}>PEST PATROL</div>
+                    </div>
+
+                    {/* Share Card Trigger */}
+                    <div className="bento-card"
+                        onClick={() => setShowShare(true)}
+                        style={{ backgroundColor: '#EBF8FF', cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}>
+                        <span style={{ fontSize: '2rem' }}>🔗</span>
+                        <div style={{ fontWeight: 900, fontSize: '0.7rem', color: '#2B6CB0', marginTop: '0.5rem' }}>PASSPORT</div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Action Zone: Floating Bar Style */}
             <section style={{
+                marginTop: 'auto',
                 padding: '2rem',
                 backgroundColor: 'white',
                 borderTopLeftRadius: '40px',
@@ -405,61 +309,13 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                     <button
                         onClick={handleFirstAid}
                         style={{
-                            backgroundColor: '#E53E3E',
-                            color: 'white',
-                            padding: '1.8rem',
-                            borderRadius: '24px',
-                            border: 'none',
-                            fontWeight: 900,
-                            fontSize: '1.2rem',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            boxShadow: '0 8px 25px rgba(229, 62, 62, 0.3)',
-                            animation: 'bounce 2s infinite'
+                            backgroundColor: '#E53E3E', color: 'white', padding: '1.5rem', borderRadius: '24px', border: 'none',
+                            fontWeight: 900, fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem',
+                            boxShadow: '0 8px 25px rgba(229, 62, 62, 0.3)'
                         }}
                     >
-                        <span style={{ fontSize: '2rem' }}>❤️‍🩹</span>
-                        ADMINISTER FIRST AID
+                        <span>❤️‍🩹</span> ADMINISTER FIRST AID
                     </button>
-                ) : isLogging ? (
-                    <form onSubmit={handleLog} style={{ display: 'flex', gap: '0.5rem', animation: 'fade-in 0.3s' }}>
-                        <input
-                            autoFocus
-                            type="text"
-                            value={note}
-                            onChange={(e) => setNote(e.target.value)}
-                            placeholder="What happened today?"
-                            style={{ flex: 1, padding: '1.2rem', borderRadius: '20px', border: '2px solid #E2E8F0', fontSize: '1rem', outline: 'none' }}
-                        />
-                        <button type="submit" style={{ backgroundColor: '#48BB78', color: 'white', padding: '0 1.5rem', borderRadius: '20px', border: 'none', fontWeight: 800 }}>
-                            Save
-                        </button>
-                    </form>
-                ) : isHarvesting ? (
-                    <form onSubmit={handleHarvest} style={{ display: 'flex', gap: '0.5rem', animation: 'fade-in 0.3s' }}>
-                        <input
-                            autoFocus
-                            type="number"
-                            value={harvestAmount}
-                            onChange={(e) => setHarvestAmount(e.target.value)}
-                            placeholder="Amount"
-                            style={{ flex: 1, padding: '1.2rem', borderRadius: '20px', border: '2px solid #E2E8F0', fontSize: '1rem', outline: 'none' }}
-                        />
-                        <select
-                            value={harvestUnit}
-                            onChange={(e) => setHarvestUnit(e.target.value)}
-                            style={{ padding: '1rem', borderRadius: '20px', border: '2px solid #E2E8F0', fontSize: '1rem', outline: 'none', backgroundColor: 'white' }}
-                        >
-                            <option value="g">g</option>
-                            <option value="kg">kg</option>
-                            <option value="units">units</option>
-                        </select>
-                        <button type="submit" style={{ backgroundColor: '#F6E05E', color: '#744210', padding: '0 1.5rem', borderRadius: '20px', border: 'none', fontWeight: 800 }}>
-                            Harvest
-                        </button>
-                    </form>
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -468,123 +324,123 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                                 style={{
                                     backgroundColor: isThirsty ? '#3182CE' : '#E2E8F0',
                                     color: isThirsty ? 'white' : '#718096',
-                                    padding: '1.5rem',
-                                    borderRadius: '24px',
-                                    border: 'none',
-                                    fontWeight: 900,
-                                    fontSize: '1.1rem',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    gap: '0.5rem',
-                                    transition: 'all 0.2s ease'
+                                    padding: '1.2rem', borderRadius: '24px', border: 'none',
+                                    fontWeight: 900, fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'
                                 }}
                             >
-                                <span style={{ fontSize: '1.5rem' }}>💧</span>
-                                {isThirsty ? 'WATER NOW' : 'HYDRATED'}
+                                <span>💧</span> {isThirsty ? 'WATER' : 'HYDRATED'}
                             </button>
                             <button
                                 onClick={() => setIsLogging(true)}
                                 style={{
-                                    backgroundColor: '#48BB78',
-                                    color: 'white',
-                                    padding: '1.5rem',
-                                    borderRadius: '24px',
-                                    border: 'none',
-                                    fontWeight: 900,
-                                    fontSize: '1.1rem',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    gap: '0.5rem'
+                                    backgroundColor: '#48BB78', color: 'white',
+                                    padding: '1.2rem', borderRadius: '24px', border: 'none',
+                                    fontWeight: 900, fontSize: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'
                                 }}
                             >
-                                <span style={{ fontSize: '1.5rem' }}>📝</span>
-                                LOG MEMORY
+                                <span>📝</span> LOG
                             </button>
                         </div>
 
                         {ProductiveService.getPlantData(plant.species) && (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                <button
-                                    onClick={() => setIsHarvesting(true)}
-                                    style={{
-                                        backgroundColor: '#F6E05E',
-                                        color: '#744210',
-                                        padding: '1.5rem',
-                                        borderRadius: '24px',
-                                        border: 'none',
-                                        fontWeight: 900,
-                                        fontSize: '1.2rem',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: '1rem',
-                                        boxShadow: '0 4px 15px rgba(246, 224, 94, 0.3)'
-                                    }}
-                                >
-                                    <span style={{ fontSize: '1.8rem' }}>🧺</span>
-                                    LOG HARVEST
-                                </button>
+                            <button
+                                onClick={() => setIsHarvesting(true)}
+                                style={{
+                                    backgroundColor: '#F6E05E', color: '#744210',
+                                    padding: '1.5rem', borderRadius: '24px', border: 'none',
+                                    fontWeight: 900, fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem',
+                                    boxShadow: '0 4px 15px rgba(246, 224, 94, 0.3)'
+                                }}
+                            >
+                                <span>🧺</span> LOG HARVEST
+                            </button>
+                        )}
 
-                                {plant.level >= 10 && (
-                                    <button
-                                        onClick={handleSaveSeeds}
-                                        style={{
-                                            backgroundColor: '#EBF8FF',
-                                            color: '#2B6CB0',
-                                            padding: '1.2rem',
-                                            borderRadius: '24px',
-                                            border: '2px dashed #3182CE',
-                                            fontWeight: 900,
-                                            fontSize: '1rem',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            gap: '0.75rem',
-                                            transition: 'all 0.2s ease'
-                                        }}
-                                    >
-                                        <span style={{ fontSize: '1.5rem' }}>🧬</span>
-                                        SAVE SEEDS (LVL 10+)
-                                    </button>
-                                )}
-                            </div>
+                        {plant.level >= 10 && ProductiveService.getPlantData(plant.species) && (
+                            <button
+                                onClick={handleSaveSeeds}
+                                style={{
+                                    backgroundColor: '#EBF8FF', color: '#2B6CB0',
+                                    padding: '1rem', borderRadius: '24px', border: '2px dashed #3182CE',
+                                    fontWeight: 900, fontSize: '0.9rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'
+                                }}
+                            >
+                                <span>🧬</span> SAVE SEEDS
+                            </button>
                         )}
                     </div>
                 )}
+            </section>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <button
-                        onClick={() => setShowShare(true)}
+            {/* Bottom Sheets */}
+
+            {/* 1. Log Memory Sheet */}
+            <BottomSheet isOpen={isLogging} onClose={() => setIsLogging(false)} title="Log a Memory 📝">
+                <form onSubmit={handleLog} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <textarea
+                        autoFocus
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        placeholder="What happened today? (e.g., First flower spotted!)"
                         style={{
-                            backgroundColor: '#F7FAFC',
-                            color: '#4A5568',
-                            padding: '1rem',
-                            borderRadius: '20px',
-                            border: '1px solid #E2E8F0',
-                            fontWeight: 700,
-                            fontSize: '0.9rem'
+                            width: '100%', padding: '1.5rem', borderRadius: '20px', border: '2px solid #F1F5F9',
+                            fontSize: '1.1rem', outline: 'none', minHeight: '150px', backgroundColor: '#F8FAFC'
                         }}
-                    >
-                        🔗 Share Passport
+                    />
+                    <button type="submit" className="btn btn-primary" style={{ padding: '1.2rem', fontSize: '1.1rem' }}>
+                        SAVE MEMORY
                     </button>
-                    <button
-                        onClick={onClose}
-                        style={{
-                            backgroundColor: '#F7FAFC',
-                            color: '#4A5568',
-                            padding: '1rem',
-                            borderRadius: '20px',
-                            border: '1px solid #E2E8F0',
-                            fontWeight: 700,
-                            fontSize: '0.9rem'
-                        }}
-                    >
-                        👋 Say Goodbye
+                </form>
+            </BottomSheet>
+
+            {/* 2. Log Harvest Sheet */}
+            <BottomSheet isOpen={isHarvesting} onClose={() => setIsHarvesting(false)} title="Log Harvest 🧺">
+                <form onSubmit={handleHarvest} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                        <input
+                            autoFocus
+                            type="number"
+                            value={harvestAmount}
+                            onChange={(e) => setHarvestAmount(e.target.value)}
+                            placeholder="Amount"
+                            style={{ flex: 2, padding: '1.2rem', borderRadius: '20px', border: '2px solid #F1F5F9', fontSize: '1.2rem', outline: 'none', backgroundColor: '#F8FAFC' }}
+                        />
+                        <select
+                            value={harvestUnit}
+                            onChange={(e) => setHarvestUnit(e.target.value)}
+                            style={{ flex: 1, padding: '1.2rem', borderRadius: '20px', border: '2px solid #F1F5F9', fontSize: '1.1rem', outline: 'none', backgroundColor: 'white' }}
+                        >
+                            <option value="g">g</option>
+                            <option value="kg">kg</option>
+                            <option value="units">units</option>
+                        </select>
+                    </div>
+                    <button type="submit" className="btn" style={{ backgroundColor: '#F6E05E', color: '#744210', padding: '1.2rem', fontSize: '1.1rem', fontWeight: 900 }}>
+                        CONFIRM HARVEST
+                    </button>
+                </form>
+            </BottomSheet>
+
+            {/* 3. Pest Patrol Sheet */}
+            <BottomSheet isOpen={isDiagnosing} onClose={() => setIsDiagnosing(false)} title="Pest Patrol 🐛">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {ProductiveService.getPlantData(plant.species)?.commonPests?.map((pest, idx) => (
+                        <div key={idx} className="glass-panel" style={{ padding: '1.5rem', backgroundColor: '#FFF5F5', border: '1px solid #FED7D7' }}>
+                            <div style={{ fontWeight: 900, fontSize: '1.1rem', color: '#C53030', marginBottom: '0.5rem' }}>{pest.name}</div>
+                            <div style={{ fontSize: '0.9rem', color: '#9B2C2C', marginBottom: '1rem' }}><strong>Symptoms:</strong> {pest.symptoms}</div>
+                            <div style={{
+                                padding: '1rem', backgroundColor: 'white', borderRadius: '12px',
+                                fontSize: '0.85rem', color: '#2F855A', fontWeight: 700, border: '1px solid #C6F6D5'
+                            }}>
+                                🌿 ORGANIC TREATMENT: {pest.treatment}
+                            </div>
+                        </div>
+                    ))}
+                    <button onClick={() => setIsDiagnosing(false)} className="btn" style={{ marginTop: '1rem', border: '1px solid #E2E8F0' }}>
+                        CLOSE PATROL
                     </button>
                 </div>
-            </section>
+            </BottomSheet>
 
             {showShare && (
                 <ShareCardModal
