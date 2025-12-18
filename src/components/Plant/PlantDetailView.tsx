@@ -17,6 +17,7 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
     const [showShare, setShowShare] = useState(false);
     const [isLogging, setIsLogging] = useState(false);
     const [isHarvesting, setIsHarvesting] = useState(false);
+    const [isDiagnosing, setIsDiagnosing] = useState(false);
     const [note, setNote] = useState('');
     const [harvestAmount, setHarvestAmount] = useState('');
     const [harvestUnit, setHarvestUnit] = useState('g');
@@ -279,6 +280,51 @@ export default function PlantDetailView({ plant, onClose }: PlantDetailViewProps
                                 🚫 Avoid: {ProductiveService.getPlantData(plant.species)?.foes.join(', ')}
                             </div>
                         </div>
+
+                        <div style={{ height: '1px', backgroundColor: 'rgba(0,0,0,0.05)', margin: '1rem 0' }} />
+
+                        {/* Pest Patrol Section */}
+                        <h3 style={{ fontSize: '0.9rem', fontWeight: 900, color: '#2D3748', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <span>🐛</span> PEST PATROL
+                        </h3>
+                        {isDiagnosing ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', animation: 'fade-in 0.3s' }}>
+                                {ProductiveService.getPlantData(plant.species)?.commonPests?.map((pest, idx) => (
+                                    <div key={idx} style={{ padding: '0.75rem', backgroundColor: '#FFF5F5', borderRadius: '12px', border: '1px solid #FED7D7' }}>
+                                        <div style={{ fontWeight: 900, fontSize: '0.85rem', color: '#C53030' }}>{pest.name}</div>
+                                        <div style={{ fontSize: '0.75rem', color: '#9B2C2C', margin: '0.25rem 0' }}><strong>Symptoms:</strong> {pest.symptoms}</div>
+                                        <div style={{ fontSize: '0.75rem', color: '#2F855A', fontWeight: 700 }}><strong>Organic Treatment:</strong> {pest.treatment}</div>
+                                    </div>
+                                ))}
+                                <button
+                                    onClick={() => setIsDiagnosing(false)}
+                                    style={{ padding: '0.5rem', borderRadius: '10px', border: '1px solid #E2E8F0', backgroundColor: 'white', fontSize: '0.75rem', fontWeight: 800 }}
+                                >
+                                    Close Diagnostic
+                                </button>
+                            </div>
+                        ) : (
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontSize: '0.8rem', color: '#718096', fontWeight: 600 }}>
+                                    {ProductiveService.getPlantData(plant.species)?.commonPests?.length || 0} known threats
+                                </span>
+                                <button
+                                    onClick={() => setIsDiagnosing(true)}
+                                    style={{
+                                        backgroundColor: '#FED7D7',
+                                        color: '#C53030',
+                                        border: 'none',
+                                        padding: '4px 12px',
+                                        borderRadius: '10px',
+                                        fontSize: '0.75rem',
+                                        fontWeight: 900,
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    REPORT ISSUE
+                                </button>
+                            </div>
+                        )}
                     </div>
                 )}
 
