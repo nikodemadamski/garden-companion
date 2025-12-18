@@ -65,9 +65,9 @@ export class PhotoService {
         .eq('user_id', userId);
 
       if (totalPhotos && totalPhotos >= USER_QUOTA.maxTotalPhotos) {
-        return { 
-          canUpload: false, 
-          reason: `Maximum ${USER_QUOTA.maxTotalPhotos} photos allowed per user` 
+        return {
+          canUpload: false,
+          reason: `Maximum ${USER_QUOTA.maxTotalPhotos} photos allowed per user`
         };
       }
 
@@ -79,9 +79,9 @@ export class PhotoService {
         .eq('plant_id', plantId);
 
       if (plantPhotos && plantPhotos >= USER_QUOTA.maxPhotosPerPlant) {
-        return { 
-          canUpload: false, 
-          reason: `Maximum ${USER_QUOTA.maxPhotosPerPlant} photos allowed per plant` 
+        return {
+          canUpload: false,
+          reason: `Maximum ${USER_QUOTA.maxPhotosPerPlant} photos allowed per plant`
         };
       }
 
@@ -95,10 +95,10 @@ export class PhotoService {
   /**
    * Generates optimized image from file
    */
-  static async optimizeImage(file: File): Promise<{ 
-    optimizedFile: File; 
-    thumbnailFile: File; 
-    metadata: PhotoMetadata 
+  static async optimizeImage(file: File): Promise<{
+    optimizedFile: File;
+    thumbnailFile: File;
+    metadata: PhotoMetadata
   }> {
     return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
@@ -185,9 +185,9 @@ export class PhotoService {
    * Uploads photo to Supabase storage
    */
   static async uploadPhoto(
-    file: File, 
-    plantId: string, 
-    userId: string, 
+    file: File,
+    plantId: string,
+    userId: string,
     isPrimary: boolean = false
   ): Promise<PlantPhoto> {
     // Validate file
@@ -249,7 +249,7 @@ export class PhotoService {
       if (isPrimary) {
         await supabase
           .from('plant_photos')
-          .update({ is_primary: false })
+          .update({ is_primary: false } as any)
           .eq('plant_id', plantId)
           .eq('user_id', userId);
       }
@@ -309,7 +309,7 @@ export class PhotoService {
         throw new Error(`Failed to fetch plant photos: ${error.message}`);
       }
 
-      return data.map(photo => ({
+      return data.map((photo: any) => ({
         id: photo.id,
         plantId: photo.plant_id,
         userId: photo.user_id,
@@ -377,7 +377,7 @@ export class PhotoService {
       // Then set the specified photo as primary
       const { error } = await supabase
         .from('plant_photos')
-        .update({ is_primary: true })
+        .update({ is_primary: true } as any)
         .eq('id', photoId)
         .eq('user_id', userId);
 
@@ -464,7 +464,7 @@ export class PhotoService {
       }
 
       const totalPhotos = data.length;
-      const totalSizeBytes = data.reduce((total, photo) => {
+      const totalSizeBytes = data.reduce((total: number, photo: any) => {
         const size = photo.metadata?.size || 0;
         return total + size;
       }, 0);
