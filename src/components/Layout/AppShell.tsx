@@ -1,4 +1,6 @@
-import React from 'react';
+"use client";
+
+import React, { useEffect, useState } from 'react';
 import { useGarden } from '@/context/GardenContext';
 import { fetchLocalWeather, WeatherData } from '@/services/weatherService';
 import ProfileModal from '@/components/Profile/ProfileModal';
@@ -8,6 +10,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     const { activeTab, setActiveTab, weather: gardenWeather } = useGarden();
     const [showProfile, setShowProfile] = React.useState(false);
     const [showExplore, setShowExplore] = React.useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Use weather from context if available, otherwise fallback to local fetch
     const weather = gardenWeather;
@@ -43,7 +50,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                         letterSpacing: '0.05em',
                         marginBottom: '0.2rem'
                     }}>
-                        {new Date().toLocaleDateString('en-IE', { weekday: 'long', day: 'numeric', month: 'long' })}
+                        {mounted ? new Date().toLocaleDateString('en-IE', { weekday: 'long', day: 'numeric', month: 'long' }) : 'Loading...'}
                     </p>
                     <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--color-text)', letterSpacing: '-0.02em' }}>
                         {activeTab === 'dashboard' ? 'My Garden' :
