@@ -95,90 +95,57 @@ export default function ShareCardModal({ plant, onClose }: ShareCardModalProps) 
 
                     {/* Content */}
                     <div style={{ position: 'relative', zIndex: 1 }}>
-                        {/* Plant Image */}
-                        <div
-                            style={{
-                                width: '100%',
-                                height: '200px',
-                                backgroundImage: `url(${plant.imageUrl || 'https://images.unsplash.com/photo-1416879115533-1963293d17d4?auto=format&fit=crop&w=800&q=80'})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                borderRadius: '12px',
-                                marginBottom: '1.5rem',
-                                border: '3px solid rgba(255,255,255,0.3)',
-                            }}
-                        />
+                        {/* Plant Avatar / Chibi */}
+                        <div style={{
+                            width: '100%',
+                            height: '180px',
+                            backgroundColor: 'rgba(255,255,255,0.2)',
+                            borderRadius: '24px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '6rem',
+                            marginBottom: '1.5rem',
+                            border: '4px solid rgba(255,255,255,0.4)'
+                        }}>
+                            {plant.level >= 5 ? '👑🌱✨' : '🌱'}
+                        </div>
 
-                        {/* Plant Name */}
-                        <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '0.5rem', textShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
-                            {plant.nickname || plant.name}
-                        </h2>
-                        <p style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: '1.5rem' }}>{plant.species}</p>
+                        {/* Plant Name & Rarity */}
+                        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                            <h2 style={{ fontSize: '2.2rem', fontWeight: 900, marginBottom: '0.2rem', textShadow: '0 2px 10px rgba(0,0,0,0.1)' }}>
+                                {plant.nickname || plant.name}
+                            </h2>
+                            {plant.rarity && (
+                                <span style={{
+                                    backgroundColor: plant.rarity === 'Legendary' ? '#FFD700' : plant.rarity === 'Rare' ? '#5856D6' : 'rgba(255,255,255,0.3)',
+                                    color: 'white',
+                                    padding: '4px 12px',
+                                    borderRadius: '20px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 900,
+                                    textTransform: 'uppercase'
+                                }}>
+                                    {plant.rarity}
+                                </span>
+                            )}
+                        </div>
 
                         {/* Stats Grid */}
-                        <div
-                            style={{
-                                display: 'grid',
-                                gridTemplateColumns: '1fr 1fr',
-                                gap: '1rem',
-                                marginBottom: '1.5rem',
-                            }}
-                        >
-                            <div
-                                style={{
-                                    backgroundColor: 'rgba(255,255,255,0.2)',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    backdropFilter: 'blur(10px)',
-                                }}
-                            >
-                                <div style={{ fontSize: '1.5rem', marginBottom: '0.3rem' }}>📅</div>
-                                <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Alive For</div>
-                                <div style={{ fontSize: '1.3rem', fontWeight: 700 }}>{age} Days</div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+                            <div style={{ backgroundColor: 'rgba(255,255,255,0.25)', padding: '1rem', borderRadius: '20px', textAlign: 'center', backdropFilter: 'blur(10px)' }}>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 900, opacity: 0.8, marginBottom: '0.2rem' }}>LEVEL</div>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{plant.level}</div>
                             </div>
-                            <div
-                                style={{
-                                    backgroundColor: 'rgba(255,255,255,0.2)',
-                                    padding: '1rem',
-                                    borderRadius: '8px',
-                                    backdropFilter: 'blur(10px)',
-                                }}
-                            >
-                                <div style={{ fontSize: '1.5rem', marginBottom: '0.3rem' }}>💧</div>
-                                <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>Watering</div>
-                                <div style={{ fontSize: '1.3rem', fontWeight: 700 }}>Every {plant.waterFrequencyDays}d</div>
+                            <div style={{ backgroundColor: 'rgba(255,255,255,0.25)', padding: '1rem', borderRadius: '20px', textAlign: 'center', backdropFilter: 'blur(10px)' }}>
+                                <div style={{ fontSize: '0.7rem', fontWeight: 900, opacity: 0.8, marginBottom: '0.2rem' }}>ALIVE FOR</div>
+                                <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{age}d</div>
                             </div>
                         </div>
 
-                        {/* Badge */}
-                        {wasSick && (
-                            <div
-                                style={{
-                                    backgroundColor: 'rgba(255,255,255,0.3)',
-                                    padding: '0.75rem 1.5rem',
-                                    borderRadius: '20px',
-                                    display: 'inline-block',
-                                    fontWeight: 700,
-                                    fontSize: '0.9rem',
-                                    backdropFilter: 'blur(10px)',
-                                }}
-                            >
-                                🏆 Survivor
-                            </div>
-                        )}
-
                         {/* Footer */}
-                        <div
-                            style={{
-                                marginTop: '2rem',
-                                paddingTop: '1rem',
-                                borderTop: '1px solid rgba(255,255,255,0.3)',
-                                fontSize: '0.8rem',
-                                opacity: 0.7,
-                                textAlign: 'center',
-                            }}
-                        >
-                            Garden Companion App 🌱
+                        <div style={{ textAlign: 'center', opacity: 0.8, fontSize: '0.8rem', fontWeight: 700 }}>
+                            (◕‿◕) Garden Companion
                         </div>
                     </div>
                 </div>

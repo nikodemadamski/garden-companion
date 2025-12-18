@@ -11,8 +11,9 @@ export interface JournalEntry {
     id: string;
     date: string;
     note: string;
-    heightCm?: number;
     imageUrl?: string; // P6: Growth Tape
+    heightCm?: number;
+    type?: 'note' | 'photo' | 'milestone';
 }
 
 // Enhanced plant interface with new fields for comprehensive garden companion

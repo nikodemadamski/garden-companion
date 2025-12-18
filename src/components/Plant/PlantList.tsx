@@ -2,22 +2,21 @@
 
 import React, { useState, useEffect } from 'react';
 import { useGarden } from '@/context/GardenContext';
-import { Plant, GardenType } from '@/types/plant';
-import PlantDetailModal from './PlantDetailModal';
+import { Plant } from '@/types/plant';
 import { fetchHistoricalWeather, HistoricalWeatherData } from '@/services/weatherService';
 import ContextCalendar from '@/components/Weather/ContextCalendar';
 import PlantCard from './PlantCard';
 import SeasonalBanner from '@/components/Weather/SeasonalBanner';
+import PlantDetailView from './PlantDetailView';
 
 export default function PlantList() {
-    const { plants, currentGarden, switchGarden, updatePlant, deletePlant } = useGarden();
+    const { plants, currentGarden, switchGarden } = useGarden();
     const [selectedPlant, setSelectedPlant] = useState<Plant | null>(null);
     const [history, setHistory] = useState<HistoricalWeatherData[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         if (currentGarden === 'outdoor') {
-            // Fetch history for outdoor context (Dublin coords for Irish context)
             fetchHistoricalWeather(53.3498, -6.2603).then(setHistory);
         } else {
             setHistory([]);
@@ -58,7 +57,6 @@ export default function PlantList() {
             {/* Search & Filter Bar */}
             <div style={{ position: 'sticky', top: '90px', zIndex: 40, backgroundColor: 'rgba(248, 249, 250, 0.8)', backdropFilter: 'blur(10px)', padding: '0.5rem 0' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {/* iPhone-style Segmented Control */}
                     <div style={{
                         display: 'flex',
                         backgroundColor: '#E2E8F0',
@@ -78,7 +76,6 @@ export default function PlantList() {
                         />
                     </div>
 
-                    {/* Search Input */}
                     <div style={{ position: 'relative' }}>
                         <input
                             type="text"
@@ -129,7 +126,7 @@ export default function PlantList() {
                         </h2>
                         <div style={{
                             display: 'grid',
-                            gridTemplateColumns: '1fr', // Mobile first
+                            gridTemplateColumns: '1fr',
                             gap: '1.25rem',
                         }}>
                             {roomPlants.map((plant) => (
@@ -154,7 +151,7 @@ export default function PlantList() {
             </div>
 
             {selectedPlant && (
-                <PlantDetailModal
+                <PlantDetailView
                     plant={selectedPlant}
                     onClose={() => setSelectedPlant(null)}
                 />
@@ -185,4 +182,3 @@ function TabButton({ active, onClick, label }: { active: boolean, onClick: () =>
         </button>
     );
 }
-
